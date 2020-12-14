@@ -1,0 +1,7 @@
+pre-commit:
+  parallel: true
+  commands:
+    formatter:
+      files: git diff --name-only @{push}
+      glob: "*.{ts}"
+      run: yarn format {files}
