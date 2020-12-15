@@ -1,7 +1,12 @@
 import {
   Kind,
   NameNode,
+  TypeNode,
+  NamedTypeNode,
+  ListTypeNode,
+  NonNullTypeNode,
   ValueNode,
+  VariableNode,
   ArgumentNode,
   DirectiveNode,
   SelectionNode,
@@ -55,6 +60,49 @@ export const selectionOf = (
   selectionSet,
 });
 
+// export interface VariableDefinitionNode {
+//   readonly kind: 'VariableDefinition';
+//   readonly loc?: Location;
+//   readonly variable: VariableNode;
+//   readonly type: TypeNode;
+//   readonly defaultValue?: ValueNode;
+//   readonly directives?: ReadonlyArray<DirectiveNode>;
+// }
+
+// export interface VariableNode {
+//   readonly kind: 'Variable';
+//   readonly loc?: Location;
+//   readonly name: NameNode;
+// }
+
+// export interface FieldNode {
+//   readonly kind: 'Field';
+//   readonly loc?: Location;
+//   readonly alias?: NameNode;
+//   readonly name: NameNode;
+//   readonly arguments?: ReadonlyArray<ArgumentNode>;
+//   readonly directives?: ReadonlyArray<DirectiveNode>;
+//   readonly selectionSet?: SelectionSetNode;
+// }
+
+// export interface ArgumentNode {
+//   readonly kind: 'Argument';
+//   readonly loc?: Location;
+//   readonly name: NameNode;
+//   readonly value: ValueNode;
+// }
+
+// export type ValueNode =
+//   | VariableNode
+//   | IntValueNode
+//   | FloatValueNode
+//   | StringValueNode
+//   | BooleanValueNode
+//   | NullValueNode
+//   | EnumValueNode
+//   | ListValueNode
+//   | ObjectValueNode;
+
 export const argumentOf = ({
   name,
   value,
@@ -65,6 +113,48 @@ export const argumentOf = ({
   kind: Kind.ARGUMENT,
   name: nameNodeOf(name),
   value,
+});
+
+export const variableOf = ({ name }: { name: string }): VariableNode => ({
+  kind: Kind.VARIABLE,
+  name: nameNodeOf(name),
+});
+
+export const variableDefinitionOf = ({
+  variable,
+  type,
+  directives = [],
+  defaultValue,
+}: {
+  variable: VariableNode;
+  type: TypeNode;
+  defaultValue?: ValueNode;
+  directives?: DirectiveNode[];
+}): VariableDefinitionNode => ({
+  kind: Kind.VARIABLE_DEFINITION,
+  variable,
+  type,
+  defaultValue,
+  directives,
+});
+
+export const nonNullTypeOf = ({
+  type,
+}: {
+  type: NamedTypeNode | ListTypeNode;
+}): NonNullTypeNode => ({
+  kind: Kind.NON_NULL_TYPE,
+  type,
+});
+
+export const listTypeOf = ({ type }: { type: TypeNode }): ListTypeNode => ({
+  kind: Kind.LIST_TYPE,
+  type,
+});
+
+export const namedTypeOf = ({ name }: { name: string }): NamedTypeNode => ({
+  kind: Kind.NAMED_TYPE,
+  name: nameNodeOf(name),
 });
 
 export const nameNodeOf = (name: string): NameNode => ({
