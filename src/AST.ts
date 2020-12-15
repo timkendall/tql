@@ -13,14 +13,59 @@ import {
   DocumentNode,
 } from "graphql";
 
-export type Primitive =
-  | string
-  | number
-  | bigint
-  | boolean
-  | symbol
-  | null
-  | undefined;
+export const documentOf = (
+  nodes: ReadonlyArray<DefinitionNode>
+): DocumentNode => ({
+  kind: Kind.DOCUMENT,
+  definitions: nodes,
+});
+
+export const operationOf = (
+  operation: OperationTypeNode,
+  name: string,
+  variables: ReadonlyArray<VariableDefinitionNode>,
+  selectionSet: SelectionSetNode,
+  directives: DirectiveNode[] = []
+): OperationDefinitionNode => ({
+  kind: Kind.OPERATION_DEFINITION,
+  operation,
+  name: nameNodeOf(name),
+  variableDefinitions: variables,
+  selectionSet,
+  directives,
+});
+
+export const selectionSetOf = (
+  selections: SelectionNode[]
+): SelectionSetNode => ({
+  kind: Kind.SELECTION_SET,
+  selections,
+});
+
+export const selectionOf = (
+  fieldName: string,
+  args: ArgumentNode[] = [],
+  directives: DirectiveNode[] = [],
+  selectionSet?: SelectionSetNode
+): SelectionNode => ({
+  kind: Kind.FIELD, // @todo `Fragment` and `InlineFragment`
+  name: nameNodeOf(fieldName),
+  arguments: args,
+  directives,
+  selectionSet,
+});
+
+export const argumentOf = ({
+  name,
+  value,
+}: {
+  name: string;
+  value: ValueNode;
+}): ArgumentNode => ({
+  kind: Kind.ARGUMENT,
+  name: nameNodeOf(name),
+  value,
+});
 
 export const nameNodeOf = (name: string): NameNode => ({
   kind: Kind.NAME,
@@ -63,116 +108,3 @@ export const valueNodeOf = (value: any, enums: any[] = []): ValueNode => {
     throw new Error(`Unknown value type: ${value}`);
   }
 };
-
-export const argumentOf = ({
-  name,
-  value,
-}: {
-  name: string;
-  value: ValueNode;
-}): ArgumentNode => ({
-  kind: Kind.ARGUMENT,
-  name: nameNodeOf(name),
-  value,
-});
-
-// type Selection = Field | Fragment | InlineFragment
-// @todo Support union
-// type Selection<Name extends string, Arguments extends Argument<string, any>[], Value = unknown> = Field<Name, Arguments, Value>
-
-export type SelectionSet = Array<Field<any, any, any>>;
-
-class Argument<Name extends string, Value = unknown> {
-  constructor(public readonly name: Name, public readonly value: Value) {}
-
-  get ast() {
-    return argumentOf({
-      name: this.name,
-      value: valueNodeOf(this.value),
-    });
-  }
-}
-
-export class Field<
-  Name extends string,
-  Arguments extends Argument<string, any>[] | never = never,
-  // @question, how do translate this do an object value for TypeScript?
-  SelectionSetOrValue extends
-    | Primitive
-    | Field<any, any, any>[]
-    | undefined = undefined
-> {
-  constructor(
-    public readonly name: Name,
-    public readonly args?: Arguments,
-    public readonly selectionSet?: SelectionSetOrValue
-  ) {}
-
-  get ast(): SelectionNode {
-    return {
-      kind: Kind.FIELD, // @todo (`Fragment` and `InlineFragment`)
-      name: nameNodeOf(this.name),
-      // arguments: args, // @todo
-      // directives, // @todo
-      selectionSet: Array.isArray(this.selectionSet)
-        ? selectionSetOf(
-            (this.selectionSet as Array<Field<any, any, any>>).map((s) => s.ast)
-          )
-        : undefined,
-    };
-  }
-}
-
-export type Result<Selection extends Array<Field<any, any, any>>> = {
-  [Key in Selection[number]["name"]]: Selection[number] extends infer U
-    ? U extends Field<Key, infer Args, infer ValueOrSelection>
-      ? ValueOrSelection extends Primitive
-        ? ValueOrSelection
-        : ValueOrSelection extends Array<Field<any, any, any>>
-        ? Result<ValueOrSelection>
-        : never
-      : never
-    : never;
-};
-
-export const selectionOf = (
-  fieldName: string,
-  args: ArgumentNode[] = [],
-  directives: DirectiveNode[] = [],
-  selectionSet?: SelectionSetNode
-): SelectionNode => ({
-  kind: Kind.FIELD, // @todo `Fragment` and `InlineFragment`
-  name: nameNodeOf(fieldName),
-  arguments: args,
-  directives,
-  selectionSet,
-});
-
-export const selectionSetOf = (
-  selections: SelectionNode[]
-): SelectionSetNode => ({
-  kind: Kind.SELECTION_SET,
-  selections,
-});
-
-export const operationOf = (
-  operation: OperationTypeNode,
-  name: string,
-  variables: ReadonlyArray<VariableDefinitionNode>,
-  selectionSet: SelectionSetNode,
-  directives: DirectiveNode[] = []
-): OperationDefinitionNode => ({
-  kind: Kind.OPERATION_DEFINITION,
-  operation,
-  name: nameNodeOf(name),
-  variableDefinitions: variables,
-  selectionSet,
-  directives,
-});
-
-export const documentOf = (
-  nodes: ReadonlyArray<DefinitionNode>
-): DocumentNode => ({
-  kind: Kind.DOCUMENT,
-  definitions: nodes,
-});
