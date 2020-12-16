@@ -104,7 +104,12 @@ export class Field<
 
 export type Value = Variable<string> | Primitive;
 export class Argument<Name extends string, Value = any> {
-  constructor(public readonly name: Name, public readonly value: Value) {}
+  constructor(
+    public readonly name: Name,
+    public readonly value: Value,
+    // @note Janky enum support
+    public readonly _enum?: any
+  ) {}
 
   get ast(): ArgumentNode {
     return argumentOf({
@@ -112,7 +117,7 @@ export class Argument<Name extends string, Value = any> {
       value:
         this.value instanceof Variable
           ? this.value.ast
-          : valueNodeOf(this.value),
+          : valueNodeOf(this.value, this._enum ? [this._enum] : undefined),
     });
   }
 }

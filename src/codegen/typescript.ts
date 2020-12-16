@@ -14,6 +14,7 @@ import {
   GraphQLNonNull,
   GraphQLList,
   GraphQLField,
+  GraphQLInputType,
 } from "graphql";
 
 export const fieldToProperty = (
@@ -241,6 +242,16 @@ export function getBaseOutputType(type: GraphQLOutputType): GraphQLOutputType {
     return getBaseOutputType(type.ofType);
   } else if (type instanceof GraphQLList) {
     return getBaseOutputType(type.ofType);
+  } else {
+    return type;
+  }
+}
+
+export function getBaseInputType(type: GraphQLInputType): GraphQLInputType {
+  if (type instanceof GraphQLNonNull) {
+    return getBaseInputType(type.ofType);
+  } else if (type instanceof GraphQLList) {
+    return getBaseInputType(type.ofType);
   } else {
     return type;
   }

@@ -71,3 +71,41 @@
 // //   ${['id'].map(field => `${field}: () => new Field<"${field}", [], string>("${field}")`).join('\n')}
 // // }
 // // `)
+
+export function ts(strings: TemplateStringsArray, ...expr: any[]) {
+  // const source = createSourceFile('file.ts', 'todo', ScriptTarget.ES2020)
+
+  console.log(strings);
+  console.log(expr);
+
+  // @todo run TypeScript parser
+  return null;
+}
+
+ts`
+  enum %name {
+    {% for member in members %}
+    {{member.name}} = {{member.value}}
+    {% end %}
+    ${[
+      { name: "admin", value: "ADMIN" },
+      { name: "support", value: "SUPPORT" },
+    ].map((value) => `${value.name} = ${value.value}`)}
+  }
+`;
+
+type EnumTemplate = `
+  enum ${string} {
+    ${string} = ${string}
+  }
+`;
+
+const enumOf = (template: EnumTemplate) => {
+  // @todo
+};
+
+enumOf(`
+  enum Foo {
+    bar = baz
+  }
+`);

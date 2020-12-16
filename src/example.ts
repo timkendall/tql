@@ -15,9 +15,8 @@ import { Selector, makeBuildQuery, execute } from "./Client";
 const buildQuery = <T extends Array<Field<any, any, any>>>(
   name: string,
   select: (t: typeof Query) => T
-): Operation<T> => {
-  return new Operation(name, "query", new SelectionSet(select(Query)));
-};
+): Operation<T> =>
+  new Operation(name, "query", new SelectionSet(select(Query)));
 
 const Query = {
   // @Restrict `Field`'s to what exists on the `User` type!
@@ -32,8 +31,6 @@ const Query = {
     new Field("account", [new Argument("id", variables.id)], select(Account)),
 };
 
-type Foo = typeof Query;
-
 const User = {
   id: () => new Field<"id", [], string>("id"),
   age: () => new Field<"age", [], number>("age"),
@@ -42,14 +39,10 @@ const User = {
   ) => new Field("account", [], select(Account)),
 };
 
-type UserS = typeof User;
-
 const Account = {
   id: () => new Field<"id", [], string>("id"),
   balance: () => new Field<"balance", [], number>("balance"),
 };
-
-type SelectorAccount = typeof Account;
 
 // @end todo
 
@@ -58,21 +51,22 @@ type SelectorAccount = typeof Account;
   const fragment = [
     User.id(),
     User.age() /*new Field<'shit',[], string>('shit')*/,
+    User.account((t) => [t.id()]),
   ];
 
   // const buildQuery = makeBuildQuery(Query)
   const query = buildQuery("Example", (t) => [
-    t.viewer((t) => [t.id(), t.age(), t.account((t) => [t.balance()])]),
+    t.viewer((t) => fragment),
     t.account({ id: new Variable("accountId") }, (t) => [t.balance()]),
   ]);
 
   console.log(query.toString());
 
-  // const { data, errors } = await execute("https://example.com", query);
+  const { data, errors } = await execute("https://example.com", query);
 
-  // data?.viewer.id;
-  // data?.viewer.age;
-  // data?.viewer.account.balance;
+  data?.viewer.id;
+  data?.viewer.age;
+  data?.viewer.account.id;
 
-  // data?.account.balance
+  data?.account.balance;
 })();
