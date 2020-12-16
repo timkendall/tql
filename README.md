@@ -17,7 +17,9 @@
 
 ## Installation
 
-`npm install @timkendall/ts-gql` or `yarn add @timkendall/ts-gql` (TypeScript 4.1+ is required for [Recursive Conditional Type](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#recursive-conditional-types) support)
+`npm install @timkendall/ts-gql` or `yarn add @timkendall/ts-gql` 
+
+* **TypeScript 4.1+** is required for [Recursive Conditional Type](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#recursive-conditional-types) support
 
 ## Usage
 
@@ -26,16 +28,26 @@ You will need to compile a type-safe client one time before using. Do this with 
 ```typescript
 import { query, execute } from '@timkendall/ts-gql'
 
-const operation = query('Example', t => [
-  t.viewer(t => [
+const operation = query("Starwars!", (t) => [
+  t.human({ id: "1002" }, (t) => [
     t.id(),
     t.name(),
-  ])
-])
+    t.appearsIn(),
+    t.homePlanet(),
+
+    t.starships((t) => [
+      t.id(),
+      t.name(),
+    ]),
+  ]),
+]);
 
 const { data, errors } = await execute("https://graphql.org/swapi-graphql/", query);
 
-data?.viewer?.id
+data?.human?.id
+data?.human?.name
+data?.starships[0]?.id
+data?.starships[0]?.name
 ```
 
 ## Inspiration
