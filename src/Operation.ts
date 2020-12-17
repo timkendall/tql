@@ -6,6 +6,9 @@ import {
   VariableDefinitionNode,
   VariableNode,
   ArgumentNode,
+  NonNullTypeNode,
+  ListTypeNode,
+  NamedTypeNode,
 } from "graphql";
 
 import {
@@ -150,18 +153,38 @@ export class VariableDefinition<V extends Variable<string>, T extends Type> {
 
 export type Type = NamedType<string, any> | ListType<any> | NonNullType<any>;
 
+/**
+ * Utility type for parsing the base type from a `Type`
+ *
+ * Example:
+ * type User = NamedType<'User', { id: string}>
+ *
+ * type A = BaseType<User>
+ * type B = BaseType<ListType<User>>
+ * type C = BaseType<NonNullType<User>>
+ * type D = BaseType<NonNullType<ListType<User>>>
+ * type E = BaseType<NonNullType<ListType<NonNullType<User>>>>
+ */
+export type BaseType<T extends Type> = T extends NamedType<string, infer Type>
+  ? Type
+  : T extends NonNullType<infer Type>
+  ? BaseType<Type>
+  : T extends ListType<infer Type>
+  ? BaseType<Type>
+  : never;
+
 export class NonNullType<Type extends NamedType<string, any> | ListType<any>> {
   constructor(public readonly type: Type) {}
 
-  get ast() {
+  get ast(): NonNullTypeNode {
     return nonNullTypeOf({ type: this.type.ast });
   }
 }
 
-export class ListType<Type extends NamedType<string, any>> {
+export class ListType<Type extends NamedType<string, any> | NonNullType<any>> {
   constructor(public readonly type: Type) {}
 
-  get ast() {
+  get ast(): ListTypeNode {
     return listTypeOf({ type: this.type.ast });
   }
 }
@@ -169,7 +192,7 @@ export class ListType<Type extends NamedType<string, any>> {
 export class NamedType<Name extends string, Type = unknown> {
   constructor(public readonly name: Name) {}
 
-  get ast() {
+  get ast(): NamedTypeNode {
     return namedTypeOf({ name: this.name });
   }
 }
