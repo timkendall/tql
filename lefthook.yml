@@ -2,6 +2,6 @@ pre-commit:
   parallel: true
   commands:
     formatter:
-      files: git diff --name-only @{push}
+      files: git diff --name-only --staged
       glob: "*.{ts}"
-      run: yarn format {files}
+      run: yarn format {files} && git add {files}
