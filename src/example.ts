@@ -12,7 +12,7 @@ import { Selector, makeBuildQuery, execute } from "./Client";
 // @todo Support dynamic creation with ex. `Selector<User>`?
 // @todo Generate all of these from a static GraphQL schema!
 
-const buildQuery = <T extends Array<Field<any, any, any>>>(
+const buildQuery = <T extends Array<Field<any, any, any, any>>>(
   name: string,
   select: (t: typeof Query) => T
 ): Operation<T> =>
@@ -24,24 +24,28 @@ const Query = {
     select: (t: typeof User) => T
   ) => new Field("viewer", [], select(User)),
 
-  account: <T extends Array<Field<"id" | "balance", any, any>>>(
+  accounts: <T extends Array<Field<"id" | "balance", any, any>>>(
     variables: { id: Value },
     select: (t: typeof Account) => T
   ) =>
-    new Field("account", [new Argument("id", variables.id)], select(Account)),
+    new Field<"accounts", [Argument<"id">], T, Array<any>>(
+      "accounts",
+      [new Argument("id", variables.id)],
+      select(Account)
+    ),
 };
 
 const User = {
-  id: () => new Field<"id", [], string>("id"),
-  age: () => new Field<"age", [], number>("age"),
+  id: () => new Field<"id", [], string, string>("id"),
+  age: () => new Field<"age", [], number, number | null>("age"),
   account: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof Account) => T
   ) => new Field("account", [], select(Account)),
 };
 
 const Account = {
-  id: () => new Field<"id", [], string>("id"),
-  balance: () => new Field<"balance", [], number>("balance"),
+  id: () => new Field<"id", [], string, string>("id"),
+  balance: () => new Field<"balance", [], number, number>("balance"),
 };
 
 // @end todo
@@ -57,7 +61,7 @@ const Account = {
   // const buildQuery = makeBuildQuery(Query)
   const query = buildQuery("Example", (t) => [
     t.viewer((t) => fragment),
-    t.account({ id: new Variable("accountId") }, (t) => [t.balance()]),
+    t.accounts({ id: new Variable("accountId") }, (t) => [t.balance()]),
   ]);
 
   console.log(query.toString());
@@ -68,5 +72,5 @@ const Account = {
   data?.viewer.age;
   data?.viewer.account.id;
 
-  data?.account.balance;
+  data?.accounts![0].balance;
 })();

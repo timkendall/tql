@@ -1,5 +1,5 @@
 import {
-  SelectionNode,
+  FieldNode,
   OperationDefinitionNode,
   SelectionSetNode,
   print,
@@ -13,7 +13,7 @@ import {
   namedTypeOf,
   variableOf,
   valueNodeOf,
-  selectionOf,
+  fieldOf,
   selectionSetOf,
   operationOf,
   variableDefinitionOf,
@@ -21,22 +21,25 @@ import {
   nonNullTypeOf,
 } from "./AST";
 
-export type Result<Selection extends Array<Field<any, any, any>>> = {
+export type Result<Selection extends Array<Field<any, any, any, any>>> = {
   [Key in Selection[number]["name"]]: Selection[number] extends infer U
-    ? U extends Field<Key, infer Args, infer ValueOrSelection>
+    ? U extends Field<Key, any, infer ValueOrSelection, infer Type>
       ? ValueOrSelection extends Primitive
-        ? ValueOrSelection
-        : ValueOrSelection extends Array<Field<any, any, any>>
-        ? Result<ValueOrSelection>
+        ? Type // derive nullable and array scalars here
+        : ValueOrSelection extends Array<Field<any, any, any, any>>
+        ? Type extends Array<any>
+          ? Array<Result<ValueOrSelection>> | null
+          : Result<ValueOrSelection> // Derive nullable and array objects here
         : never
       : never
     : never;
 };
 
-export class Operation<T extends Array<Field<any, any, any>>> {
+export class Operation<T extends Array<Field<any, any, any, any>>> {
   constructor(
     public readonly name: string,
-    public readonly operation: "query", // @todo support `mutation` and `subscription`
+    // @todo support `mutation` and `subscription` operations
+    public readonly operation: "query",
     // public readonly directives: Directive[]
     // public readonly variableDefinitions: Variable[]
     public readonly selectionSet: SelectionSet<T>
@@ -47,27 +50,27 @@ export class Operation<T extends Array<Field<any, any, any>>> {
   }
 
   get ast(): OperationDefinitionNode {
-    return operationOf(
-      this.operation,
-      this.name,
-      [
-        /* @todo this.variables */
+    return operationOf({
+      operation: this.operation,
+      name: this.name,
+      selectionSet: this.selectionSet.ast,
+      variables: [
+        /* @todo */
       ],
-      this.selectionSet.ast,
-      [
-        /* @todo this.directives */
-      ]
-    );
+      directives: [
+        /* @todo */
+      ],
+    });
   }
 }
 
-// type Selection = Field | Fragment | InlineFragment
-// type Selection<Name extends string, Arguments extends Argument<string, any>[], Value = unknown> = Field<Name, Arguments, Value>
+// @todo a `Selection` is really a union of the following concrete types:
+//  - Field
+//  - Fragment
+//  - InlineFragment
 
 export class SelectionSet<T extends Array<Field<any, any, any>>> {
-  constructor(
-    public readonly selections: T // @todo support `Fragment` and `InlineFragment`
-  ) {}
+  constructor(public readonly selections: T) {}
 
   get ast(): SelectionSetNode {
     return selectionSetOf(this.selections.map((s) => s.ast));
@@ -80,7 +83,8 @@ export class Field<
   SelectionSetOrValue extends
     | Primitive
     | Field<any, any, any>[]
-    | undefined = undefined
+    | undefined = undefined,
+  Type = unknown
 > {
   constructor(
     public readonly name: Name,
@@ -88,21 +92,24 @@ export class Field<
     public readonly selectionSet?: SelectionSetOrValue
   ) {}
 
-  get ast(): SelectionNode {
-    return selectionOf(
-      this.name,
-      this.args?.map((arg) => arg.ast),
-      /* @todo directives*/ [],
-      Array.isArray(this.selectionSet)
+  get ast(): FieldNode {
+    return fieldOf({
+      name: this.name,
+      args: this.args?.map((arg) => arg.ast),
+      directives: [
+        /* @todo */
+      ],
+      selectionSet: Array.isArray(this.selectionSet)
         ? selectionSetOf(
             (this.selectionSet as Array<Field<any, any, any>>).map((s) => s.ast)
           )
-        : undefined
-    );
+        : undefined,
+    });
   }
 }
 
 export type Value = Variable<string> | Primitive;
+
 export class Argument<Name extends string, Value = any> {
   constructor(
     public readonly name: Name,
@@ -121,6 +128,7 @@ export class Argument<Name extends string, Value = any> {
     });
   }
 }
+
 export class Variable<Name extends string> {
   constructor(public readonly name: Name) {}
 

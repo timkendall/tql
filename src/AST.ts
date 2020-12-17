@@ -16,6 +16,7 @@ import {
   OperationDefinitionNode,
   DefinitionNode,
   DocumentNode,
+  FieldNode,
 } from "graphql";
 
 export const documentOf = (
@@ -25,13 +26,19 @@ export const documentOf = (
   definitions: nodes,
 });
 
-export const operationOf = (
-  operation: OperationTypeNode,
-  name: string,
-  variables: ReadonlyArray<VariableDefinitionNode>,
-  selectionSet: SelectionSetNode,
-  directives: DirectiveNode[] = []
-): OperationDefinitionNode => ({
+export const operationOf = ({
+  operation,
+  name,
+  variables = [],
+  directives = [],
+  selectionSet,
+}: {
+  operation: OperationTypeNode;
+  name: string;
+  selectionSet: SelectionSetNode;
+  variables?: ReadonlyArray<VariableDefinitionNode>;
+  directives?: DirectiveNode[];
+}): OperationDefinitionNode => ({
   kind: Kind.OPERATION_DEFINITION,
   operation,
   name: nameNodeOf(name),
@@ -47,61 +54,23 @@ export const selectionSetOf = (
   selections,
 });
 
-export const selectionOf = (
-  fieldName: string,
-  args: ArgumentNode[] = [],
-  directives: DirectiveNode[] = [],
-  selectionSet?: SelectionSetNode
-): SelectionNode => ({
-  kind: Kind.FIELD, // @todo `Fragment` and `InlineFragment`
-  name: nameNodeOf(fieldName),
+export const fieldOf = ({
+  name,
+  args = [],
+  directives = [],
+  selectionSet,
+}: {
+  name: string;
+  args?: ArgumentNode[];
+  directives?: DirectiveNode[];
+  selectionSet?: SelectionSetNode;
+}): FieldNode => ({
+  kind: Kind.FIELD,
+  name: nameNodeOf(name),
   arguments: args,
   directives,
   selectionSet,
 });
-
-// export interface VariableDefinitionNode {
-//   readonly kind: 'VariableDefinition';
-//   readonly loc?: Location;
-//   readonly variable: VariableNode;
-//   readonly type: TypeNode;
-//   readonly defaultValue?: ValueNode;
-//   readonly directives?: ReadonlyArray<DirectiveNode>;
-// }
-
-// export interface VariableNode {
-//   readonly kind: 'Variable';
-//   readonly loc?: Location;
-//   readonly name: NameNode;
-// }
-
-// export interface FieldNode {
-//   readonly kind: 'Field';
-//   readonly loc?: Location;
-//   readonly alias?: NameNode;
-//   readonly name: NameNode;
-//   readonly arguments?: ReadonlyArray<ArgumentNode>;
-//   readonly directives?: ReadonlyArray<DirectiveNode>;
-//   readonly selectionSet?: SelectionSetNode;
-// }
-
-// export interface ArgumentNode {
-//   readonly kind: 'Argument';
-//   readonly loc?: Location;
-//   readonly name: NameNode;
-//   readonly value: ValueNode;
-// }
-
-// export type ValueNode =
-//   | VariableNode
-//   | IntValueNode
-//   | FloatValueNode
-//   | StringValueNode
-//   | BooleanValueNode
-//   | NullValueNode
-//   | EnumValueNode
-//   | ListValueNode
-//   | ObjectValueNode;
 
 export const argumentOf = ({
   name,

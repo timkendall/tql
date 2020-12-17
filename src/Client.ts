@@ -7,7 +7,7 @@ export class Client {
   // @todo
 }
 
-export const execute = <T extends Array<Field<any, any, any>>>(
+export const execute = <T extends Array<Field<any, any, any, any>>>(
   endpoint: string,
   operation: Operation<T>
   /* @todo variables?: Variables */
