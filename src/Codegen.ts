@@ -181,15 +181,39 @@ export class Codegen {
   private objectType(type: GraphQLObjectType): string {
     const fields = Object.values(type.getFields());
 
-    return `
-      export interface I${type.name} {
-        ${fields.map(renderInterfaceField).join("\n")}
-      }
+    const interfaces = type.getInterfaces();
 
-      export const ${type.name} = {
-        ${fields.map((field) => this.field(field)).join("\n")}
-      }
-    `;
+    if (interfaces.length > 0) {
+      // @note TypeScript only requires new fields to be defined on interface extendors
+      const interfaceFields = interfaces.flatMap((i) =>
+        Object.values(i.getFields()).map((field) => field.name)
+      );
+      const uncommonFields = fields.filter(
+        (field) => !interfaceFields.includes(field.name)
+      );
+
+      return `
+        export interface I${type.name} extends ${interfaces
+        .map((i) => "I" + i.name)
+        .join(", ")} {
+          ${uncommonFields.map(renderInterfaceField).join("\n")}
+        }
+
+        export const ${type.name} = {
+          ${fields.map((field) => this.field(field)).join("\n")}
+        }
+      `;
+    } else {
+      return `
+        export interface I${type.name} {
+          ${fields.map(renderInterfaceField).join("\n")}
+        }
+
+        export const ${type.name} = {
+          ${fields.map((field) => this.field(field)).join("\n")}
+        }
+      `;
+    }
   }
 
   private inputObjectType(type: GraphQLInputObjectType): string {

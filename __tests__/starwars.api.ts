@@ -158,15 +158,10 @@ export const Character = {
   appearsIn: () => new Field<"appearsIn">("appearsIn"),
 };
 
-export interface IHuman {
-  id: string;
-  name: string;
+export interface IHuman extends ICharacter {
   homePlanet: string;
   height: number;
   mass: number;
-  friends: ICharacter[];
-  friendsConnection: IFriendsConnection;
-  appearsIn: Episode[];
   starships: IStarship[];
 }
 
@@ -205,12 +200,7 @@ export const Human = {
   ) => new Field("starships", [], select(Starship)),
 };
 
-export interface IDroid {
-  id: string;
-  name: string;
-  friends: ICharacter[];
-  friendsConnection: IFriendsConnection;
-  appearsIn: Episode[];
+export interface IDroid extends ICharacter {
   primaryFunction: string;
 }
 
