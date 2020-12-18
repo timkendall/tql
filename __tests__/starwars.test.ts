@@ -22,6 +22,7 @@ describe("starwars schema", () => {
           // @fix TypeScript currently has issues deriving `Field` types when we have
           // two `Selector` objects with identical fields that reference each other.
           //
+          // ex. type ExampleQuery = Result<IQuery, typeof operation.selectionSet.selections>
           // t.friends(t => [t.id(), t.name(), t.appearsIn()]),
 
           t.starships((t) => [t.id(), t.name()]),
