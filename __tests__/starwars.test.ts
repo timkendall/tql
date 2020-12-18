@@ -19,6 +19,9 @@ describe("starwars schema", () => {
           t.appearsIn(),
           t.homePlanet(),
 
+          // @note Deprecated field should be properly picked-up by VSCode!
+          t.mass(),
+
           // @fix TypeScript currently has issues deriving `Field` types when we have
           // two `Selector` objects with identical fields that reference each other.
           //
@@ -47,6 +50,7 @@ describe("starwars schema", () => {
             name
             appearsIn
             homePlanet
+            mass
             starships {
               id
               name
@@ -64,6 +68,7 @@ describe("starwars schema", () => {
             ],
             "homePlanet": null,
             "id": "1002",
+            "mass": 80,
             "name": "Han Solo",
             "starships": Array [
               Object {

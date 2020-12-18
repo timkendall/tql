@@ -171,6 +171,10 @@ export const Human = {
   homePlanet: () => new Field<"homePlanet">("homePlanet"),
   height: (variables: { unit: unknown }) =>
     new Field<"height", [/* @todo */]>("height"),
+
+  /**
+   * @deprecated Weight is a sensitive subject!
+   */
   mass: () => new Field<"mass">("mass"),
 
   friends: <T extends Array<Field<any, any, any>>>(

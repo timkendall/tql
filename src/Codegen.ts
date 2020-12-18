@@ -243,7 +243,7 @@ export class Codegen {
   }
 
   private field(field: GraphQLField<any, any, any>): string {
-    const { name, args, type } = field;
+    const { name, args, type, deprecationReason } = field;
 
     const isList =
       type instanceof GraphQLList ||
@@ -252,6 +252,14 @@ export class Codegen {
     const baseType = getBaseOutputType(type);
 
     // @todo If `GraphQLInterfaceType` or `GraphQLUnionType` define a new "merged" `Selector`?
+
+    const deprecatedComment = deprecationReason
+      ? `
+    /**
+     * @deprecated ${deprecationReason}
+     */
+    `
+      : "";
 
     if (
       baseType instanceof GraphQLScalarType ||
@@ -264,10 +272,16 @@ export class Codegen {
 
       // @todo render arguments correctly
       return args.length > 0
-        ? `${name}: (variables: { ${args
-            .map((a) => `${a.name}: unknown`)
-            .join(", ")} }) => new Field<"${name}", [/* @todo */]>("${name}"),`
-        : `${name}: () => new Field<"${name}">("${name}"),`;
+        ? deprecatedComment.concat(
+            `${name}: (variables: { ${args
+              .map((a) => `${a.name}: unknown`)
+              .join(
+                ", "
+              )} }) => new Field<"${name}", [/* @todo */]>("${name}"),`
+          )
+        : deprecatedComment.concat(
+            `${name}: () => new Field<"${name}">("${name}"),`
+          );
     } else {
       const renderArgument = (arg: GraphQLArgument): string => {
         const _base = getBaseInputType(arg.type);
@@ -303,6 +317,7 @@ export class Codegen {
       // @todo render arguments correctly
       return args.length > 0
         ? `
+        ${deprecatedComment}
         ${name}: <T extends Array<Field<any, any, any>>>(
           variables: { ${args.map(renderVariable).join(", ")} },
           select: (t: typeof ${baseType.toString()}) => T
@@ -311,6 +326,7 @@ export class Codegen {
             .join(", ")} ], select(${baseType.toString()})),
       `
         : `
+        ${deprecatedComment}
         ${name}: <T extends Array<Field<any, any, any>>>(
           select: (t: typeof ${baseType.toString()}) => T
         ) => new Field("${name}", [], select(${baseType.toString()})),
