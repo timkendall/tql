@@ -40,6 +40,28 @@ const toPrimitive = (
   }
 };
 
+const renderInterfaceField = (field: GraphQLField<any, any, any>): string => {
+  const isList =
+    field.type instanceof GraphQLList ||
+    (field.type instanceof GraphQLNonNull &&
+      field.type.ofType instanceof GraphQLList);
+  const isNonNull = field.type instanceof GraphQLNonNull;
+  const baseType = getBaseOutputType(field.type);
+
+  if (baseType instanceof GraphQLScalarType) {
+    return `${field.name}: ${toPrimitive(baseType)}` + (isList ? "[]" : "");
+  } else if (baseType instanceof GraphQLEnumType) {
+    return `${field.name}: ${baseType.name}` + (isList ? "[]" : "");
+  } else if (
+    baseType instanceof GraphQLInterfaceType ||
+    baseType instanceof GraphQLObjectType
+  ) {
+    return `${field.name}: I${baseType.name}` + (isList ? "[]" : "");
+  } else {
+    return `${field.name}: any`;
+  }
+};
+
 export class Codegen {
   private readonly printer = ts.createPrinter();
   private readonly source: ts.SourceFile;
@@ -137,7 +159,12 @@ export class Codegen {
   private interfaceType(type: GraphQLInterfaceType): string {
     const fields = Object.values(type.getFields());
 
+    // @note Render interface types and selector objects
     return `
+      export interface I${type.name} {
+        ${fields.map(renderInterfaceField).join("\n")}
+      }
+
       export const ${type.name} = {
         ${fields.map((field) => this.field(field)).join("\n")}
       }
@@ -155,6 +182,10 @@ export class Codegen {
     const fields = Object.values(type.getFields());
 
     return `
+      export interface I${type.name} {
+        ${fields.map(renderInterfaceField).join("\n")}
+      }
+
       export const ${type.name} = {
         ${fields.map((field) => this.field(field)).join("\n")}
       }
@@ -211,10 +242,8 @@ export class Codegen {
       return args.length > 0
         ? `${name}: (variables: { ${args
             .map((a) => `${a.name}: unknown`)
-            .join(
-              ", "
-            )} }) => new Field<"${name}", [/* @todo */], ${fieldType}>("${name}"),`
-        : `${name}: () => new Field<"${name}", [], ${fieldType}>("${name}"),`;
+            .join(", ")} }) => new Field<"${name}", [/* @todo */]>("${name}"),`
+        : `${name}: () => new Field<"${name}">("${name}"),`;
     } else {
       const renderArgument = (arg: GraphQLArgument): string => {
         const _base = getBaseInputType(arg.type);
