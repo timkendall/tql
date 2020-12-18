@@ -7,11 +7,14 @@ export class Client {
   // @todo
 }
 
-export const execute = <T extends Array<Field<any, any, any, any>>>(
+export const execute = <
+  RootType,
+  SelectionSet extends Array<Field<any, any, any>>
+>(
   endpoint: string,
-  operation: Operation<T>
+  operation: Operation<SelectionSet>
   /* @todo variables?: Variables */
-): Promise<ExecutionResult<Result<T>>> =>
+): Promise<ExecutionResult<Result<RootType, SelectionSet>>> =>
   fetch(endpoint, {
     method: "post",
     headers: { "Content-Type": "application/json" },
@@ -20,7 +23,9 @@ export const execute = <T extends Array<Field<any, any, any, any>>>(
       // variables,
       query: operation.toString(),
     }),
-  }).then((res) => res.json()) as Promise<ExecutionResult<Result<T>>>;
+  }).then((res) => res.json()) as Promise<
+    ExecutionResult<Result<RootType, SelectionSet>>
+  >;
 
 // @todo we lose out type-saftey going through this (need to fix the `Selector` type param)
 //

@@ -24,21 +24,27 @@ import {
   nonNullTypeOf,
 } from "./AST";
 
-export type Result<Selection extends Array<Field<any, any, any, any>>> = {
-  [Key in Selection[number]["name"]]: Selection[number] extends infer U
-    ? U extends Field<Key, any, infer ValueOrSelection, infer Type>
-      ? ValueOrSelection extends Primitive
-        ? Type // derive nullable and array scalars here
-        : ValueOrSelection extends Array<Field<any, any, any, any>>
-        ? Type extends Array<any>
-          ? Array<Result<ValueOrSelection>> | null
-          : Result<ValueOrSelection> // Derive nullable and array objects here
-        : never
-      : never
-    : never;
-};
+export type Result<
+  Type, // @note Has to be object or array! (right?)
+  SelectionSet extends Array<Field<any, any, any>>
+> = Type extends Array<infer T>
+  ? T extends Primitive
+    ? // @note Return scalar array
+      Array<T>
+    : // @note Wrap complex object in array
+      Array<Result<T, SelectionSet>>
+  : {
+      // @note Build out complex object
+      [Key in SelectionSet[number]["name"]]: Type[Key] extends Primitive
+        ? Type[Key]
+        : SelectionSet[number] extends infer U
+        ? U extends Field<Key, any, infer Selections>
+          ? Result<Type[Key], Selections>
+          : never
+        : never;
+    };
 
-export class Operation<T extends Array<Field<any, any, any, any>>> {
+export class Operation<T extends Array<Field<any, any, any>>> {
   constructor(
     public readonly name: string,
     // @todo support `mutation` and `subscription` operations
@@ -83,16 +89,12 @@ export class SelectionSet<T extends Array<Field<any, any, any>>> {
 export class Field<
   Name extends string,
   Arguments extends Argument<string, any>[] | never = never,
-  SelectionSetOrValue extends
-    | Primitive
-    | Field<any, any, any>[]
-    | undefined = undefined,
-  Type = unknown
+  SelectionSet extends Field<any, any, any>[] | never = never
 > {
   constructor(
     public readonly name: Name,
     public readonly args?: Arguments,
-    public readonly selectionSet?: SelectionSetOrValue
+    public readonly selectionSet?: SelectionSet
   ) {}
 
   get ast(): FieldNode {
