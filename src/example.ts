@@ -64,6 +64,7 @@ const Account = {
   balance: () => new Field<"balance">("balance"),
 };
 
+
 // @end todo
 
 (async () => {
@@ -87,9 +88,9 @@ const Account = {
     typeof query.selectionSet.selections
   >("https://example.com", query);
 
-  data?.viewer.id;
-  data?.viewer.age;
-  data?.viewer.account.id;
+  data!.viewer.id;
+  data!.viewer.age;
+  data!.viewer.account.id;
 
-  data?.accounts![0].balance;
+  data!.accounts![0].balance;
 })();
