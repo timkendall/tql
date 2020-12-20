@@ -10,7 +10,6 @@ import {
   ListTypeNode,
   NamedTypeNode,
   InlineFragmentNode,
-  getNamedType,
 } from "graphql";
 
 import {
@@ -27,98 +26,11 @@ import {
   nonNullTypeOf,
 } from "./AST";
 
-interface Query {
-  character: Character;
-}
-
-interface Character {
-  __typename: string;
-  id: string;
-  name: string;
-}
-
-interface Hero extends Character {
-  __typename: "Hero";
-  heroics: string[];
-}
-
-interface Villian extends Character {
-  __typename: "Villian";
-  villany: number[];
-}
-
-type fragmentedSelection = SelectionSet<
-  [
-    Field<
-      "character",
-      never,
-      // @question how do map this to
-      SelectionSet<
-        [
-          Field<"__typename">,
-          Field<"id">,
-          Field<"name">,
-
-          InlineFragment<
-            NamedType<"Hero", Hero>,
-            SelectionSet<[Field<"__typename">, Field<"heroics">]>
-          >,
-
-          InlineFragment<
-            NamedType<"Villian", Villian>,
-            SelectionSet<[Field<"__typename">, Field<"villany">]>
-          >
-        ]
-      >
-    >
-  ]
->;
-
-type TResult = Result<Query, fragmentedSelection>;
-
-const isHero = (object: Record<string, any>): object is Partial<Hero> => {
-  return object.__typename === "Hero";
-};
-
-const isVillian = (object: Record<string, any>): object is Partial<Villian> => {
-  return object.__typename === "Villian";
-};
-
-// const result = {} as TResult;
-
-// // common fields
-// result.character.id;
-// result.character.name;
-// result.character.__typename;
-
-// // type-guards
-// if (isHero(result.character)) {
-//   result.character.__typename;
-//   result.character.heroics;
-// }
-
-// if (isVillian(result.character)) {
-//   result.character.__typename;
-//   result.character.villany;
-// }
-
 // For each `Selection` in `SelectionSet<infer Selections>`
 // A. Map to scalar field if Selection is Field<any, never>
 // B. Map to object field if Selection is Field<any, SelectionSet<any>
 // C. Breakout to union object if Selection is InlineFragment<any, SelectionSet<any>>
-// How do we do the last one?
 
-type FilterFragments<
-  T extends Array<Field<any, any, any> | InlineFragment<any, any>>
-> = Array<
-  T[number] extends infer U
-    ? U extends Field<any, any, any>
-      ? T[number]
-      : never
-    : never
->;
-
-// @note sorta does what we want...
 export type Result<
   Type,
   TSelectionSet extends SelectionSet<Array<Selection>> // @todo take an `Operation` type instead (for correctness)
@@ -148,6 +60,16 @@ export type Result<
             : {}
           : {}
         : {}); // @note need to use empty objects to not nuke the left side of our intersection type (&)
+
+type FilterFragments<
+  T extends Array<Field<any, any, any> | InlineFragment<any, any>>
+> = Array<
+  T[number] extends infer U
+    ? U extends Field<any, any, any>
+      ? T[number]
+      : never
+    : never
+>;
 
 export class Operation<TSelectionSet extends SelectionSet<any>> {
   constructor(
