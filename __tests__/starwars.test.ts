@@ -1,12 +1,12 @@
-import { executeSync, parse } from "graphql";
+import { execute, parse } from "graphql";
 
-import { documentOf } from "../src";
+import { documentOf, Result } from "../src";
 import { StarWarsSchema } from "./starwars.schema";
-import { query, Episode } from "./starwars.api";
+import { query, Episode, IQuery } from "./starwars.api";
 
 describe("starwars schema", () => {
   describe("query", () => {
-    it("renders a valid query", () => {
+    it("renders a valid query", async () => {
       const operation = query("Example", (t) => [
         t.reviews({ episode: Episode.EMPIRE }, (t) => [
           t.stars(),
@@ -14,6 +14,7 @@ describe("starwars schema", () => {
         ]),
 
         t.human({ id: "1002" }, (t) => [
+          t.__typename(),
           t.id(),
           t.name(),
           t.appearsIn(),
@@ -22,17 +23,24 @@ describe("starwars schema", () => {
           // @note Deprecated field should be properly picked-up by VSCode!
           t.mass(),
 
-          // @fix TypeScript currently has issues deriving `Field` types when we have
-          // two `Selector` objects with identical fields that reference each other.
-          //
-          // ex. type ExampleQuery = Result<IQuery, typeof operation.selectionSet.selections>
-          // t.friends(t => [t.id(), t.name(), t.appearsIn()]),
+          t.friends((t) => [
+            t.__typename(),
+            t.id(),
+            t.name(),
+            t.appearsIn(),
+
+            t.on("Human", (t) => [t.homePlanet()]),
+            t.on("Droid", (t) => [t.primaryFunction()]),
+          ]),
 
           t.starships((t) => [t.id(), t.name()]),
         ]),
       ]);
 
-      const result = executeSync({
+      // @note Example result type!
+      type ExampleQuery = Result<IQuery, typeof operation["selectionSet"]>;
+
+      const result = await execute({
         schema: StarWarsSchema,
         document: documentOf([operation.ast]),
       });
@@ -46,11 +54,24 @@ describe("starwars schema", () => {
             commentary
           }
           human(id: \\"1002\\") {
+            __typename
             id
             name
             appearsIn
             homePlanet
             mass
+            friends {
+              __typename
+              id
+              name
+              appearsIn
+              ... on Human {
+                homePlanet
+              }
+              ... on Droid {
+                primaryFunction
+              }
+            }
             starships {
               id
               name
@@ -61,10 +82,46 @@ describe("starwars schema", () => {
       expect(result.data).toMatchInlineSnapshot(`
         Object {
           "human": Object {
+            "__typename": "Human",
             "appearsIn": Array [
               "NEWHOPE",
               "EMPIRE",
               "JEDI",
+            ],
+            "friends": Array [
+              Object {
+                "__typename": "Human",
+                "appearsIn": Array [
+                  "NEWHOPE",
+                  "EMPIRE",
+                  "JEDI",
+                ],
+                "homePlanet": "Tatooine",
+                "id": "1000",
+                "name": "Luke Skywalker",
+              },
+              Object {
+                "__typename": "Human",
+                "appearsIn": Array [
+                  "NEWHOPE",
+                  "EMPIRE",
+                  "JEDI",
+                ],
+                "homePlanet": "Alderaan",
+                "id": "1003",
+                "name": "Leia Organa",
+              },
+              Object {
+                "__typename": "Droid",
+                "appearsIn": Array [
+                  "NEWHOPE",
+                  "EMPIRE",
+                  "JEDI",
+                ],
+                "id": "2001",
+                "name": "R2-D2",
+                "primaryFunction": "Astromech",
+              },
             ],
             "homePlanet": null,
             "id": "1002",

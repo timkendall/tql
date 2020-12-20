@@ -17,6 +17,7 @@ import {
   DefinitionNode,
   DocumentNode,
   FieldNode,
+  InlineFragmentNode,
 } from "graphql";
 
 export const documentOf = (
@@ -52,6 +53,21 @@ export const selectionSetOf = (
 ): SelectionSetNode => ({
   kind: Kind.SELECTION_SET,
   selections,
+});
+
+export const inlineFragmentOf = ({
+  typeCondition,
+  directives = [],
+  selectionSet,
+}: {
+  typeCondition: NamedTypeNode;
+  directives?: DirectiveNode[];
+  selectionSet: SelectionSetNode;
+}): InlineFragmentNode => ({
+  kind: Kind.INLINE_FRAGMENT,
+  typeCondition,
+  directives,
+  selectionSet,
 });
 
 export const fieldOf = ({

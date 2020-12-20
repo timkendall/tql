@@ -77,10 +77,13 @@ export class Codegen {
     return [
       `
     import {
+      NamedType,
       Argument,
       Value,
       Field,
+      InlineFragment,
       Operation,
+      Selection,
       SelectionSet,
       Variable,
     } from '../src'
@@ -90,10 +93,10 @@ export class Codegen {
 
   private get query() {
     return `
-      export const query = <T extends Array<Field<any, any, any>>>(
+      export const query = <T extends Array<Selection>>(
         name: string,
         select: (t: typeof Query) => T
-      ): Operation<T> => new Operation(name, "query", new SelectionSet(select(Query)))
+      ): Operation<SelectionSet<T>> => new Operation(name, "query", new SelectionSet(select(Query)))
     `;
   }
 
@@ -159,14 +162,73 @@ export class Codegen {
   private interfaceType(type: GraphQLInterfaceType): string {
     const fields = Object.values(type.getFields());
 
-    // @note Render interface types and selector objects
+    // @note Get all implementors of this interface
+    const implementations = this.schema
+      .getPossibleTypes(type)
+      .map((type) => type.name);
+
+    // ex. F extends "Human" ? HumanSelector : DroidSelector
+    const renderConditionalSelectorArgument = (types: string[]) => {
+      const [first, ...rest] = types;
+
+      if (rest.length === 0) {
+        return first;
+      } else {
+        return types
+          .map((t) => `F extends "${t}" ? ${t}Selector : `)
+          .join("")
+          .concat(" never");
+      }
+    };
+
+    // @note Render
     return `
       export interface I${type.name} {
+        __typename: string
         ${fields.map(renderInterfaceField).join("\n")}
       }
 
-      export const ${type.name} = {
+      interface ${type.name}Selector {
+        __typename: () => Field<"__typename">
+        
+        ${fields.map((field) => this._fieldSignature(field)).join("\n")}
+
+        on: <T extends Array<Selection>, F extends ${implementations
+          .map((name) => `"${name}"`)
+          .join(" | ")}>(
+          type: F,
+          select: (t: ${renderConditionalSelectorArgument(
+            implementations.map((name) => name)
+          )}) => T
+        ) => InlineFragment<NamedType<F, any>, SelectionSet<T>>
+      }
+
+      export const ${type.name}: ${type.name}Selector = {
+        __typename: () => new Field("__typename"),
+
         ${fields.map((field) => this.field(field)).join("\n")}
+
+        on: (
+          type,
+          select,
+        ) => {
+          switch(type) {
+            ${implementations
+              .map(
+                (name) => `
+              case "${name}": {
+                return new InlineFragment(
+                  new NamedType("${name}") as any,
+                  new SelectionSet(select(${name} as any)),
+                )
+              }
+            `
+              )
+              .join("\n")}
+            default:
+              throw new Error("Unknown type!")
+          }
+        },
       }
     `;
   }
@@ -196,10 +258,25 @@ export class Codegen {
         export interface I${type.name} extends ${interfaces
         .map((i) => "I" + i.name)
         .join(", ")} {
+          __typename: "${type.name}"
           ${uncommonFields.map(renderInterfaceField).join("\n")}
         }
 
-        export const ${type.name} = {
+        interface ${type.name}Selector {
+          __typename: () => Field<"__typename">
+          
+          ${fields.map((field) => this._fieldSignature(field)).join("\n")}
+        }
+
+        export const is${
+          type.name
+        } = (object: Record<string, any>): object is Partial<I${type.name}> => {
+          return object.__typename === "${type.name}";
+        };
+
+        export const ${type.name}: ${type.name}Selector = {
+          __typename: () => new Field("__typename"),
+
           ${fields.map((field) => this.field(field)).join("\n")}
         }
       `;
@@ -209,7 +286,15 @@ export class Codegen {
           ${fields.map(renderInterfaceField).join("\n")}
         }
 
-        export const ${type.name} = {
+        interface ${type.name}Selector {
+          __typename: () => Field<"__typename">
+          
+          ${fields.map((field) => this._fieldSignature(field)).join("\n")}
+        }
+
+        export const ${type.name}: ${type.name}Selector = {
+          __typename: () => new Field("__typename"),
+
           ${fields.map((field) => this.field(field)).join("\n")}
         }
       `;
@@ -240,6 +325,85 @@ export class Codegen {
     return isNonNull
       ? `${inputField.name}: unknown`
       : `${inputField.name}?: unknown`;
+  }
+
+  private _fieldSignature(field: GraphQLField<any, any, any>): string {
+    const { name, args, type, deprecationReason } = field;
+
+    const isList =
+      type instanceof GraphQLList ||
+      (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList);
+    const isNonNull = type instanceof GraphQLNonNull;
+    const baseType = getBaseOutputType(type);
+
+    if (
+      baseType instanceof GraphQLScalarType ||
+      baseType instanceof GraphQLEnumType
+    ) {
+      const fieldType =
+        baseType instanceof GraphQLScalarType
+          ? toPrimitive(baseType)
+          : baseType.name;
+
+      // @todo render arguments correctly
+      return args.length > 0
+        ? `${name}: (variables: { ${args
+            .map((a) => `${a.name}: unknown`)
+            .join(", ")} }) => Field<"${name}", [/* @todo */]>`
+        : `${name}: () => Field<"${name}">`;
+    } else {
+      const renderArgument = (arg: GraphQLArgument): string => {
+        const _base = getBaseInputType(arg.type);
+
+        // @note Janky enum value support
+        return _base instanceof GraphQLEnumType
+          ? `Argument<"${arg.name}", Variable<"${
+              arg.name
+            }"> | ${getBaseInputType(arg.type).toString()}>`
+          : `Argument<"${arg.name}", Variable<"${
+              arg.name
+            }"> | ${renderInputType(arg.type)}>`;
+      };
+
+      const renderInputType = (type: GraphQLInputType): string => {
+        const _base = getBaseInputType(type);
+
+        if (_base instanceof GraphQLScalarType) {
+          return toPrimitive(_base);
+        } else if (_base instanceof GraphQLEnumType) {
+          return _base.name;
+        } else {
+          return "unknown";
+        }
+      };
+
+      const renderVariable = (arg: GraphQLArgument): string => {
+        return arg instanceof GraphQLNonNull
+          ? `${arg.name}: Variable<"${arg.name}"> | ${renderInputType(
+              arg.type
+            )}`
+          : `${arg.name}?: Variable<"${arg.name}"> | ${renderInputType(
+              arg.type
+            )}`;
+      };
+
+      // @todo render arguments correctly
+      // @todo restrict allowed Field types
+      return args.length > 0
+        ? `
+        ${name}: <T extends Array<Selection>>(
+          variables: { ${args.map(renderVariable).join(", ")} },
+          select: (t: ${baseType.toString()}Selector) => T
+        ) => Field<"${name}", [ ${args
+            .map(renderArgument)
+            .join(", ")} ], SelectionSet<T>>,
+      `
+        : `
+        ${name}: <T extends Array<Selection>>(
+          select: (t: ${baseType.toString()}Selector) => T
+        ) => Field<"${name}", never, SelectionSet<T>>,
+      `;
+    }
   }
 
   private field(field: GraphQLField<any, any, any>): string {
@@ -273,15 +437,9 @@ export class Codegen {
       // @todo render arguments correctly
       return args.length > 0
         ? deprecatedComment.concat(
-            `${name}: (variables: { ${args
-              .map((a) => `${a.name}: unknown`)
-              .join(
-                ", "
-              )} }) => new Field<"${name}", [/* @todo */]>("${name}"),`
+            `${name}: (variables) => new Field("${name}"),`
           )
-        : deprecatedComment.concat(
-            `${name}: () => new Field<"${name}">("${name}"),`
-          );
+        : deprecatedComment.concat(`${name}: () => new Field("${name}"),`);
     } else {
       const renderArgument = (arg: GraphQLArgument): string => {
         const _base = getBaseInputType(arg.type);
@@ -315,21 +473,22 @@ export class Codegen {
       };
 
       // @todo render arguments correctly
+      // @todo restrict allowed Field types
       return args.length > 0
         ? `
         ${deprecatedComment}
-        ${name}: <T extends Array<Field<any, any, any>>>(
-          variables: { ${args.map(renderVariable).join(", ")} },
-          select: (t: typeof ${baseType.toString()}) => T
+        ${name}:(
+          variables,
+          select,
         ) => new Field("${name}", [ ${args
             .map(renderArgument)
-            .join(", ")} ], select(${baseType.toString()})),
+            .join(", ")} ], new SelectionSet(select(${baseType.toString()}))),
       `
         : `
         ${deprecatedComment}
-        ${name}: <T extends Array<Field<any, any, any>>>(
-          select: (t: typeof ${baseType.toString()}) => T
-        ) => new Field("${name}", [], select(${baseType.toString()})),
+        ${name}: (
+          select,
+        ) => new Field("${name}", undefined as never, new SelectionSet(select(${baseType.toString()}))),
       `;
     }
   }

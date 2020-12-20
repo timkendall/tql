@@ -9,6 +9,7 @@ import {
   NonNullTypeNode,
   ListTypeNode,
   NamedTypeNode,
+  InlineFragmentNode,
 } from "graphql";
 
 import {
@@ -16,6 +17,7 @@ import {
   namedTypeOf,
   variableOf,
   valueNodeOf,
+  inlineFragmentOf,
   fieldOf,
   selectionSetOf,
   operationOf,
@@ -24,34 +26,59 @@ import {
   nonNullTypeOf,
 } from "./AST";
 
+// For each `Selection` in `SelectionSet<infer Selections>`
+// A. Map to scalar field if Selection is Field<any, never>
+// B. Map to object field if Selection is Field<any, SelectionSet<any>
+// C. Breakout to union object if Selection is InlineFragment<any, SelectionSet<any>>
+
 export type Result<
-  Type, // @note Has to be object or array! (right?)
-  SelectionSet extends Array<Field<any, any, any>>
+  Type,
+  TSelectionSet extends SelectionSet<Array<Selection>> // @todo take an `Operation` type instead (for correctness)
 > = Type extends Array<infer T>
   ? T extends Primitive
     ? // @note Return scalar array
       Array<T>
     : // @note Wrap complex object in array
-      Array<Result<T, SelectionSet>>
+      Array<Result<T, TSelectionSet>>
   : {
-      // @note Build out complex object
-      [Key in SelectionSet[number]["name"]]: Type[Key] extends Primitive
+      // @note Build out object from non-fragment field selections
+      [Key in FilterFragments<
+        TSelectionSet["selections"]
+      >[number]["name"]]: Type[Key] extends Primitive
         ? Type[Key]
-        : SelectionSet[number] extends infer U
+        : TSelectionSet["selections"][number] extends infer U
         ? U extends Field<Key, any, infer Selections>
           ? Result<Type[Key], Selections>
           : never
         : never;
-    };
+      // @note Should result in ({common} & {specific1}) | ({common} & {specific2})?
+    } &
+      (TSelectionSet["selections"][number] extends infer U
+        ? U extends InlineFragment<infer TypeCondition, infer SelectionSet>
+          ? TypeCondition extends NamedType<any, infer Type>
+            ? Result<Type, SelectionSet>
+            : {}
+          : {}
+        : {}); // @note need to use empty objects to not nuke the left side of our intersection type (&)
 
-export class Operation<T extends Array<Field<any, any, any>>> {
+type FilterFragments<
+  T extends Array<Field<any, any, any> | InlineFragment<any, any>>
+> = Array<
+  T[number] extends infer U
+    ? U extends Field<any, any, any>
+      ? T[number]
+      : never
+    : never
+>;
+
+export class Operation<TSelectionSet extends SelectionSet<any>> {
   constructor(
     public readonly name: string,
     // @todo support `mutation` and `subscription` operations
     public readonly operation: "query",
     // public readonly directives: Directive[]
     // public readonly variableDefinitions: Variable[]
-    public readonly selectionSet: SelectionSet<T>
+    public readonly selectionSet: TSelectionSet
   ) {}
 
   toString() {
@@ -73,12 +100,7 @@ export class Operation<T extends Array<Field<any, any, any>>> {
   }
 }
 
-// @todo a `Selection` is really a union of the following concrete types:
-//  - Field
-//  - Fragment
-//  - InlineFragment
-
-export class SelectionSet<T extends Array<Field<any, any, any>>> {
+export class SelectionSet<T extends Array<Selection>> {
   constructor(public readonly selections: T) {}
 
   get ast(): SelectionSetNode {
@@ -86,15 +108,34 @@ export class SelectionSet<T extends Array<Field<any, any, any>>> {
   }
 }
 
+export type Selection = Field<any, any, any> | InlineFragment<any, any>;
+
+export class InlineFragment<
+  TypeCondition extends Type,
+  TSelectionSet extends SelectionSet<any>
+> {
+  constructor(
+    public readonly typeCondition: TypeCondition,
+    public readonly selectionSet: TSelectionSet
+  ) {}
+
+  get ast(): InlineFragmentNode {
+    return inlineFragmentOf({
+      typeCondition: getBaseType(this.typeCondition).ast,
+      selectionSet: this.selectionSet.ast,
+    });
+  }
+}
+
 export class Field<
   Name extends string,
-  Arguments extends Argument<string, any>[] | never = never,
-  SelectionSet extends Field<any, any, any>[] | never = never
+  Arguments extends Array<Argument<string, any>> | never = never,
+  TSelectionSet extends SelectionSet<any> | never = never
 > {
   constructor(
     public readonly name: Name,
     public readonly args?: Arguments,
-    public readonly selectionSet?: SelectionSet
+    public readonly selectionSet?: TSelectionSet
   ) {}
 
   get ast(): FieldNode {
@@ -104,11 +145,7 @@ export class Field<
       directives: [
         /* @todo */
       ],
-      selectionSet: Array.isArray(this.selectionSet)
-        ? selectionSetOf(
-            (this.selectionSet as Array<Field<any, any, any>>).map((s) => s.ast)
-          )
-        : undefined,
+      selectionSet: this.selectionSet?.ast,
     });
   }
 }
@@ -154,6 +191,16 @@ export class VariableDefinition<V extends Variable<string>, T extends Type> {
 }
 
 export type Type = NamedType<string, any> | ListType<any> | NonNullType<any>;
+
+export function getBaseType(type: Type): NamedType<any, any> {
+  if (type instanceof NonNullType) {
+    return getBaseType(type.type);
+  } else if (type instanceof ListType) {
+    return getBaseType(type.type);
+  } else {
+    return type;
+  }
+}
 
 /**
  * Utility type for parsing the base type from a `Type`

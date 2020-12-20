@@ -3,6 +3,7 @@ import {
   Value,
   Field,
   Operation,
+  Selection,
   SelectionSet,
   Variable,
 } from "./Operation";
@@ -12,10 +13,10 @@ import { execute } from "./Client";
 // @todo Support dynamic creation with ex. `Selector<User>`?
 // @todo Generate all of these from a static GraphQL schema!
 
-const buildQuery = <T extends Array<Field<any, any, any>>>(
+const buildQuery = <T extends Array<Selection>>(
   name: string,
   select: (t: typeof Query) => T
-): Operation<T> =>
+): Operation<SelectionSet<T>> =>
   new Operation(name, "query", new SelectionSet(select(Query)));
 
 interface IQuery {
@@ -38,16 +39,16 @@ const Query = {
   // @Restrict `Field`'s to what exists on the `User` type!
   viewer: <T extends Array<Field<"id" | "age" | "account", any, any>>>(
     select: (t: typeof User) => T
-  ) => new Field("viewer", [], select(User)),
+  ) => new Field("viewer", [], new SelectionSet(select(User))),
 
   accounts: <T extends Array<Field<"id" | "balance", any, any>>>(
     variables: { id: Value },
     select: (t: typeof Account) => T
   ) =>
-    new Field<"accounts", [Argument<"id">], T>(
+    new Field<"accounts", [Argument<"id">], SelectionSet<T>>(
       "accounts",
       [new Argument("id", variables.id)],
-      select(Account)
+      new SelectionSet(select(Account))
     ),
 };
 
@@ -56,7 +57,7 @@ const User = {
   age: () => new Field<"age">("age"),
   account: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof Account) => T
-  ) => new Field("account", [], select(Account)),
+  ) => new Field("account", [], new SelectionSet(select(Account))),
 };
 
 const Account = {
@@ -82,14 +83,14 @@ const Account = {
 
   console.log(query.toString());
 
-  const { data, errors } = await execute<
-    IQuery,
-    typeof query.selectionSet.selections
-  >("https://example.com", query);
+  const { data, errors } = await execute<IQuery, typeof query>(
+    "https://example.com",
+    query
+  );
 
-  data?.viewer.id;
-  data?.viewer.age;
-  data?.viewer.account.id;
+  data!.viewer.id;
+  data!.viewer.age;
+  data!.viewer.account.id;
 
-  data?.accounts![0].balance;
+  data!.accounts![0].balance;
 })();
