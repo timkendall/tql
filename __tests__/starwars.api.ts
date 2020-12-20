@@ -23,15 +23,15 @@ export enum LengthUnit {
 }
 
 export interface ReviewInput {
-  stars: unknown;
-  commentary?: unknown;
-  favorite_color?: unknown;
+  stars: number;
+  commentary?: string;
+  favorite_color?: ColorInput;
 }
 
 export interface ColorInput {
-  red: unknown;
-  green: unknown;
-  blue: unknown;
+  red: number;
+  green: number;
+  blue: number;
 }
 
 type ISearchResult = IHuman | IDroid | IStarship;
@@ -225,14 +225,14 @@ interface MutationSelector {
   createReview: <T extends Array<Selection>>(
     variables: {
       episode?: Variable<"episode"> | Episode;
-      review?: Variable<"review"> | unknown;
+      review?: Variable<"review"> | ReviewInput;
     },
     select: (t: ReviewSelector) => T
   ) => Field<
     "createReview",
     [
       Argument<"episode", Variable<"episode"> | Episode>,
-      Argument<"review", Variable<"review"> | unknown>
+      Argument<"review", Variable<"review"> | ReviewInput>
     ],
     SelectionSet<T>
   >;
@@ -650,3 +650,9 @@ export const query = <T extends Array<Selection>>(
   select: (t: typeof Query) => T
 ): Operation<SelectionSet<T>> =>
   new Operation(name, "query", new SelectionSet(select(Query)));
+
+export const mutation = <T extends Array<Selection>>(
+  name: string,
+  select: (t: typeof Mutation) => T
+): Operation<SelectionSet<T>> =>
+  new Operation(name, "mutation", new SelectionSet(select(Mutation)));

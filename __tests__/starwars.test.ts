@@ -2,9 +2,52 @@ import { execute, parse } from "graphql";
 
 import { documentOf, Result } from "../src";
 import { StarWarsSchema } from "./starwars.schema";
-import { query, Episode, IQuery } from "./starwars.api";
+import { query, mutation, Episode, IQuery, IMutation } from "./starwars.api";
 
 describe("starwars schema", () => {
+  describe("mutation", () => {
+    it("renders a valid mutation", async () => {
+      const operation = mutation("AddReview", (t) => [
+        t.createReview(
+          {
+            episode: Episode.JEDI,
+            review: { stars: 4, commentary: "So good!" },
+          },
+          (t) => [t.commentary(), t.stars()]
+        ),
+      ]);
+
+      type ExampleMutation = Result<
+        IMutation,
+        typeof operation["selectionSet"]
+      >;
+
+      const result = await execute({
+        schema: StarWarsSchema,
+        document: documentOf([operation.ast]),
+      });
+
+      expect(() => parse(operation.toString())).not.toThrow();
+      expect(result.errors).toBeUndefined();
+      expect(operation.toString()).toMatchInlineSnapshot(`
+        "mutation AddReview {
+          createReview(episode: JEDI, review: {stars: 4, commentary: \\"So good!\\"}) {
+            commentary
+            stars
+          }
+        }"
+      `);
+      expect(result.data).toMatchInlineSnapshot(`
+        Object {
+          "createReview": Object {
+            "commentary": "So good!",
+            "stars": 4,
+          },
+        }
+      `);
+    });
+  });
+
   describe("query", () => {
     it("renders a valid query", async () => {
       const operation = query("Example", (t) => [

@@ -1,9 +1,9 @@
 # Current Limitations
 
 - [x] Interface type support
-- [ ] Nested input object support
+- [x] Nested input object support
 - [x] Union type support
-- [ ] `mutation` or `subscription` operation support
+- [x] `mutation` or `subscription` operation support
 - [ ] Object and list nullability support
 - [ ] Variable definition support
 - [ ] Field alias support

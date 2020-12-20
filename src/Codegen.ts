@@ -115,6 +115,28 @@ export class Codegen {
     `;
   }
 
+  private get mutation() {
+    return this.schema.getMutationType()
+      ? `
+      export const mutation = <T extends Array<Selection>>(
+        name: string,
+        select: (t: typeof Mutation) => T
+      ): Operation<SelectionSet<T>> => new Operation(name, "mutation", new SelectionSet(select(Mutation)))
+    `
+      : "";
+  }
+
+  private get subscription() {
+    return this.schema.getSubscriptionType()
+      ? `
+      export const subscription = <T extends Array<Selection>>(
+        name: string,
+        select: (t: typeof Subscription) => T
+      ): Operation<SelectionSet<T>> => new Operation(name, "subscription", new SelectionSet(select(Subscription)))
+    `
+      : "";
+  }
+
   public render(): string {
     const types = Object.values(this.schema.getTypeMap()).filter(
       ({ name }) => !name.startsWith("__")
@@ -155,6 +177,8 @@ export class Codegen {
       ...unions,
       ...consts,
       this.query,
+      this.mutation,
+      this.subscription,
     ];
 
     return prettier.format(text.join("\n\n"), { parser: "typescript" });
@@ -357,19 +381,30 @@ export class Codegen {
   }
 
   private inputField(inputField: GraphQLInputField): string {
-    const isList =
-      inputField.type instanceof GraphQLList ||
-      (inputField.type instanceof GraphQLNonNull &&
-        inputField.type.ofType instanceof GraphQLList);
-    const isNonNull = inputField.type instanceof GraphQLNonNull;
-
+    const isList = isListType(inputField.type);
+    const isNonNull = isNonNullType(inputField.type);
     const baseType = getBaseInputType(inputField.type);
 
-    // @todo render correct TypeScript type
+    let tsType: string;
 
-    return isNonNull
-      ? `${inputField.name}: unknown`
-      : `${inputField.name}?: unknown`;
+    if (baseType instanceof GraphQLScalarType) {
+      tsType = toPrimitive(baseType);
+    } else if (
+      baseType instanceof GraphQLEnumType ||
+      baseType instanceof GraphQLInputObjectType
+    ) {
+      tsType = baseType.name;
+    } else {
+      throw new Error("Unable to render inputField!");
+    }
+
+    return [
+      inputField.name,
+      isNonNull ? ":" : "?:",
+      " ",
+      tsType,
+      isList ? "[]" : "",
+    ].join("");
   }
 
   private _fieldSignature(field: GraphQLField<any, any, any>): string {
@@ -415,10 +450,13 @@ export class Codegen {
 
         if (_base instanceof GraphQLScalarType) {
           return toPrimitive(_base);
-        } else if (_base instanceof GraphQLEnumType) {
+        } else if (
+          _base instanceof GraphQLEnumType ||
+          _base instanceof GraphQLInputObjectType
+        ) {
           return _base.name;
         } else {
-          return "unknown";
+          throw new Error("Unable to render inputType.");
         }
       };
 
@@ -459,8 +497,6 @@ export class Codegen {
       (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList);
     const isNonNull = type instanceof GraphQLNonNull;
     const baseType = getBaseOutputType(type);
-
-    // @todo If `GraphQLInterfaceType` or `GraphQLUnionType` define a new "merged" `Selector`?
 
     const deprecatedComment = deprecationReason
       ? `

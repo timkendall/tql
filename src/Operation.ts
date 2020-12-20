@@ -74,8 +74,7 @@ type FilterFragments<
 export class Operation<TSelectionSet extends SelectionSet<any>> {
   constructor(
     public readonly name: string,
-    // @todo support `mutation` and `subscription` operations
-    public readonly operation: "query",
+    public readonly operation: "query" | "mutation" | "subscription",
     // public readonly directives: Directive[]
     // public readonly variableDefinitions: Variable[]
     public readonly selectionSet: TSelectionSet
