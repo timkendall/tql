@@ -71,14 +71,17 @@ type FilterFragments<
     : never
 >;
 
-export class Operation<TSelectionSet extends SelectionSet<any>> {
+export class Operation<
+  TSelectionSet extends SelectionSet<any>,
+  TVariables extends Array<VariableDefinition<any, any>> = never
+> {
   constructor(
     public readonly name: string,
     public readonly operation: "query" | "mutation" | "subscription",
-    // public readonly directives: Directive[]
-    // public readonly variableDefinitions: Variable[]
-    public readonly selectionSet: TSelectionSet
-  ) {}
+    public readonly selectionSet: TSelectionSet,
+    public readonly variableDefinitions?: TVariables
+  ) // public readonly directives: Directive[]
+  {}
 
   toString() {
     return print(this.ast);
@@ -89,9 +92,7 @@ export class Operation<TSelectionSet extends SelectionSet<any>> {
       operation: this.operation,
       name: this.name,
       selectionSet: this.selectionSet.ast,
-      variables: [
-        /* @todo */
-      ],
+      variables: this.variableDefinitions?.map((v) => v.ast),
       directives: [
         /* @todo */
       ],
