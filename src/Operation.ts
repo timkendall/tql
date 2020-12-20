@@ -60,14 +60,12 @@ type fragmentedSelection = SelectionSet<
 
           InlineFragment<
             NamedType<"Hero", Hero>,
-            SelectionSet<[Field<"__typename">, Field<"heroics">]>,
-            "HeroFragment"
+            SelectionSet<[Field<"__typename">, Field<"heroics">]>
           >,
 
           InlineFragment<
             NamedType<"Villian", Villian>,
-            SelectionSet<[Field<"__typename">, Field<"villany">]>,
-            "VillianFragment"
+            SelectionSet<[Field<"__typename">, Field<"villany">]>
           >
         ]
       >
@@ -110,7 +108,7 @@ if (isVillian(result.character)) {
 // How do we do the last one?
 
 type FilterFragments<
-  T extends Array<Field<any, any, any> | InlineFragment<any, any, any>>
+  T extends Array<Field<any, any, any> | InlineFragment<any, any>>
 > = Array<
   T[number] extends infer U
     ? U extends Field<any, any, any>
@@ -143,9 +141,9 @@ export type Result<
       // @note Should result in ({common} & {specific1}) | ({common} & {specific2})?
     } &
       (TSelectionSet["selections"][number] extends infer U
-        ? U extends InlineFragment<infer TypeCondition, infer SS, any>
+        ? U extends InlineFragment<infer TypeCondition, infer SelectionSet>
           ? TypeCondition extends NamedType<any, infer Type>
-            ? Result<Type, SS>
+            ? Result<Type, SelectionSet>
             : {}
           : {}
         : {}); // @note need to use empty objects to not nuke the left side of our intersection type (&)
@@ -187,17 +185,15 @@ export class SelectionSet<T extends Array<Selection>> {
   }
 }
 
-export type Selection = Field<any, any, any> | InlineFragment<any, any, any>;
+export type Selection = Field<any, any, any> | InlineFragment<any, any>;
 
 export class InlineFragment<
   TypeCondition extends Type,
-  TSelectionSet extends SelectionSet<any>,
-  PlaceholderName extends string
+  TSelectionSet extends SelectionSet<any>
 > {
   constructor(
     public readonly typeCondition: TypeCondition,
-    public readonly selectionSet: TSelectionSet,
-    public readonly name: PlaceholderName
+    public readonly selectionSet: TSelectionSet
   ) {}
 
   get ast(): InlineFragmentNode {

@@ -64,15 +64,15 @@ export const Query = {
       select(Review)
     ),
 
-  // search: <T extends Array<Field<any, any, any>>>(
-  //   variables: { text?: Variable<"text"> | string },
-  //   select: (t: typeof SearchResult) => T
-  // ) =>
-  //   new Field(
-  //     "search",
-  //     [new Argument("text", variables.text)],
-  //     select(SearchResult)
-  //   ),
+  search: <T extends Array<Field<any, any, any>>>(
+    variables: { text?: Variable<"text"> | string },
+    select: (t: typeof SearchResult) => T
+  ) =>
+    new Field(
+      "search",
+      [new Argument("text", variables.text)],
+      select(SearchResult)
+    ),
 
   character: <T extends Array<Field<any, any, any>>>(
     variables: { id?: Variable<"id"> | string },
@@ -124,6 +124,7 @@ export const Mutation = {
 };
 
 export interface ICharacter {
+  __typename: string;
   id: string;
   name: string;
   friends: ICharacter[];
@@ -159,6 +160,7 @@ export const Character = {
 };
 
 export interface IHuman extends ICharacter {
+  __typename: "Human";
   homePlanet: string;
   height: number;
   mass: number;
@@ -205,6 +207,7 @@ export const Human = {
 };
 
 export interface IDroid extends ICharacter {
+  __typename: "Droid";
   primaryFunction: string;
 }
 

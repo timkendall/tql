@@ -162,6 +162,7 @@ export class Codegen {
     // @note Render interface types and selector objects
     return `
       export interface I${type.name} {
+        __typename: string
         ${fields.map(renderInterfaceField).join("\n")}
       }
 
@@ -196,6 +197,7 @@ export class Codegen {
         export interface I${type.name} extends ${interfaces
         .map((i) => "I" + i.name)
         .join(", ")} {
+          __typename: "${type.name}"
           ${uncommonFields.map(renderInterfaceField).join("\n")}
         }
 
