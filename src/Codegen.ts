@@ -81,6 +81,7 @@ export class Codegen {
       Value,
       Field,
       Operation,
+      Selection,
       SelectionSet,
       Variable,
     } from '../src'
@@ -90,10 +91,10 @@ export class Codegen {
 
   private get query() {
     return `
-      export const query = <T extends Array<Field<any, any, any>>>(
+      export const query = <T extends Array<Selection>>(
         name: string,
         select: (t: typeof Query) => T
-      ): Operation<T> => new Operation(name, "query", new SelectionSet(select(Query)))
+      ): Operation<SelectionSet<T>> => new Operation(name, "query", new SelectionSet(select(Query)))
     `;
   }
 
@@ -281,9 +282,7 @@ export class Codegen {
                 ", "
               )} }) => new Field<"${name}", [/* @todo */]>("${name}"),`
           )
-        : deprecatedComment.concat(
-            `${name}: () => new Field<"${name}">("${name}"),`
-          );
+        : deprecatedComment.concat(`${name}: () => new Field("${name}"),`);
     } else {
       const renderArgument = (arg: GraphQLArgument): string => {
         const _base = getBaseInputType(arg.type);
@@ -317,6 +316,7 @@ export class Codegen {
       };
 
       // @todo render arguments correctly
+      // @todo restrict allowed Field types
       return args.length > 0
         ? `
         ${deprecatedComment}
@@ -325,13 +325,13 @@ export class Codegen {
           select: (t: typeof ${baseType.toString()}) => T
         ) => new Field("${name}", [ ${args
             .map(renderArgument)
-            .join(", ")} ], select(${baseType.toString()})),
+            .join(", ")} ], new SelectionSet(select(${baseType.toString()}))),
       `
         : `
         ${deprecatedComment}
         ${name}: <T extends Array<Field<any, any, any>>>(
           select: (t: typeof ${baseType.toString()}) => T
-        ) => new Field("${name}", [], select(${baseType.toString()})),
+        ) => new Field("${name}", [], new SelectionSet(select(${baseType.toString()}))),
       `;
     }
   }

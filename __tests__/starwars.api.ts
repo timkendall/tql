@@ -3,6 +3,7 @@ import {
   Value,
   Field,
   Operation,
+  Selection,
   SelectionSet,
   Variable,
 } from "../src";
@@ -51,7 +52,7 @@ export const Query = {
     new Field(
       "hero",
       [new Argument("episode", variables.episode, Episode)],
-      select(Character)
+      new SelectionSet(select(Character))
     ),
 
   reviews: <T extends Array<Field<any, any, any>>>(
@@ -61,18 +62,18 @@ export const Query = {
     new Field(
       "reviews",
       [new Argument("episode", variables.episode, Episode)],
-      select(Review)
+      new SelectionSet(select(Review))
     ),
 
-  search: <T extends Array<Field<any, any, any>>>(
-    variables: { text?: Variable<"text"> | string },
-    select: (t: typeof SearchResult) => T
-  ) =>
-    new Field(
-      "search",
-      [new Argument("text", variables.text)],
-      select(SearchResult)
-    ),
+  // search: <T extends Array<Field<any, any, any>>>(
+  //   variables: { text?: Variable<"text"> | string },
+  //   select: (t: typeof SearchResult) => T
+  // ) =>
+  //   new Field(
+  //     "search",
+  //     [new Argument("text", variables.text)],
+  //     new SelectionSet(select(SearchResult))
+  //   ),
 
   character: <T extends Array<Field<any, any, any>>>(
     variables: { id?: Variable<"id"> | string },
@@ -81,24 +82,38 @@ export const Query = {
     new Field(
       "character",
       [new Argument("id", variables.id)],
-      select(Character)
+      new SelectionSet(select(Character))
     ),
 
   droid: <T extends Array<Field<any, any, any>>>(
     variables: { id?: Variable<"id"> | string },
     select: (t: typeof Droid) => T
-  ) => new Field("droid", [new Argument("id", variables.id)], select(Droid)),
+  ) =>
+    new Field(
+      "droid",
+      [new Argument("id", variables.id)],
+      new SelectionSet(select(Droid))
+    ),
 
   human: <T extends Array<Field<any, any, any>>>(
     variables: { id?: Variable<"id"> | string },
     select: (t: typeof Human) => T
-  ) => new Field("human", [new Argument("id", variables.id)], select(Human)),
+  ) =>
+    new Field(
+      "human",
+      [new Argument("id", variables.id)],
+      new SelectionSet(select(Human))
+    ),
 
   starship: <T extends Array<Field<any, any, any>>>(
     variables: { id?: Variable<"id"> | string },
     select: (t: typeof Starship) => T
   ) =>
-    new Field("starship", [new Argument("id", variables.id)], select(Starship)),
+    new Field(
+      "starship",
+      [new Argument("id", variables.id)],
+      new SelectionSet(select(Starship))
+    ),
 };
 
 export interface IMutation {
@@ -119,7 +134,7 @@ export const Mutation = {
         new Argument("episode", variables.episode, Episode),
         new Argument("review", variables.review),
       ],
-      select(Review)
+      new SelectionSet(select(Review))
     ),
 };
 
@@ -133,12 +148,12 @@ export interface ICharacter {
 }
 
 export const Character = {
-  id: () => new Field<"id">("id"),
-  name: () => new Field<"name">("name"),
+  id: () => new Field("id"),
+  name: () => new Field("name"),
 
   friends: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof Character) => T
-  ) => new Field("friends", [], select(Character)),
+  ) => new Field("friends", [], new SelectionSet(select(Character))),
 
   friendsConnection: <T extends Array<Field<any, any, any>>>(
     variables: {
@@ -153,10 +168,10 @@ export const Character = {
         new Argument("first", variables.first),
         new Argument("after", variables.after),
       ],
-      select(FriendsConnection)
+      new SelectionSet(select(FriendsConnection))
     ),
 
-  appearsIn: () => new Field<"appearsIn">("appearsIn"),
+  appearsIn: () => new Field("appearsIn"),
 };
 
 export interface IHuman extends ICharacter {
@@ -168,20 +183,20 @@ export interface IHuman extends ICharacter {
 }
 
 export const Human = {
-  id: () => new Field<"id">("id"),
-  name: () => new Field<"name">("name"),
-  homePlanet: () => new Field<"homePlanet">("homePlanet"),
+  id: () => new Field("id"),
+  name: () => new Field("name"),
+  homePlanet: () => new Field("homePlanet"),
   height: (variables: { unit: unknown }) =>
     new Field<"height", [/* @todo */]>("height"),
 
   /**
    * @deprecated Weight is a sensitive subject!
    */
-  mass: () => new Field<"mass">("mass"),
+  mass: () => new Field("mass"),
 
   friends: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof Character) => T
-  ) => new Field("friends", [], select(Character)),
+  ) => new Field("friends", [], new SelectionSet(select(Character))),
 
   friendsConnection: <T extends Array<Field<any, any, any>>>(
     variables: {
@@ -196,14 +211,14 @@ export const Human = {
         new Argument("first", variables.first),
         new Argument("after", variables.after),
       ],
-      select(FriendsConnection)
+      new SelectionSet(select(FriendsConnection))
     ),
 
-  appearsIn: () => new Field<"appearsIn">("appearsIn"),
+  appearsIn: () => new Field("appearsIn"),
 
   starships: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof Starship) => T
-  ) => new Field("starships", [], select(Starship)),
+  ) => new Field("starships", [], new SelectionSet(select(Starship))),
 };
 
 export interface IDroid extends ICharacter {
@@ -212,12 +227,12 @@ export interface IDroid extends ICharacter {
 }
 
 export const Droid = {
-  id: () => new Field<"id">("id"),
-  name: () => new Field<"name">("name"),
+  id: () => new Field("id"),
+  name: () => new Field("name"),
 
   friends: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof Character) => T
-  ) => new Field("friends", [], select(Character)),
+  ) => new Field("friends", [], new SelectionSet(select(Character))),
 
   friendsConnection: <T extends Array<Field<any, any, any>>>(
     variables: {
@@ -232,11 +247,11 @@ export const Droid = {
         new Argument("first", variables.first),
         new Argument("after", variables.after),
       ],
-      select(FriendsConnection)
+      new SelectionSet(select(FriendsConnection))
     ),
 
-  appearsIn: () => new Field<"appearsIn">("appearsIn"),
-  primaryFunction: () => new Field<"primaryFunction">("primaryFunction"),
+  appearsIn: () => new Field("appearsIn"),
+  primaryFunction: () => new Field("primaryFunction"),
 };
 
 export interface IFriendsConnection {
@@ -247,19 +262,19 @@ export interface IFriendsConnection {
 }
 
 export const FriendsConnection = {
-  totalCount: () => new Field<"totalCount">("totalCount"),
+  totalCount: () => new Field("totalCount"),
 
   edges: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof FriendsEdge) => T
-  ) => new Field("edges", [], select(FriendsEdge)),
+  ) => new Field("edges", [], new SelectionSet(select(FriendsEdge))),
 
   friends: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof Character) => T
-  ) => new Field("friends", [], select(Character)),
+  ) => new Field("friends", [], new SelectionSet(select(Character))),
 
   pageInfo: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof PageInfo) => T
-  ) => new Field("pageInfo", [], select(PageInfo)),
+  ) => new Field("pageInfo", [], new SelectionSet(select(PageInfo))),
 };
 
 export interface IFriendsEdge {
@@ -268,11 +283,11 @@ export interface IFriendsEdge {
 }
 
 export const FriendsEdge = {
-  cursor: () => new Field<"cursor">("cursor"),
+  cursor: () => new Field("cursor"),
 
   node: <T extends Array<Field<any, any, any>>>(
     select: (t: typeof Character) => T
-  ) => new Field("node", [], select(Character)),
+  ) => new Field("node", [], new SelectionSet(select(Character))),
 };
 
 export interface IPageInfo {
@@ -282,9 +297,9 @@ export interface IPageInfo {
 }
 
 export const PageInfo = {
-  startCursor: () => new Field<"startCursor">("startCursor"),
-  endCursor: () => new Field<"endCursor">("endCursor"),
-  hasNextPage: () => new Field<"hasNextPage">("hasNextPage"),
+  startCursor: () => new Field("startCursor"),
+  endCursor: () => new Field("endCursor"),
+  hasNextPage: () => new Field("hasNextPage"),
 };
 
 export interface IReview {
@@ -293,8 +308,8 @@ export interface IReview {
 }
 
 export const Review = {
-  stars: () => new Field<"stars">("stars"),
-  commentary: () => new Field<"commentary">("commentary"),
+  stars: () => new Field("stars"),
+  commentary: () => new Field("commentary"),
 };
 
 export interface IStarship {
@@ -305,15 +320,15 @@ export interface IStarship {
 }
 
 export const Starship = {
-  id: () => new Field<"id">("id"),
-  name: () => new Field<"name">("name"),
+  id: () => new Field("id"),
+  name: () => new Field("name"),
   length: (variables: { unit: unknown }) =>
     new Field<"length", [/* @todo */]>("length"),
-  coordinates: () => new Field<"coordinates">("coordinates"),
+  coordinates: () => new Field("coordinates"),
 };
 
-export const query = <T extends Array<Field<any, any, any>>>(
+export const query = <T extends Array<Selection>>(
   name: string,
   select: (t: typeof Query) => T
-): Operation<T> =>
+): Operation<SelectionSet<T>> =>
   new Operation(name, "query", new SelectionSet(select(Query)));

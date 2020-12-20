@@ -83,23 +83,23 @@ const isVillian = (object: Record<string, any>): object is Partial<Villian> => {
   return object.__typename === "Villian";
 };
 
-const result = {} as TResult;
+// const result = {} as TResult;
 
-// common fields
-result.character.id;
-result.character.name;
-result.character.__typename;
+// // common fields
+// result.character.id;
+// result.character.name;
+// result.character.__typename;
 
-// type-guards
-if (isHero(result.character)) {
-  result.character.__typename;
-  result.character.heroics;
-}
+// // type-guards
+// if (isHero(result.character)) {
+//   result.character.__typename;
+//   result.character.heroics;
+// }
 
-if (isVillian(result.character)) {
-  result.character.__typename;
-  result.character.villany;
-}
+// if (isVillian(result.character)) {
+//   result.character.__typename;
+//   result.character.villany;
+// }
 
 // For each `Selection` in `SelectionSet<infer Selections>`
 // A. Map to scalar field if Selection is Field<any, never>

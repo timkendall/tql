@@ -3,6 +3,7 @@ import {
   Value,
   Field,
   Operation,
+  Selection,
   SelectionSet,
   Variable,
 } from "./Operation";
@@ -12,7 +13,7 @@ import { execute } from "./Client";
 // @todo Support dynamic creation with ex. `Selector<User>`?
 // @todo Generate all of these from a static GraphQL schema!
 
-const buildQuery = <T extends Array<Field<any, any, any>>>(
+const buildQuery = <T extends Array<Selection>>(
   name: string,
   select: (t: typeof Query) => T
 ): Operation<SelectionSet<T>> =>
