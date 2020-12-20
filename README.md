@@ -50,17 +50,6 @@ const operation = query("Example", (t) => [
     t.starships((t) => [t.id(), t.name()]),
   ]),
 ]);
-
-const { data, errors } = await execute("https://graphql.org/swapi-graphql/", query);
-
-data?.reviews?.length
-data?.reviews![0].stars
-data?.reviews![0].commentary
-
-data?.human?.id
-data?.human?.name
-data?.starships[0]?.id
-data?.starships[0]?.name
 ```
 
 ## Inspiration
