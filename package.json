@@ -1,12 +1,12 @@
 {
-  "name": "@timkendall/tsgql",
+  "name": "@timkendall/tql",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Write GraphQL queries in TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "tsgql": "bin/index"
+    "tql": "bin/index"
   },
   "files": [
     "dist",

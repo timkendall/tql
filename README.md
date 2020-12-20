@@ -1,32 +1,32 @@
-# TS-GQL
+# TQL
 
 **⚠️ this is pre-production software at this point, see current limitations below.**
 
-`ts-gql` is a fully TypeScript-native GraphQL operation writer; **codegen only when you schema changes**, **works with any GraphQL client**, **fully type-safe**.
+`tql` is a fully TypeScript-native GraphQL operation writer; **codegen only when you schema changes**, **works with any GraphQL client**, **fully type-safe**.
 
 **Current limitations:**
 
 - No `mutation` or `subscription` operation type support yet
-- No nullability or list support yet
-- No abstract type support yet
+- No object or list nullability support yet
+- No union type support yet
 - No custom scalar support yet (e.g no `Date` objects), limited to JS built-ins.
 - No variable support yet
 - No field alias support yet
 - No directive support yet
-- No fragment support yet
+- No named fragment support yet
 
 ## Installation
 
-`npm install @timkendall/ts-gql` or `yarn add @timkendall/ts-gql` 
+`npm install @timkendall/tql` or `yarn add @timkendall/tql` 
 
 * **TypeScript 4.1+** is required for [Recursive Conditional Type](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#recursive-conditional-types) support
 
 ## Usage
 
-You will need to compile a type-safe client one time before using. Do this with the provided CLI; `ts-gql <schema>`.
+You will need to compile a type-safe client one time before using. Do this with the provided CLI; `tql <schema>`.
 
 ```typescript
-import { query, execute } from '@timkendall/ts-gql'
+import { query, execute } from '@timkendall/tql'
 
 const operation = query("Starwars!", (t) => [
   t.human({ id: "1002" }, (t) => [
