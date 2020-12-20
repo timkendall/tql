@@ -1,11 +1,14 @@
 # Current Limitations
 
+## required for 1.0
 - [x] Interface type support
 - [x] Nested input object support
 - [x] Union type support
 - [x] `mutation` or `subscription` operation support
 - [ ] Object and list nullability support
 - [ ] Variable definition support
+
+## perhaps in 1.x
 - [ ] Field alias support
 - [ ] Directive support
 - [ ] Named fragments
