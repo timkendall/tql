@@ -10,6 +10,7 @@ import {
   ListTypeNode,
   NamedTypeNode,
   InlineFragmentNode,
+  getNamedType,
 } from "graphql";
 
 import {
@@ -198,7 +199,7 @@ export class InlineFragment<
 
   get ast(): InlineFragmentNode {
     return inlineFragmentOf({
-      typeCondition: this.typeCondition.ast,
+      typeCondition: getBaseType(this.typeCondition).ast,
       selectionSet: this.selectionSet.ast,
     });
   }
@@ -268,6 +269,16 @@ export class VariableDefinition<V extends Variable<string>, T extends Type> {
 }
 
 export type Type = NamedType<string, any> | ListType<any> | NonNullType<any>;
+
+export function getBaseType(type: Type): NamedType<any, any> {
+  if (type instanceof NonNullType) {
+    return getBaseType(type.type);
+  } else if (type instanceof ListType) {
+    return getBaseType(type.type);
+  } else {
+    return type;
+  }
+}
 
 /**
  * Utility type for parsing the base type from a `Type`

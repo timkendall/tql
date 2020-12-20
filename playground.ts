@@ -19,7 +19,7 @@ const Interface = {
   // @not Possible implementation (TypeScript still can't seem to figure out `type: 'Foo'` always returns a `InlineFragment<'Foo', T>`)
   on: <T extends Array<Field<any, any, any>>, F extends "Foo" | "Bar">(
     type: F,
-    select: (t: F extends "Foo" ? typeof Foo : typeof Bar) => T
+    select: (t: T extends "Foo" ? typeof Foo : typeof Bar) => T
   ) /*:@question unneed? InlineFragment<NamedType<F>, T> */ => {
     if (isFoo(type)) {
       return new InlineFragment<NamedType<F>, SelectionSet<T>>(

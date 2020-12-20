@@ -1,7 +1,9 @@
 import {
+  NamedType,
   Argument,
   Value,
   Field,
+  InlineFragment,
   Operation,
   Selection,
   SelectionSet,
@@ -44,71 +46,119 @@ export interface IQuery {
   starship: IStarship;
 }
 
-export const Query = {
-  hero: <T extends Array<Field<any, any, any>>>(
+interface QuerySelector {
+  __typename: () => Field<"__typename">;
+
+  hero: <T extends Array<Selection>>(
     variables: { episode?: Variable<"episode"> | Episode },
-    select: (t: typeof Character) => T
-  ) =>
+    select: (t: CharacterSelector) => T
+  ) => Field<
+    "hero",
+    [Argument<"episode", Variable<"episode"> | Episode>],
+    SelectionSet<T>
+  >;
+
+  reviews: <T extends Array<Selection>>(
+    variables: { episode?: Variable<"episode"> | Episode },
+    select: (t: ReviewSelector) => T
+  ) => Field<
+    "reviews",
+    [Argument<"episode", Variable<"episode"> | Episode>],
+    SelectionSet<T>
+  >;
+
+  // search: <T extends Array<Selection>>(
+  //   variables: { text?: Variable<"text"> | string },
+  //   select: (t: SearchResultSelector) => T
+  // ) => Field<
+  //   "search",
+  //   [Argument<"text", Variable<"text"> | string>],
+  //   SelectionSet<T>
+  // >;
+
+  character: <T extends Array<Selection>>(
+    variables: { id?: Variable<"id"> | string },
+    select: (t: CharacterSelector) => T
+  ) => Field<
+    "character",
+    [Argument<"id", Variable<"id"> | string>],
+    SelectionSet<T>
+  >;
+
+  droid: <T extends Array<Selection>>(
+    variables: { id?: Variable<"id"> | string },
+    select: (t: DroidSelector) => T
+  ) => Field<
+    "droid",
+    [Argument<"id", Variable<"id"> | string>],
+    SelectionSet<T>
+  >;
+
+  human: <T extends Array<Selection>>(
+    variables: { id?: Variable<"id"> | string },
+    select: (t: HumanSelector) => T
+  ) => Field<
+    "human",
+    [Argument<"id", Variable<"id"> | string>],
+    SelectionSet<T>
+  >;
+
+  starship: <T extends Array<Selection>>(
+    variables: { id?: Variable<"id"> | string },
+    select: (t: StarshipSelector) => T
+  ) => Field<
+    "starship",
+    [Argument<"id", Variable<"id"> | string>],
+    SelectionSet<T>
+  >;
+}
+
+export const Query: QuerySelector = {
+  __typename: () => new Field("__typename"),
+
+  hero: (variables, select) =>
     new Field(
       "hero",
       [new Argument("episode", variables.episode, Episode)],
       new SelectionSet(select(Character))
     ),
 
-  reviews: <T extends Array<Field<any, any, any>>>(
-    variables: { episode?: Variable<"episode"> | Episode },
-    select: (t: typeof Review) => T
-  ) =>
+  reviews: (variables, select) =>
     new Field(
       "reviews",
       [new Argument("episode", variables.episode, Episode)],
       new SelectionSet(select(Review))
     ),
 
-  // search: <T extends Array<Field<any, any, any>>>(
-  //   variables: { text?: Variable<"text"> | string },
-  //   select: (t: typeof SearchResult) => T
-  // ) =>
+  // search: (variables, select) =>
   //   new Field(
   //     "search",
   //     [new Argument("text", variables.text)],
   //     new SelectionSet(select(SearchResult))
   //   ),
 
-  character: <T extends Array<Field<any, any, any>>>(
-    variables: { id?: Variable<"id"> | string },
-    select: (t: typeof Character) => T
-  ) =>
+  character: (variables, select) =>
     new Field(
       "character",
       [new Argument("id", variables.id)],
       new SelectionSet(select(Character))
     ),
 
-  droid: <T extends Array<Field<any, any, any>>>(
-    variables: { id?: Variable<"id"> | string },
-    select: (t: typeof Droid) => T
-  ) =>
+  droid: (variables, select) =>
     new Field(
       "droid",
       [new Argument("id", variables.id)],
       new SelectionSet(select(Droid))
     ),
 
-  human: <T extends Array<Field<any, any, any>>>(
-    variables: { id?: Variable<"id"> | string },
-    select: (t: typeof Human) => T
-  ) =>
+  human: (variables, select) =>
     new Field(
       "human",
       [new Argument("id", variables.id)],
       new SelectionSet(select(Human))
     ),
 
-  starship: <T extends Array<Field<any, any, any>>>(
-    variables: { id?: Variable<"id"> | string },
-    select: (t: typeof Starship) => T
-  ) =>
+  starship: (variables, select) =>
     new Field(
       "starship",
       [new Argument("id", variables.id)],
@@ -120,14 +170,29 @@ export interface IMutation {
   createReview: IReview;
 }
 
-export const Mutation = {
-  createReview: <T extends Array<Field<any, any, any>>>(
+interface MutationSelector {
+  __typename: () => Field<"__typename">;
+
+  createReview: <T extends Array<Selection>>(
     variables: {
       episode?: Variable<"episode"> | Episode;
       review?: Variable<"review"> | unknown;
     },
-    select: (t: typeof Review) => T
-  ) =>
+    select: (t: ReviewSelector) => T
+  ) => Field<
+    "createReview",
+    [
+      Argument<"episode", Variable<"episode"> | Episode>,
+      Argument<"review", Variable<"review"> | unknown>
+    ],
+    SelectionSet<T>
+  >;
+}
+
+export const Mutation: MutationSelector = {
+  __typename: () => new Field("__typename"),
+
+  createReview: (variables, select) =>
     new Field(
       "createReview",
       [
@@ -147,21 +212,59 @@ export interface ICharacter {
   appearsIn: Episode[];
 }
 
-export const Character = {
-  id: () => new Field("id"),
-  name: () => new Field("name"),
+interface CharacterSelector {
+  __typename: () => Field<"__typename">;
 
-  friends: <T extends Array<Field<any, any, any>>>(
-    select: (t: typeof Character) => T
-  ) => new Field("friends", [], new SelectionSet(select(Character))),
+  id: () => Field<"id">;
+  name: () => Field<"name">;
 
-  friendsConnection: <T extends Array<Field<any, any, any>>>(
+  friends: <T extends Array<Selection>>(
+    select: (t: CharacterSelector) => T
+  ) => Field<"friends", never, SelectionSet<T>>;
+
+  friendsConnection: <T extends Array<Selection>>(
     variables: {
       first?: Variable<"first"> | number;
       after?: Variable<"after"> | string;
     },
-    select: (t: typeof FriendsConnection) => T
-  ) =>
+    select: (t: FriendsConnectionSelector) => T
+  ) => Field<
+    "friendsConnection",
+    [
+      Argument<"first", Variable<"first"> | number>,
+      Argument<"after", Variable<"after"> | string>
+    ],
+    SelectionSet<T>
+  >;
+
+  appearsIn: () => Field<"appearsIn">;
+
+  on: <T extends Array<Selection>, F extends "Human" | "Droid">(
+    type: F,
+    select: (
+      t: F extends "Human"
+        ? HumanSelector
+        : F extends "Droid"
+        ? DroidSelector
+        : never
+    ) => T
+  ) => InlineFragment<NamedType<F, any>, SelectionSet<T>>;
+}
+
+export const Character: CharacterSelector = {
+  __typename: () => new Field("__typename"),
+
+  id: () => new Field("id"),
+  name: () => new Field("name"),
+
+  friends: (select) =>
+    new Field(
+      "friends",
+      undefined as never,
+      new SelectionSet(select(Character))
+    ),
+
+  friendsConnection: (variables, select) =>
     new Field(
       "friendsConnection",
       [
@@ -172,6 +275,27 @@ export const Character = {
     ),
 
   appearsIn: () => new Field("appearsIn"),
+
+  on: (type, select) => {
+    switch (type) {
+      case "Human": {
+        return new InlineFragment(
+          new NamedType("Human") as any,
+          new SelectionSet(select(Human as any))
+        );
+      }
+
+      case "Droid": {
+        return new InlineFragment(
+          new NamedType("Droid") as any,
+          new SelectionSet(select(Droid as any))
+        );
+      }
+
+      default:
+        throw new Error("Unknown type!");
+    }
+  },
 };
 
 export interface IHuman extends ICharacter {
@@ -182,35 +306,68 @@ export interface IHuman extends ICharacter {
   starships: IStarship[];
 }
 
+interface HumanSelector {
+  __typename: () => Field<"__typename">;
+
+  id: () => Field<"id">;
+  name: () => Field<"name">;
+  homePlanet: () => Field<"homePlanet">;
+  height: (variables: { unit: unknown }) => Field<"height", [/* @todo */]>;
+  mass: () => Field<"mass">;
+
+  friends: <T extends Array<Selection>>(
+    select: (t: CharacterSelector) => T
+  ) => Field<"friends", never, SelectionSet<T>>;
+
+  friendsConnection: <T extends Array<Selection>>(
+    variables: {
+      first?: Variable<"first"> | number;
+      after?: Variable<"after"> | string;
+    },
+    select: (t: FriendsConnectionSelector) => T
+  ) => Field<
+    "friendsConnection",
+    [
+      Argument<"first", Variable<"first"> | number>,
+      Argument<"after", Variable<"after"> | string>
+    ],
+    SelectionSet<T>
+  >;
+
+  appearsIn: () => Field<"appearsIn">;
+
+  starships: <T extends Array<Selection>>(
+    select: (t: StarshipSelector) => T
+  ) => Field<"starships", never, SelectionSet<T>>;
+}
+
 export const isHuman = (
   object: Record<string, any>
 ): object is Partial<IHuman> => {
   return object.__typename === "Human";
 };
 
-export const Human = {
+export const Human: HumanSelector = {
+  __typename: () => new Field("__typename"),
+
   id: () => new Field("id"),
   name: () => new Field("name"),
   homePlanet: () => new Field("homePlanet"),
-  height: (variables: { unit: unknown }) =>
-    new Field<"height", [/* @todo */]>("height"),
+  height: (variables) => new Field("height"),
 
   /**
    * @deprecated Weight is a sensitive subject!
    */
   mass: () => new Field("mass"),
 
-  friends: <T extends Array<Field<any, any, any>>>(
-    select: (t: typeof Character) => T
-  ) => new Field("friends", [], new SelectionSet(select(Character))),
+  friends: (select) =>
+    new Field(
+      "friends",
+      undefined as never,
+      new SelectionSet(select(Character))
+    ),
 
-  friendsConnection: <T extends Array<Field<any, any, any>>>(
-    variables: {
-      first?: Variable<"first"> | number;
-      after?: Variable<"after"> | string;
-    },
-    select: (t: typeof FriendsConnection) => T
-  ) =>
+  friendsConnection: (variables, select) =>
     new Field(
       "friendsConnection",
       [
@@ -222,14 +379,46 @@ export const Human = {
 
   appearsIn: () => new Field("appearsIn"),
 
-  starships: <T extends Array<Field<any, any, any>>>(
-    select: (t: typeof Starship) => T
-  ) => new Field("starships", [], new SelectionSet(select(Starship))),
+  starships: (select) =>
+    new Field(
+      "starships",
+      undefined as never,
+      new SelectionSet(select(Starship))
+    ),
 };
 
 export interface IDroid extends ICharacter {
   __typename: "Droid";
   primaryFunction: string;
+}
+
+interface DroidSelector {
+  __typename: () => Field<"__typename">;
+
+  id: () => Field<"id">;
+  name: () => Field<"name">;
+
+  friends: <T extends Array<Selection>>(
+    select: (t: CharacterSelector) => T
+  ) => Field<"friends", never, SelectionSet<T>>;
+
+  friendsConnection: <T extends Array<Selection>>(
+    variables: {
+      first?: Variable<"first"> | number;
+      after?: Variable<"after"> | string;
+    },
+    select: (t: FriendsConnectionSelector) => T
+  ) => Field<
+    "friendsConnection",
+    [
+      Argument<"first", Variable<"first"> | number>,
+      Argument<"after", Variable<"after"> | string>
+    ],
+    SelectionSet<T>
+  >;
+
+  appearsIn: () => Field<"appearsIn">;
+  primaryFunction: () => Field<"primaryFunction">;
 }
 
 export const isDroid = (
@@ -238,21 +427,20 @@ export const isDroid = (
   return object.__typename === "Droid";
 };
 
-export const Droid = {
+export const Droid: DroidSelector = {
+  __typename: () => new Field("__typename"),
+
   id: () => new Field("id"),
   name: () => new Field("name"),
 
-  friends: <T extends Array<Field<any, any, any>>>(
-    select: (t: typeof Character) => T
-  ) => new Field("friends", [], new SelectionSet(select(Character))),
+  friends: (select) =>
+    new Field(
+      "friends",
+      undefined as never,
+      new SelectionSet(select(Character))
+    ),
 
-  friendsConnection: <T extends Array<Field<any, any, any>>>(
-    variables: {
-      first?: Variable<"first"> | number;
-      after?: Variable<"after"> | string;
-    },
-    select: (t: typeof FriendsConnection) => T
-  ) =>
+  friendsConnection: (variables, select) =>
     new Field(
       "friendsConnection",
       [
@@ -273,20 +461,49 @@ export interface IFriendsConnection {
   pageInfo: IPageInfo;
 }
 
-export const FriendsConnection = {
+interface FriendsConnectionSelector {
+  __typename: () => Field<"__typename">;
+
+  totalCount: () => Field<"totalCount">;
+
+  edges: <T extends Array<Selection>>(
+    select: (t: FriendsEdgeSelector) => T
+  ) => Field<"edges", never, SelectionSet<T>>;
+
+  friends: <T extends Array<Selection>>(
+    select: (t: CharacterSelector) => T
+  ) => Field<"friends", never, SelectionSet<T>>;
+
+  pageInfo: <T extends Array<Selection>>(
+    select: (t: PageInfoSelector) => T
+  ) => Field<"pageInfo", never, SelectionSet<T>>;
+}
+
+export const FriendsConnection: FriendsConnectionSelector = {
+  __typename: () => new Field("__typename"),
+
   totalCount: () => new Field("totalCount"),
 
-  edges: <T extends Array<Field<any, any, any>>>(
-    select: (t: typeof FriendsEdge) => T
-  ) => new Field("edges", [], new SelectionSet(select(FriendsEdge))),
+  edges: (select) =>
+    new Field(
+      "edges",
+      undefined as never,
+      new SelectionSet(select(FriendsEdge))
+    ),
 
-  friends: <T extends Array<Field<any, any, any>>>(
-    select: (t: typeof Character) => T
-  ) => new Field("friends", [], new SelectionSet(select(Character))),
+  friends: (select) =>
+    new Field(
+      "friends",
+      undefined as never,
+      new SelectionSet(select(Character))
+    ),
 
-  pageInfo: <T extends Array<Field<any, any, any>>>(
-    select: (t: typeof PageInfo) => T
-  ) => new Field("pageInfo", [], new SelectionSet(select(PageInfo))),
+  pageInfo: (select) =>
+    new Field(
+      "pageInfo",
+      undefined as never,
+      new SelectionSet(select(PageInfo))
+    ),
 };
 
 export interface IFriendsEdge {
@@ -294,12 +511,23 @@ export interface IFriendsEdge {
   node: ICharacter;
 }
 
-export const FriendsEdge = {
+interface FriendsEdgeSelector {
+  __typename: () => Field<"__typename">;
+
+  cursor: () => Field<"cursor">;
+
+  node: <T extends Array<Selection>>(
+    select: (t: CharacterSelector) => T
+  ) => Field<"node", never, SelectionSet<T>>;
+}
+
+export const FriendsEdge: FriendsEdgeSelector = {
+  __typename: () => new Field("__typename"),
+
   cursor: () => new Field("cursor"),
 
-  node: <T extends Array<Field<any, any, any>>>(
-    select: (t: typeof Character) => T
-  ) => new Field("node", [], new SelectionSet(select(Character))),
+  node: (select) =>
+    new Field("node", undefined as never, new SelectionSet(select(Character))),
 };
 
 export interface IPageInfo {
@@ -308,7 +536,17 @@ export interface IPageInfo {
   hasNextPage: boolean;
 }
 
-export const PageInfo = {
+interface PageInfoSelector {
+  __typename: () => Field<"__typename">;
+
+  startCursor: () => Field<"startCursor">;
+  endCursor: () => Field<"endCursor">;
+  hasNextPage: () => Field<"hasNextPage">;
+}
+
+export const PageInfo: PageInfoSelector = {
+  __typename: () => new Field("__typename"),
+
   startCursor: () => new Field("startCursor"),
   endCursor: () => new Field("endCursor"),
   hasNextPage: () => new Field("hasNextPage"),
@@ -319,7 +557,16 @@ export interface IReview {
   commentary: string;
 }
 
-export const Review = {
+interface ReviewSelector {
+  __typename: () => Field<"__typename">;
+
+  stars: () => Field<"stars">;
+  commentary: () => Field<"commentary">;
+}
+
+export const Review: ReviewSelector = {
+  __typename: () => new Field("__typename"),
+
   stars: () => new Field("stars"),
   commentary: () => new Field("commentary"),
 };
@@ -331,11 +578,21 @@ export interface IStarship {
   coordinates: number[];
 }
 
-export const Starship = {
+interface StarshipSelector {
+  __typename: () => Field<"__typename">;
+
+  id: () => Field<"id">;
+  name: () => Field<"name">;
+  length: (variables: { unit: unknown }) => Field<"length", [/* @todo */]>;
+  coordinates: () => Field<"coordinates">;
+}
+
+export const Starship: StarshipSelector = {
+  __typename: () => new Field("__typename"),
+
   id: () => new Field("id"),
   name: () => new Field("name"),
-  length: (variables: { unit: unknown }) =>
-    new Field<"length", [/* @todo */]>("length"),
+  length: (variables) => new Field("length"),
   coordinates: () => new Field("coordinates"),
 };
 

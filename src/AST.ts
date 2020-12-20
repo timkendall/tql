@@ -60,15 +60,15 @@ export const inlineFragmentOf = ({
   directives = [],
   selectionSet,
 }: {
-  typeCondition: TypeNode;
+  typeCondition: NamedTypeNode;
   directives?: DirectiveNode[];
   selectionSet: SelectionSetNode;
 }): InlineFragmentNode => ({
   kind: Kind.INLINE_FRAGMENT,
+  typeCondition,
   directives,
   selectionSet,
 });
-
 
 export const fieldOf = ({
   name,
