@@ -33,7 +33,7 @@ import {
 
 export type Result<
   Type,
-  TSelectionSet extends SelectionSet<Array<Selection>> // @todo take an `Operation` type instead (for correctness)
+  TSelectionSet extends SelectionSet<Array<Selection>>
 > = Type extends Array<infer T>
   ? T extends Primitive
     ? // @note Return scalar array
