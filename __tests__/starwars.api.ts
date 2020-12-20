@@ -34,12 +34,61 @@ export interface ColorInput {
   blue: unknown;
 }
 
-// "SearchResult" is a union type and not supported
+type ISearchResult = IHuman | IDroid | IStarship;
+
+interface SearchResultSelector {
+  __typename: () => Field<"__typename">;
+
+  on: <T extends Array<Selection>, F extends "Human" | "Droid" | "Starship">(
+    type: F,
+    select: (
+      t: F extends "Human"
+        ? HumanSelector
+        : F extends "Droid"
+        ? DroidSelector
+        : F extends "Starship"
+        ? StarshipSelector
+        : never
+    ) => T
+  ) => InlineFragment<NamedType<F, any>, SelectionSet<T>>;
+}
+
+export const SearchResult: SearchResultSelector = {
+  __typename: () => new Field("__typename"),
+
+  on: (type, select) => {
+    switch (type) {
+      case "Human": {
+        return new InlineFragment(
+          new NamedType("Human") as any,
+          new SelectionSet(select(Human as any))
+        );
+      }
+
+      case "Droid": {
+        return new InlineFragment(
+          new NamedType("Droid") as any,
+          new SelectionSet(select(Droid as any))
+        );
+      }
+
+      case "Starship": {
+        return new InlineFragment(
+          new NamedType("Starship") as any,
+          new SelectionSet(select(Starship as any))
+        );
+      }
+
+      default:
+        throw new Error("Unknown type!");
+    }
+  },
+};
 
 export interface IQuery {
   hero: ICharacter;
   reviews: IReview[];
-  search: any;
+  search: ISearchResult[];
   character: ICharacter;
   droid: IDroid;
   human: IHuman;
@@ -67,14 +116,14 @@ interface QuerySelector {
     SelectionSet<T>
   >;
 
-  // search: <T extends Array<Selection>>(
-  //   variables: { text?: Variable<"text"> | string },
-  //   select: (t: SearchResultSelector) => T
-  // ) => Field<
-  //   "search",
-  //   [Argument<"text", Variable<"text"> | string>],
-  //   SelectionSet<T>
-  // >;
+  search: <T extends Array<Selection>>(
+    variables: { text?: Variable<"text"> | string },
+    select: (t: SearchResultSelector) => T
+  ) => Field<
+    "search",
+    [Argument<"text", Variable<"text"> | string>],
+    SelectionSet<T>
+  >;
 
   character: <T extends Array<Selection>>(
     variables: { id?: Variable<"id"> | string },
@@ -130,12 +179,12 @@ export const Query: QuerySelector = {
       new SelectionSet(select(Review))
     ),
 
-  // search: (variables, select) =>
-  //   new Field(
-  //     "search",
-  //     [new Argument("text", variables.text)],
-  //     new SelectionSet(select(SearchResult))
-  //   ),
+  search: (variables, select) =>
+    new Field(
+      "search",
+      [new Argument("text", variables.text)],
+      new SelectionSet(select(SearchResult))
+    ),
 
   character: (variables, select) =>
     new Field(

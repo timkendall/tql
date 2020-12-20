@@ -54,11 +54,26 @@ const renderInterfaceField = (field: GraphQLField<any, any, any>): string => {
     return `${field.name}: ${baseType.name}` + (isList ? "[]" : "");
   } else if (
     baseType instanceof GraphQLInterfaceType ||
+    baseType instanceof GraphQLUnionType ||
     baseType instanceof GraphQLObjectType
   ) {
     return `${field.name}: I${baseType.name}` + (isList ? "[]" : "");
   } else {
-    return `${field.name}: any`;
+    throw new Error("Unable to render interface field.");
+  }
+};
+
+// ex. F extends "Human" ? HumanSelector : DroidSelector
+const renderConditionalSelectorArgument = (types: string[]) => {
+  const [first, ...rest] = types;
+
+  if (rest.length === 0) {
+    return first;
+  } else {
+    return types
+      .map((t) => `F extends "${t}" ? ${t}Selector : `)
+      .join("")
+      .concat(" never");
   }
 };
 
@@ -167,21 +182,6 @@ export class Codegen {
       .getPossibleTypes(type)
       .map((type) => type.name);
 
-    // ex. F extends "Human" ? HumanSelector : DroidSelector
-    const renderConditionalSelectorArgument = (types: string[]) => {
-      const [first, ...rest] = types;
-
-      if (rest.length === 0) {
-        return first;
-      } else {
-        return types
-          .map((t) => `F extends "${t}" ? ${t}Selector : `)
-          .join("")
-          .concat(" never");
-      }
-    };
-
-    // @note Render
     return `
       export interface I${type.name} {
         __typename: string
@@ -234,10 +234,55 @@ export class Codegen {
   }
 
   private unionType(type: GraphQLUnionType): string {
-    console.warn(
-      `Skipping union type "${type.name}". Union types are not supported yet.`
-    );
-    return `// "${type.name}" is a union type and not supported`;
+    // @note Get all implementors of this union
+    const implementations = this.schema
+      .getPossibleTypes(type)
+      .map((type) => type.name);
+
+    return `
+      type ${"I" + type.name} = ${implementations
+      .map((type) => `I${type}`)
+      .join(" | ")}
+
+      interface ${type.name}Selector {
+        __typename: () => Field<"__typename">
+
+        on: <T extends Array<Selection>, F extends ${implementations
+          .map((name) => `"${name}"`)
+          .join(" | ")}>(
+          type: F,
+          select: (t: ${renderConditionalSelectorArgument(
+            implementations.map((name) => name)
+          )}) => T
+        ) => InlineFragment<NamedType<F, any>, SelectionSet<T>>
+      }
+
+      export const ${type.name}: ${type.name}Selector = {
+        __typename: () => new Field("__typename"),
+
+        on: (
+          type,
+          select,
+        ) => {
+          switch(type) {
+            ${implementations
+              .map(
+                (name) => `
+              case "${name}": {
+                return new InlineFragment(
+                  new NamedType("${name}") as any,
+                  new SelectionSet(select(${name} as any)),
+                )
+              }
+            `
+              )
+              .join("\n")}
+            default:
+              throw new Error("Unknown type!")
+          }
+        },
+      }
+    `;
   }
 
   private objectType(type: GraphQLObjectType): string {

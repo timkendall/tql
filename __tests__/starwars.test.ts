@@ -8,6 +8,12 @@ describe("starwars schema", () => {
   describe("query", () => {
     it("renders a valid query", async () => {
       const operation = query("Example", (t) => [
+        t.search({ text: "han" }, (t) => [
+          t.__typename(),
+
+          t.on("Human", (t) => [t.id(), t.name()]),
+        ]),
+
         t.reviews({ episode: Episode.EMPIRE }, (t) => [
           t.stars(),
           t.commentary(),
@@ -49,6 +55,13 @@ describe("starwars schema", () => {
       expect(result.errors).toBeUndefined();
       expect(operation.toString()).toMatchInlineSnapshot(`
         "query Example {
+          search(text: \\"han\\") {
+            __typename
+            ... on Human {
+              id
+              name
+            }
+          }
           reviews(episode: EMPIRE) {
             stars
             commentary
@@ -139,6 +152,13 @@ describe("starwars schema", () => {
             ],
           },
           "reviews": Array [],
+          "search": Array [
+            Object {
+              "__typename": "Human",
+              "id": "1002",
+              "name": "Han Solo",
+            },
+          ],
         }
       `);
     });

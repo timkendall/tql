@@ -2,7 +2,7 @@
 
 - [x] Interface type support
 - [ ] Nested input object support
-- [ ] Union type support
+- [x] Union type support
 - [ ] `mutation` or `subscription` operation support
 - [ ] Object and list nullability support
 - [ ] Variable definition support
