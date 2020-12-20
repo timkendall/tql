@@ -202,6 +202,12 @@ export class Codegen {
           ${uncommonFields.map(renderInterfaceField).join("\n")}
         }
 
+        export const is${
+          type.name
+        } = (object: Record<string, any>): object is Partial<I${type.name}> => {
+          return object.__typename === "${type.name}";
+        };
+
         export const ${type.name} = {
           ${fields.map((field) => this.field(field)).join("\n")}
         }

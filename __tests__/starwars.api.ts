@@ -182,6 +182,12 @@ export interface IHuman extends ICharacter {
   starships: IStarship[];
 }
 
+export const isHuman = (
+  object: Record<string, any>
+): object is Partial<IHuman> => {
+  return object.__typename === "Human";
+};
+
 export const Human = {
   id: () => new Field("id"),
   name: () => new Field("name"),
@@ -225,6 +231,12 @@ export interface IDroid extends ICharacter {
   __typename: "Droid";
   primaryFunction: string;
 }
+
+export const isDroid = (
+  object: Record<string, any>
+): object is Partial<IDroid> => {
+  return object.__typename === "Droid";
+};
 
 export const Droid = {
   id: () => new Field("id"),
