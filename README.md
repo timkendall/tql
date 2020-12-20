@@ -1,19 +1,12 @@
 # TQL
 
-**⚠️ this is pre-production software at this point, see current limitations below.**
+> Note: this is **pre-production software** at this point, see the **[current limitations](./CURRENT_LIMITATIONS.md)**.
 
-`tql` is a fully TypeScript-native GraphQL operation writer; **codegen only when you schema changes**, **works with any GraphQL client**, **fully type-safe**.
+**tql** is a fully TypeScript-native GraphQL operation writer; **codegen only when you schema changes**, **works with any GraphQL client**, **fully type-safe**.
 
-**Current limitations:**
-
-- No `mutation` or `subscription` operation type support yet
-- No object or list nullability support yet
-- No union type support yet
-- No custom scalar support yet (e.g no `Date` objects), limited to JS built-ins.
-- No variable support yet
-- No field alias support yet
-- No directive support yet
-- No named fragment support yet
+- **Codegen once** - regenerate your GraphQL API client only when your schema changes.
+- **Fully type-safe** - take advantage of the full power of TypeScript's advanced type-system.
+- **Backendless** - integrate with any existing GraphQL client.
 
 ## Installation
 
@@ -23,26 +16,46 @@
 
 ## Usage
 
-You will need to compile a type-safe client one time before using. Do this with the provided CLI; `tql <schema>`.
+You will need to compile a type-safe client one time before using. Do this with the provided CLI - `yarn tql <schema>`.
 
 ```typescript
 import { query, execute } from '@timkendall/tql'
 
-const operation = query("Starwars!", (t) => [
+const operation = query("Example", (t) => [
+  t.reviews({ episode: Episode.EMPIRE }, (t) => [
+    t.stars(),
+    t.commentary(),
+  ]),
+
   t.human({ id: "1002" }, (t) => [
+    t.__typename(),
     t.id(),
     t.name(),
     t.appearsIn(),
     t.homePlanet(),
 
-    t.starships((t) => [
+    // @note Deprecated field should be properly picked-up by VSCode!
+    t.mass(),
+
+    t.friends((t) => [
+      t.__typename(),
       t.id(),
       t.name(),
+      t.appearsIn(),
+
+      t.on("Human", (t) => [t.homePlanet()]),
+      t.on("Droid", (t) => [t.primaryFunction()]),
     ]),
+
+    t.starships((t) => [t.id(), t.name()]),
   ]),
 ]);
 
 const { data, errors } = await execute("https://graphql.org/swapi-graphql/", query);
+
+data?.reviews?.length
+data?.reviews![0].stars
+data?.reviews![0].commentary
 
 data?.human?.id
 data?.human?.name
@@ -52,7 +65,7 @@ data?.starships[0]?.name
 
 ## Inspiration
 
-Heavily inspired by [graphql-nexus](https://github.com/graphql-nexus/schema), [gqless](https://github.com/gqless/gqless), and [graphql_ppx](https://github.com/mhallin/graphql_ppx)!
+I was inspired by the features and DSL's of [graphql-nexus](https://github.com/graphql-nexus/schema), [graphql_ppx](https://github.com/mhallin/graphql_ppx), [gqless](https://github.com/gqless/gqless), and [caliban](https://github.com/ghostdogpr/caliban).
 
 ## License
 
