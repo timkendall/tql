@@ -1,3 +1,5 @@
+import { Assign, OmitByValue } from 'utility-types'
+
 import {
   FieldNode,
   OperationDefinitionNode,
@@ -31,43 +33,51 @@ interface Query {
 }
 
 interface Character {
+  __typename: string
   id: string
   name: string
 }
 
 interface Hero extends Character {
+  __typename: 'Hero'
   heroics: string[]
 }
 
 interface Villian extends Character {
-  villany: string[]
+  __typename: 'Villian'
+  villany: number[]
 }
 
-type fragmentedSelection = [
+type fragmentedSelection = SelectionSet<[
   Field<
   'character',
   never,
+
+  // @question how do map this to 
   SelectionSet<[
+    Field<'__typename'>,
     Field<'id'>,
     Field<'name'>,
 
     InlineFragment<
-      NamedType<'Hero'>, 
+      NamedType<'Hero', Hero>, 
       SelectionSet<[
+        Field<'__typename'>,
         Field<'heroics'>
       ]>,
-      'bax'
+      'HeroFragment'
       >,
     
     InlineFragment<
-      NamedType<'Villian'>, 
+      NamedType<'Villian', Villian>, 
       SelectionSet<[
+        Field<'__typename'>,
         Field<'villany'>
       ]>,
-      'bax'
+      'VillianFragment'
     >,
   ]>>
-]
+]>
 
 
 
@@ -77,7 +87,76 @@ type fragmentedSelection = [
 
 
 
-type result = Result<Query, SelectionSet<fragmentedSelection>>
+type TResult = Result<Query, fragmentedSelection>
+
+const isHero = (object: Record<string, any>): object is Partial<Hero> => {
+  return object.__typename === 'Hero'
+}
+
+const isVillian = (object: Record<string, any>): object is Partial<Villian> => {
+  return object.__typename === 'Villian'
+}
+
+const result = {} as TResult
+
+// common fields
+result.character.id
+result.character.name
+result.character.__typename
+
+// type-guards
+if (isHero(result.character)) {
+  result.character.__typename
+  result.character.heroics
+}
+
+if (isVillian(result.character)) {
+  result.character.__typename
+  result.character.villany
+}
+
+
+
+// For each `Selection` in `SelectionSet<infer Selections>`
+// A. Map to scalar field if Selection is Field<any, never>
+// B. Map to object field if Selection is Field<any, SelectionSet<any>
+// C. Breakout to union object if Selection is InlineFragment<any, SelectionSet<any>>
+ // How do we do the last one?
+
+type FilterFragments<T extends Array<Field<any,any,any> | InlineFragment<any,any,any>>> = 
+  Array<T[number] extends infer U 
+    ? U extends Field<any,any,any> 
+      ? T[number] 
+      : never
+    : never>
+
+type FilterFields<T extends Array<Field<any,any,any> | InlineFragment<any,any,any>>> = 
+  Array<T[number] extends infer U 
+    ? U extends InlineFragment<any,any, any> 
+      ? T[number] 
+      : never
+    : never>
+
+type noFrags = FilterFragments<[
+  Field<'id'>,
+  Field<'name'>,
+
+  InlineFragment<
+    NamedType<'Hero'>, 
+    SelectionSet<[
+      Field<'heroics'>
+    ]>,
+    'bax'
+    >,
+  
+  InlineFragment<
+    NamedType<'Villian'>, 
+    SelectionSet<[
+      Field<'villany'>
+    ]>,
+    'bax'
+  >,
+]>
 
 // @note sorta does what we want...
 export type Result<
@@ -90,17 +169,26 @@ export type Result<
     : // @note Wrap complex object in array
       Array<Result<T, TSelectionSet>>
   : {
-      // @note Build out complex object
-      [Key in TSelectionSet['selections'][number]['name']]: Type[Key] extends Primitive
+      // @note Build out object from non-fragment field selections
+      [Key in FilterFragments<TSelectionSet['selections']>[number]['name']]: Type[Key] extends Primitive
         ? Type[Key]
         : TSelectionSet['selections'][number] extends infer U
         ? U extends Field<Key, any, infer Selections>
           ? Result<Type[Key], Selections>
-          : U extends InlineFragment<infer TypeCondition, infer S, any> 
-            ? Result<Type[Key], S>
           : never
         : never;
-    };
+        // @note Should result in ({common} & {specific1}) | ({common} & {specific2})?
+    } & (
+        TSelectionSet['selections'][number] extends infer U 
+          ? U extends InlineFragment<infer TypeCondition, infer SS, any> 
+            ? TypeCondition extends NamedType<any, infer Type>
+              ? Result<Type, SS>
+              : {}
+            : {}
+          : {} // @note need to use empty objects to not nuke the left side of our intersection type (&)
+    )
+       
+    
 
 export class Operation<TSelectionSet extends SelectionSet<any>> {
   constructor(
