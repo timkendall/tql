@@ -51,17 +51,21 @@ type fragmentedSelection = [
     Field<'id'>,
     Field<'name'>,
 
-    // InlineFragment<
-    //   NamedType<'Hero'>, 
-    //   [
-    //     Field<'heroics'>
-    //   ]>,
+    InlineFragment<
+      NamedType<'Hero'>, 
+      SelectionSet<[
+        Field<'heroics'>
+      ]>,
+      'bax'
+      >,
     
-    // InlineFragment<
-    //   NamedType<'Villian'>, 
-    //   [
-    //     Field<'villany'>
-    //   ]>,
+    InlineFragment<
+      NamedType<'Villian'>, 
+      SelectionSet<[
+        Field<'villany'>
+      ]>,
+      'bax'
+    >,
   ]>>
 ]
 
@@ -73,56 +77,39 @@ type fragmentedSelection = [
 
 
 
-type ResultSelectionSet<Type, Selections extends Array<Selection>> = Selections[number] extends infer U 
-? U extends Field<any, any, any>
-  ? never // @todo parse Field<>
-  : U extends InlineFragment<any, any>
-    ? never // @todo parse InlineFrgament<>
-  : never
-: never
-
-type inlineFragmentTest = ResultInlineFragment<Hero, InlineFragment<NamedType<'Hero'>, [Field<'heroics'>]>>
-
-type ResultInlineFragment<Type, T extends InlineFragment<any, any>> = 
-  T extends InlineFragment<any /* @todo Type */, infer SelectionSet>
-  ? never
-  : never
-
-
 type result = Result<Query, SelectionSet<fragmentedSelection>>
 
-
+// @note sorta does what we want...
 export type Result<
- // @note Has to be object or array! (right?)  
   Type,
-  // @todo Use more correct `SelectionSet<Array<Selection>>` type (will require some unnesting)
-  // @todo First pass, use `Array<Selection>`
-  Z extends SelectionSet<any>
+  TSelectionSet extends SelectionSet<Array<Selection>>
 > = Type extends Array<infer T>
   ? T extends Primitive
     ? // @note Return scalar array
       Array<T>
     : // @note Wrap complex object in array
-      Array<Result<T, Z>>
+      Array<Result<T, TSelectionSet>>
   : {
       // @note Build out complex object
-      [Key in Z['selections'][number]['name']]: Type[Key] extends Primitive
+      [Key in TSelectionSet['selections'][number]['name']]: Type[Key] extends Primitive
         ? Type[Key]
-        : Z['selections'][number] extends infer U
+        : TSelectionSet['selections'][number] extends infer U
         ? U extends Field<Key, any, infer Selections>
           ? Result<Type[Key], Selections>
+          : U extends InlineFragment<infer TypeCondition, infer S, any> 
+            ? Result<Type[Key], S>
           : never
         : never;
     };
 
-export class Operation<T extends Array<Field<any, any, any>>> {
+export class Operation<TSelectionSet extends SelectionSet<any>> {
   constructor(
     public readonly name: string,
     // @todo support `mutation` and `subscription` operations
     public readonly operation: "query",
     // public readonly directives: Directive[]
     // public readonly variableDefinitions: Variable[]
-    public readonly selectionSet: SelectionSet<T>
+    public readonly selectionSet: TSelectionSet
   ) {}
 
   toString() {
@@ -144,7 +131,7 @@ export class Operation<T extends Array<Field<any, any, any>>> {
   }
 }
 
-export class SelectionSet<T extends Array<Field<any,any,any>>> {
+export class SelectionSet<T extends Array<Selection>> {
   constructor(public readonly selections: T) {}
 
   get ast(): SelectionSetNode {
@@ -152,34 +139,36 @@ export class SelectionSet<T extends Array<Field<any,any,any>>> {
   }
 }
 
-export type Selection = Field<any, any, any> | InlineFragment<any, any>
+export type Selection = Field<any, any, any> | InlineFragment<any, any, any>
 
 export class InlineFragment<
  TypeCondition extends Type,
- SelectionSet extends Selection[] // @todo use our `SelectionSet` class (to support enitre `Selection` union)
+ TSelectionSet extends SelectionSet<any>,
+ PlaceholderName extends string,
 > {
   constructor(
     public readonly typeCondition: TypeCondition,
-    public readonly selectionSet: SelectionSet,
+    public readonly selectionSet: TSelectionSet,
+    public readonly name: PlaceholderName 
   ) {}
 
   get ast(): InlineFragmentNode {
     return inlineFragmentOf({
       typeCondition: this.typeCondition.ast,
-      selectionSet: selectionSetOf(this.selectionSet.map((s) => s.ast)),
+      selectionSet: this.selectionSet.ast,
     })
   }
 }
 
 export class Field<
   Name extends string,
-  Arguments extends Argument<string, any>[] | never = never,
-  Z extends SelectionSet<any> | never = never // @todo use our `SelectionSet` class (to support enitre `Selection` union)
+  Arguments extends Array<Argument<string, any>> | never = never,
+  TSelectionSet extends SelectionSet<any> | never = never,
 > {
   constructor(
     public readonly name: Name,
     public readonly args?: Arguments,
-    public readonly selectionSet?: Z
+    public readonly selectionSet?: TSelectionSet
   ) {}
 
   get ast(): FieldNode {
