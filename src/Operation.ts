@@ -1,5 +1,3 @@
-import { Assign, OmitByValue } from 'utility-types'
-
 import {
   FieldNode,
   OperationDefinitionNode,
@@ -29,139 +27,102 @@ import {
 } from "./AST";
 
 interface Query {
-  character: Character
+  character: Character;
 }
 
 interface Character {
-  __typename: string
-  id: string
-  name: string
+  __typename: string;
+  id: string;
+  name: string;
 }
 
 interface Hero extends Character {
-  __typename: 'Hero'
-  heroics: string[]
+  __typename: "Hero";
+  heroics: string[];
 }
 
 interface Villian extends Character {
-  __typename: 'Villian'
-  villany: number[]
+  __typename: "Villian";
+  villany: number[];
 }
 
-type fragmentedSelection = SelectionSet<[
-  Field<
-  'character',
-  never,
+type fragmentedSelection = SelectionSet<
+  [
+    Field<
+      "character",
+      never,
+      // @question how do map this to
+      SelectionSet<
+        [
+          Field<"__typename">,
+          Field<"id">,
+          Field<"name">,
 
-  // @question how do map this to 
-  SelectionSet<[
-    Field<'__typename'>,
-    Field<'id'>,
-    Field<'name'>,
+          InlineFragment<
+            NamedType<"Hero", Hero>,
+            SelectionSet<[Field<"__typename">, Field<"heroics">]>,
+            "HeroFragment"
+          >,
 
-    InlineFragment<
-      NamedType<'Hero', Hero>, 
-      SelectionSet<[
-        Field<'__typename'>,
-        Field<'heroics'>
-      ]>,
-      'HeroFragment'
-      >,
-    
-    InlineFragment<
-      NamedType<'Villian', Villian>, 
-      SelectionSet<[
-        Field<'__typename'>,
-        Field<'villany'>
-      ]>,
-      'VillianFragment'
-    >,
-  ]>>
-]>
+          InlineFragment<
+            NamedType<"Villian", Villian>,
+            SelectionSet<[Field<"__typename">, Field<"villany">]>,
+            "VillianFragment"
+          >
+        ]
+      >
+    >
+  ]
+>;
 
-
-
-// type
-// type ResultField
-// type ResultInlineFragment
-
-
-
-type TResult = Result<Query, fragmentedSelection>
+type TResult = Result<Query, fragmentedSelection>;
 
 const isHero = (object: Record<string, any>): object is Partial<Hero> => {
-  return object.__typename === 'Hero'
-}
+  return object.__typename === "Hero";
+};
 
 const isVillian = (object: Record<string, any>): object is Partial<Villian> => {
-  return object.__typename === 'Villian'
-}
+  return object.__typename === "Villian";
+};
 
-const result = {} as TResult
+const result = {} as TResult;
 
 // common fields
-result.character.id
-result.character.name
-result.character.__typename
+result.character.id;
+result.character.name;
+result.character.__typename;
 
 // type-guards
 if (isHero(result.character)) {
-  result.character.__typename
-  result.character.heroics
+  result.character.__typename;
+  result.character.heroics;
 }
 
 if (isVillian(result.character)) {
-  result.character.__typename
-  result.character.villany
+  result.character.__typename;
+  result.character.villany;
 }
-
-
 
 // For each `Selection` in `SelectionSet<infer Selections>`
 // A. Map to scalar field if Selection is Field<any, never>
 // B. Map to object field if Selection is Field<any, SelectionSet<any>
 // C. Breakout to union object if Selection is InlineFragment<any, SelectionSet<any>>
- // How do we do the last one?
+// How do we do the last one?
 
-type FilterFragments<T extends Array<Field<any,any,any> | InlineFragment<any,any,any>>> = 
-  Array<T[number] extends infer U 
-    ? U extends Field<any,any,any> 
-      ? T[number] 
+type FilterFragments<
+  T extends Array<Field<any, any, any> | InlineFragment<any, any, any>>
+> = Array<
+  T[number] extends infer U
+    ? U extends Field<any, any, any>
+      ? T[number]
       : never
-    : never>
-
-type FilterFields<T extends Array<Field<any,any,any> | InlineFragment<any,any,any>>> = 
-  Array<T[number] extends infer U 
-    ? U extends InlineFragment<any,any, any> 
-      ? T[number] 
-      : never
-    : never>
-
-type noFrags = FilterFragments<[
-  Field<'id'>,
-  Field<'name'>,
-
-  InlineFragment<
-    NamedType<'Hero'>, 
-    SelectionSet<[
-      Field<'heroics'>
-    ]>,
-    'bax'
-    >,
-  
-  InlineFragment<
-    NamedType<'Villian'>, 
-    SelectionSet<[
-      Field<'villany'>
-    ]>,
-    'bax'
-  >,
-]>
+    : never
+>;
 
 // @note sorta does what we want...
 export type Result<
   Type,
-  TSelectionSet extends SelectionSet<Array<Selection>>
+  TSelectionSet extends SelectionSet<Array<Selection>> // @todo take an `Operation` type instead (for correctness)
 > = Type extends Array<infer T>
   ? T extends Primitive
     ? // @note Return scalar array
@@ -170,25 +131,24 @@ export type Result<
       Array<Result<T, TSelectionSet>>
   : {
       // @note Build out object from non-fragment field selections
-      [Key in FilterFragments<TSelectionSet['selections']>[number]['name']]: Type[Key] extends Primitive
+      [Key in FilterFragments<
+        TSelectionSet["selections"]
+      >[number]["name"]]: Type[Key] extends Primitive
         ? Type[Key]
-        : TSelectionSet['selections'][number] extends infer U
+        : TSelectionSet["selections"][number] extends infer U
         ? U extends Field<Key, any, infer Selections>
           ? Result<Type[Key], Selections>
           : never
         : never;
-        // @note Should result in ({common} & {specific1}) | ({common} & {specific2})?
-    } & (
-        TSelectionSet['selections'][number] extends infer U 
-          ? U extends InlineFragment<infer TypeCondition, infer SS, any> 
-            ? TypeCondition extends NamedType<any, infer Type>
-              ? Result<Type, SS>
-              : {}
+      // @note Should result in ({common} & {specific1}) | ({common} & {specific2})?
+    } &
+      (TSelectionSet["selections"][number] extends infer U
+        ? U extends InlineFragment<infer TypeCondition, infer SS, any>
+          ? TypeCondition extends NamedType<any, infer Type>
+            ? Result<Type, SS>
             : {}
-          : {} // @note need to use empty objects to not nuke the left side of our intersection type (&)
-    )
-       
-    
+          : {}
+        : {}); // @note need to use empty objects to not nuke the left side of our intersection type (&)
 
 export class Operation<TSelectionSet extends SelectionSet<any>> {
   constructor(
@@ -227,31 +187,31 @@ export class SelectionSet<T extends Array<Selection>> {
   }
 }
 
-export type Selection = Field<any, any, any> | InlineFragment<any, any, any>
+export type Selection = Field<any, any, any> | InlineFragment<any, any, any>;
 
 export class InlineFragment<
- TypeCondition extends Type,
- TSelectionSet extends SelectionSet<any>,
- PlaceholderName extends string,
+  TypeCondition extends Type,
+  TSelectionSet extends SelectionSet<any>,
+  PlaceholderName extends string
 > {
   constructor(
     public readonly typeCondition: TypeCondition,
     public readonly selectionSet: TSelectionSet,
-    public readonly name: PlaceholderName 
+    public readonly name: PlaceholderName
   ) {}
 
   get ast(): InlineFragmentNode {
     return inlineFragmentOf({
       typeCondition: this.typeCondition.ast,
       selectionSet: this.selectionSet.ast,
-    })
+    });
   }
 }
 
 export class Field<
   Name extends string,
   Arguments extends Array<Argument<string, any>> | never = never,
-  TSelectionSet extends SelectionSet<any> | never = never,
+  TSelectionSet extends SelectionSet<any> | never = never
 > {
   constructor(
     public readonly name: Name,

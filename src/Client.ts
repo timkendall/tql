@@ -9,12 +9,12 @@ export class Client {
 
 export const execute = <
   RootType,
-  SelectionSet extends Array<Field<any, any, any>>
+  TOperation extends Operation<SelectionSet<any>>
 >(
   endpoint: string,
-  operation: Operation<SelectionSet>
+  operation: TOperation
   /* @todo variables?: Variables */
-): Promise<ExecutionResult<Result<RootType, SelectionSet>>> =>
+): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>> =>
   fetch(endpoint, {
     method: "post",
     headers: { "Content-Type": "application/json" },
@@ -24,7 +24,7 @@ export const execute = <
       query: operation.toString(),
     }),
   }).then((res) => res.json()) as Promise<
-    ExecutionResult<Result<RootType, SelectionSet>>
+    ExecutionResult<Result<RootType, TOperation["selectionSet"]>>
   >;
 
 // @todo we lose out type-saftey going through this (need to fix the `Selector` type param)
@@ -38,14 +38,14 @@ export const execute = <
 //   return new Operation(name, 'query', new SelectionSet(select(Query)))
 // };
 //
-export const makeBuildQuery = <U extends Selector>(root: U) => <
-  T extends Array<Field<any, any, any>>
->(
-  name: string,
-  select: (t: Selector) => T
-): Operation<T> => {
-  return new Operation<T>(name, "query", new SelectionSet<T>(select(root)));
-};
+// export const makeBuildQuery = <U extends Selector>(root: U) => <
+//   T extends Array<Field<any, any, any>>
+// >(
+//   name: string,
+//   select: (t: Selector) => T
+// ): Operation<T> => {
+//   return new Operation<T>(name, "query", new SelectionSet<T>(select(root)));
+// };
 
 // type SelectorCallback<T extends Array<Field<any, any, any>>> =
 //   (select: (t: Selector<T>) => T) => Field<any, any, any>
