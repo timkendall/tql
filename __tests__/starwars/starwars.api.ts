@@ -264,13 +264,29 @@ export interface ICharacter {
 interface CharacterSelector {
   __typename: () => Field<"__typename">;
 
+  /**
+   * @description The ID of the character
+   */
+
   id: () => Field<"id">;
 
+  /**
+   * @description The name of the character
+   */
+
   name: () => Field<"name">;
+
+  /**
+   * @description The friends of the character, or an empty list if they have none
+   */
 
   friends: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"friends", never, SelectionSet<T>>;
+
+  /**
+   * @description The friends of the character exposed as a connection with edges
+   */
 
   friendsConnection: <T extends Array<Selection>>(
     variables: {
@@ -286,6 +302,10 @@ interface CharacterSelector {
     ],
     SelectionSet<T>
   >;
+
+  /**
+   * @description The movies this character appears in
+   */
 
   appearsIn: () => Field<"appearsIn">;
 
@@ -304,8 +324,19 @@ interface CharacterSelector {
 export const Character: CharacterSelector = {
   __typename: () => new Field("__typename"),
 
+  /**
+   * @description The ID of the character
+   */
   id: () => new Field("id"),
+
+  /**
+   * @description The name of the character
+   */
   name: () => new Field("name"),
+
+  /**
+   * @description The friends of the character, or an empty list if they have none
+   */
 
   friends: (select) =>
     new Field(
@@ -313,6 +344,10 @@ export const Character: CharacterSelector = {
       undefined as never,
       new SelectionSet(select(Character))
     ),
+
+  /**
+   * @description The friends of the character exposed as a connection with edges
+   */
 
   friendsConnection: (variables, select) =>
     new Field(
@@ -324,6 +359,9 @@ export const Character: CharacterSelector = {
       new SelectionSet(select(FriendsConnection))
     ),
 
+  /**
+   * @description The movies this character appears in
+   */
   appearsIn: () => new Field("appearsIn"),
 
   on: (type, select) => {
@@ -359,23 +397,48 @@ export interface IHuman extends ICharacter {
 interface HumanSelector {
   __typename: () => Field<"__typename">;
 
+  /**
+   * @description The ID of the human
+   */
+
   id: () => Field<"id">;
+
+  /**
+   * @description What this human calls themselves
+   */
 
   name: () => Field<"name">;
 
+  /**
+   * @description The home planet of the human, or null if unknown
+   */
+
   homePlanet: () => Field<"homePlanet">;
+
+  /**
+   * @description Height in the preferred unit, default is meters
+   */
 
   height: (variables: { unit: unknown }) => Field<"height", [/* @todo */]>;
 
   /**
+   * @description Mass in kilograms, or null if unknown
    * @deprecated Weight is a sensitive subject!
    */
 
   mass: () => Field<"mass">;
 
+  /**
+   * @description This human's friends, or an empty list if they have none
+   */
+
   friends: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"friends", never, SelectionSet<T>>;
+
+  /**
+   * @description The friends of the human exposed as a connection with edges
+   */
 
   friendsConnection: <T extends Array<Selection>>(
     variables: {
@@ -392,7 +455,15 @@ interface HumanSelector {
     SelectionSet<T>
   >;
 
+  /**
+   * @description The movies this human appears in
+   */
+
   appearsIn: () => Field<"appearsIn">;
+
+  /**
+   * @description A list of starships this person has piloted, or an empty list if none
+   */
 
   starships: <T extends Array<Selection>>(
     select: (t: StarshipSelector) => T
@@ -408,15 +479,35 @@ export const isHuman = (
 export const Human: HumanSelector = {
   __typename: () => new Field("__typename"),
 
+  /**
+   * @description The ID of the human
+   */
   id: () => new Field("id"),
+
+  /**
+   * @description What this human calls themselves
+   */
   name: () => new Field("name"),
+
+  /**
+   * @description The home planet of the human, or null if unknown
+   */
   homePlanet: () => new Field("homePlanet"),
+
+  /**
+   * @description Height in the preferred unit, default is meters
+   */
   height: (variables) => new Field("height"),
 
   /**
+   * @description Mass in kilograms, or null if unknown
    * @deprecated Weight is a sensitive subject!
    */
   mass: () => new Field("mass"),
+
+  /**
+   * @description This human's friends, or an empty list if they have none
+   */
 
   friends: (select) =>
     new Field(
@@ -424,6 +515,10 @@ export const Human: HumanSelector = {
       undefined as never,
       new SelectionSet(select(Character))
     ),
+
+  /**
+   * @description The friends of the human exposed as a connection with edges
+   */
 
   friendsConnection: (variables, select) =>
     new Field(
@@ -435,7 +530,14 @@ export const Human: HumanSelector = {
       new SelectionSet(select(FriendsConnection))
     ),
 
+  /**
+   * @description The movies this human appears in
+   */
   appearsIn: () => new Field("appearsIn"),
+
+  /**
+   * @description A list of starships this person has piloted, or an empty list if none
+   */
 
   starships: (select) =>
     new Field(
@@ -453,13 +555,29 @@ export interface IDroid extends ICharacter {
 interface DroidSelector {
   __typename: () => Field<"__typename">;
 
+  /**
+   * @description The ID of the droid
+   */
+
   id: () => Field<"id">;
 
+  /**
+   * @description What others call this droid
+   */
+
   name: () => Field<"name">;
+
+  /**
+   * @description This droid's friends, or an empty list if they have none
+   */
 
   friends: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"friends", never, SelectionSet<T>>;
+
+  /**
+   * @description The friends of the droid exposed as a connection with edges
+   */
 
   friendsConnection: <T extends Array<Selection>>(
     variables: {
@@ -476,7 +594,15 @@ interface DroidSelector {
     SelectionSet<T>
   >;
 
+  /**
+   * @description The movies this droid appears in
+   */
+
   appearsIn: () => Field<"appearsIn">;
+
+  /**
+   * @description This droid's primary function
+   */
 
   primaryFunction: () => Field<"primaryFunction">;
 }
@@ -490,8 +616,19 @@ export const isDroid = (
 export const Droid: DroidSelector = {
   __typename: () => new Field("__typename"),
 
+  /**
+   * @description The ID of the droid
+   */
   id: () => new Field("id"),
+
+  /**
+   * @description What others call this droid
+   */
   name: () => new Field("name"),
+
+  /**
+   * @description This droid's friends, or an empty list if they have none
+   */
 
   friends: (select) =>
     new Field(
@@ -499,6 +636,10 @@ export const Droid: DroidSelector = {
       undefined as never,
       new SelectionSet(select(Character))
     ),
+
+  /**
+   * @description The friends of the droid exposed as a connection with edges
+   */
 
   friendsConnection: (variables, select) =>
     new Field(
@@ -510,7 +651,14 @@ export const Droid: DroidSelector = {
       new SelectionSet(select(FriendsConnection))
     ),
 
+  /**
+   * @description The movies this droid appears in
+   */
   appearsIn: () => new Field("appearsIn"),
+
+  /**
+   * @description This droid's primary function
+   */
   primaryFunction: () => new Field("primaryFunction"),
 };
 
@@ -524,15 +672,31 @@ export interface IFriendsConnection {
 interface FriendsConnectionSelector {
   __typename: () => Field<"__typename">;
 
+  /**
+   * @description The total number of friends
+   */
+
   totalCount: () => Field<"totalCount">;
+
+  /**
+   * @description The edges for each of the character's friends.
+   */
 
   edges: <T extends Array<Selection>>(
     select: (t: FriendsEdgeSelector) => T
   ) => Field<"edges", never, SelectionSet<T>>;
 
+  /**
+   * @description A list of the friends, as a convenience when edges are not needed.
+   */
+
   friends: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"friends", never, SelectionSet<T>>;
+
+  /**
+   * @description Information for paginating this connection
+   */
 
   pageInfo: <T extends Array<Selection>>(
     select: (t: PageInfoSelector) => T
@@ -542,7 +706,14 @@ interface FriendsConnectionSelector {
 export const FriendsConnection: FriendsConnectionSelector = {
   __typename: () => new Field("__typename"),
 
+  /**
+   * @description The total number of friends
+   */
   totalCount: () => new Field("totalCount"),
+
+  /**
+   * @description The edges for each of the character's friends.
+   */
 
   edges: (select) =>
     new Field(
@@ -551,12 +722,20 @@ export const FriendsConnection: FriendsConnectionSelector = {
       new SelectionSet(select(FriendsEdge))
     ),
 
+  /**
+   * @description A list of the friends, as a convenience when edges are not needed.
+   */
+
   friends: (select) =>
     new Field(
       "friends",
       undefined as never,
       new SelectionSet(select(Character))
     ),
+
+  /**
+   * @description Information for paginating this connection
+   */
 
   pageInfo: (select) =>
     new Field(
@@ -574,7 +753,15 @@ export interface IFriendsEdge {
 interface FriendsEdgeSelector {
   __typename: () => Field<"__typename">;
 
+  /**
+   * @description A cursor used for pagination
+   */
+
   cursor: () => Field<"cursor">;
+
+  /**
+   * @description The character represented by this friendship edge
+   */
 
   node: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
@@ -584,7 +771,14 @@ interface FriendsEdgeSelector {
 export const FriendsEdge: FriendsEdgeSelector = {
   __typename: () => new Field("__typename"),
 
+  /**
+   * @description A cursor used for pagination
+   */
   cursor: () => new Field("cursor"),
+
+  /**
+   * @description The character represented by this friendship edge
+   */
 
   node: (select) =>
     new Field("node", undefined as never, new SelectionSet(select(Character))),
@@ -622,7 +816,15 @@ export interface IReview {
 interface ReviewSelector {
   __typename: () => Field<"__typename">;
 
+  /**
+   * @description The number of stars this review gave, 1-5
+   */
+
   stars: () => Field<"stars">;
+
+  /**
+   * @description Comment about the movie
+   */
 
   commentary: () => Field<"commentary">;
 }
@@ -630,7 +832,14 @@ interface ReviewSelector {
 export const Review: ReviewSelector = {
   __typename: () => new Field("__typename"),
 
+  /**
+   * @description The number of stars this review gave, 1-5
+   */
   stars: () => new Field("stars"),
+
+  /**
+   * @description Comment about the movie
+   */
   commentary: () => new Field("commentary"),
 };
 
@@ -644,9 +853,21 @@ export interface IStarship {
 interface StarshipSelector {
   __typename: () => Field<"__typename">;
 
+  /**
+   * @description The ID of the starship
+   */
+
   id: () => Field<"id">;
 
+  /**
+   * @description The name of the starship
+   */
+
   name: () => Field<"name">;
+
+  /**
+   * @description Length of the starship, along the longest axis
+   */
 
   length: (variables: { unit: unknown }) => Field<"length", [/* @todo */]>;
 
@@ -656,8 +877,19 @@ interface StarshipSelector {
 export const Starship: StarshipSelector = {
   __typename: () => new Field("__typename"),
 
+  /**
+   * @description The ID of the starship
+   */
   id: () => new Field("id"),
+
+  /**
+   * @description The name of the starship
+   */
   name: () => new Field("name"),
+
+  /**
+   * @description Length of the starship, along the longest axis
+   */
   length: (variables) => new Field("length"),
   coordinates: () => new Field("coordinates"),
 };

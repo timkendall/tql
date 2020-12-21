@@ -397,7 +397,7 @@ export class Codegen {
   }
 
   private _fieldSignature(field: GraphQLField<any, any, any>): string {
-    const { name, args, type, deprecationReason } = field;
+    const { name, args, type } = field;
 
     const isList =
       type instanceof GraphQLList ||
@@ -405,13 +405,19 @@ export class Codegen {
     const isNonNull = type instanceof GraphQLNonNull;
     const baseType = getBaseOutputType(type);
 
-    const deprecatedComment = deprecationReason
-      ? `
+    const jsDocComments = [
+      field.description && `@description ${field.description}`,
+      field.deprecationReason && `@deprecated ${field.deprecationReason}`,
+    ].filter(Boolean);
+
+    const jsDocComment =
+      jsDocComments.length > 0
+        ? `
     /**
-     * @deprecated ${deprecationReason}
+     ${jsDocComments.map((comment) => "* " + comment).join("\n")}
      */
     `
-      : "";
+        : "";
 
     if (
       baseType instanceof GraphQLScalarType ||
@@ -424,10 +430,10 @@ export class Codegen {
 
       // @todo render arguments correctly
       return args.length > 0
-        ? `${deprecatedComment}\n${name}: (variables: { ${args
+        ? `${jsDocComment}\n${name}: (variables: { ${args
             .map((a) => `${a.name}: unknown`)
             .join(", ")} }) => Field<"${name}", [/* @todo */]>`
-        : `${deprecatedComment}\n${name}: () => Field<"${name}">`;
+        : `${jsDocComment}\n${name}: () => Field<"${name}">`;
     } else {
       const renderArgument = (arg: GraphQLArgument): string => {
         const _base = getBaseInputType(arg.type);
@@ -471,7 +477,7 @@ export class Codegen {
       // @todo restrict allowed Field types
       return args.length > 0
         ? `
-        ${deprecatedComment}
+        ${jsDocComment}
         ${name}: <T extends Array<Selection>>(
           variables: { ${args.map(renderVariable).join(", ")} },
           select: (t: ${baseType.toString()}Selector) => T
@@ -480,7 +486,7 @@ export class Codegen {
             .join(", ")} ], SelectionSet<T>>,
       `
         : `
-        ${deprecatedComment}
+        ${jsDocComment}
         ${name}: <T extends Array<Selection>>(
           select: (t: ${baseType.toString()}Selector) => T
         ) => Field<"${name}", never, SelectionSet<T>>,
@@ -489,7 +495,7 @@ export class Codegen {
   }
 
   private field(field: GraphQLField<any, any, any>): string {
-    const { name, args, type, deprecationReason } = field;
+    const { name, args, type } = field;
 
     const isList =
       type instanceof GraphQLList ||
@@ -497,13 +503,19 @@ export class Codegen {
     const isNonNull = type instanceof GraphQLNonNull;
     const baseType = getBaseOutputType(type);
 
-    const deprecatedComment = deprecationReason
-      ? `
+    const jsDocComments = [
+      field.description && `@description ${field.description}`,
+      field.deprecationReason && `@deprecated ${field.deprecationReason}`,
+    ].filter(Boolean);
+
+    const jsDocComment =
+      jsDocComments.length > 0
+        ? `
     /**
-     * @deprecated ${deprecationReason}
+     ${jsDocComments.map((comment) => "* " + comment).join("\n")}
      */
     `
-      : "";
+        : "";
 
     if (
       baseType instanceof GraphQLScalarType ||
@@ -516,10 +528,8 @@ export class Codegen {
 
       // @todo render arguments correctly
       return args.length > 0
-        ? deprecatedComment.concat(
-            `${name}: (variables) => new Field("${name}"),`
-          )
-        : deprecatedComment.concat(`${name}: () => new Field("${name}"),`);
+        ? jsDocComment.concat(`${name}: (variables) => new Field("${name}"),`)
+        : jsDocComment.concat(`${name}: () => new Field("${name}"),`);
     } else {
       const renderArgument = (arg: GraphQLArgument): string => {
         const _base = getBaseInputType(arg.type);
@@ -556,7 +566,7 @@ export class Codegen {
       // @todo restrict allowed Field types
       return args.length > 0
         ? `
-        ${deprecatedComment}
+        ${jsDocComment}
         ${name}:(
           variables,
           select,
@@ -565,7 +575,7 @@ export class Codegen {
             .join(", ")} ], new SelectionSet(select(${baseType.toString()}))),
       `
         : `
-        ${deprecatedComment}
+        ${jsDocComment}
         ${name}: (
           select,
         ) => new Field("${name}", undefined as never, new SelectionSet(select(${baseType.toString()}))),
