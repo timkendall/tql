@@ -158,7 +158,7 @@ export const valueNodeOf = (value: any, enums: any[] = []): ValueNode => {
     return { kind: Kind.FLOAT, value: String(value) };
   } else if (typeof value === "boolean") {
     return { kind: Kind.BOOLEAN, value: value };
-  } else if (value === null) {
+  } else if (value === null || value === undefined) {
     return { kind: Kind.NULL };
   } else if (Array.isArray(value)) {
     return {

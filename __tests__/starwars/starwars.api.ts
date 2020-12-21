@@ -8,7 +8,7 @@ import {
   Selection,
   SelectionSet,
   Variable,
-} from "../src";
+} from "../../src";
 
 export enum Episode {
   NEWHOPE = "NEWHOPE",
@@ -265,6 +265,7 @@ interface CharacterSelector {
   __typename: () => Field<"__typename">;
 
   id: () => Field<"id">;
+
   name: () => Field<"name">;
 
   friends: <T extends Array<Selection>>(
@@ -359,9 +360,17 @@ interface HumanSelector {
   __typename: () => Field<"__typename">;
 
   id: () => Field<"id">;
+
   name: () => Field<"name">;
+
   homePlanet: () => Field<"homePlanet">;
+
   height: (variables: { unit: unknown }) => Field<"height", [/* @todo */]>;
+
+  /**
+   * @deprecated Weight is a sensitive subject!
+   */
+
   mass: () => Field<"mass">;
 
   friends: <T extends Array<Selection>>(
@@ -445,6 +454,7 @@ interface DroidSelector {
   __typename: () => Field<"__typename">;
 
   id: () => Field<"id">;
+
   name: () => Field<"name">;
 
   friends: <T extends Array<Selection>>(
@@ -467,6 +477,7 @@ interface DroidSelector {
   >;
 
   appearsIn: () => Field<"appearsIn">;
+
   primaryFunction: () => Field<"primaryFunction">;
 }
 
@@ -589,7 +600,9 @@ interface PageInfoSelector {
   __typename: () => Field<"__typename">;
 
   startCursor: () => Field<"startCursor">;
+
   endCursor: () => Field<"endCursor">;
+
   hasNextPage: () => Field<"hasNextPage">;
 }
 
@@ -610,6 +623,7 @@ interface ReviewSelector {
   __typename: () => Field<"__typename">;
 
   stars: () => Field<"stars">;
+
   commentary: () => Field<"commentary">;
 }
 
@@ -631,8 +645,11 @@ interface StarshipSelector {
   __typename: () => Field<"__typename">;
 
   id: () => Field<"id">;
+
   name: () => Field<"name">;
+
   length: (variables: { unit: unknown }) => Field<"length", [/* @todo */]>;
+
   coordinates: () => Field<"coordinates">;
 }
 

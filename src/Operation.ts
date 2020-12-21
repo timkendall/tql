@@ -24,6 +24,7 @@ import {
   variableDefinitionOf,
   listTypeOf,
   nonNullTypeOf,
+  documentOf,
 } from "./AST";
 
 // For each `Selection` in `SelectionSet<infer Selections>`
@@ -84,6 +85,10 @@ export class Operation<TSelectionSet extends SelectionSet<any>> {
     return print(this.ast);
   }
 
+  toDocument() {
+    return documentOf([this.ast]);
+  }
+
   get ast(): OperationDefinitionNode {
     return operationOf({
       operation: this.operation,
@@ -140,7 +145,9 @@ export class Field<
   get ast(): FieldNode {
     return fieldOf({
       name: this.name,
-      args: this.args?.map((arg) => arg.ast),
+      args: this.args
+        ?.filter((arg) => Boolean(arg.value))
+        .map((arg) => arg.ast),
       directives: [
         /* @todo */
       ],

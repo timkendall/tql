@@ -3,14 +3,12 @@ import {
   GraphQLObjectType,
   GraphQLScalarType,
   GraphQLField,
-  getNamedType,
   isListType,
   isNonNullType,
   GraphQLEnumType,
   GraphQLInterfaceType,
   GraphQLArgument,
   GraphQLInputObjectType,
-  GraphQLOutputType,
   GraphQLNonNull,
   GraphQLList,
   GraphQLEnumValue,
@@ -18,7 +16,6 @@ import {
   GraphQLUnionType,
   GraphQLInputType,
 } from "graphql";
-import * as ts from "typescript";
 import prettier from "prettier";
 
 import { getBaseOutputType, getBaseInputType } from "./codegen/typescript";
@@ -68,7 +65,7 @@ const renderConditionalSelectorArgument = (types: string[]) => {
   const [first, ...rest] = types;
 
   if (rest.length === 0) {
-    return first;
+    return `${first}Selector`;
   } else {
     return types
       .map((t) => `F extends "${t}" ? ${t}Selector : `)
@@ -78,15 +75,7 @@ const renderConditionalSelectorArgument = (types: string[]) => {
 };
 
 export class Codegen {
-  private readonly printer = ts.createPrinter();
-  private readonly source: ts.SourceFile;
-
-  constructor(
-    public readonly schema: GraphQLSchema,
-    public readonly target: ts.ScriptTarget = ts.ScriptTarget.ES2020
-  ) {
-    this.source = ts.createSourceFile("", "", target);
-  }
+  constructor(public readonly schema: GraphQLSchema) {}
 
   private get imports() {
     return [
@@ -416,6 +405,14 @@ export class Codegen {
     const isNonNull = type instanceof GraphQLNonNull;
     const baseType = getBaseOutputType(type);
 
+    const deprecatedComment = deprecationReason
+      ? `
+    /**
+     * @deprecated ${deprecationReason}
+     */
+    `
+      : "";
+
     if (
       baseType instanceof GraphQLScalarType ||
       baseType instanceof GraphQLEnumType
@@ -427,10 +424,10 @@ export class Codegen {
 
       // @todo render arguments correctly
       return args.length > 0
-        ? `${name}: (variables: { ${args
+        ? `${deprecatedComment}\n${name}: (variables: { ${args
             .map((a) => `${a.name}: unknown`)
             .join(", ")} }) => Field<"${name}", [/* @todo */]>`
-        : `${name}: () => Field<"${name}">`;
+        : `${deprecatedComment}\n${name}: () => Field<"${name}">`;
     } else {
       const renderArgument = (arg: GraphQLArgument): string => {
         const _base = getBaseInputType(arg.type);
@@ -474,6 +471,7 @@ export class Codegen {
       // @todo restrict allowed Field types
       return args.length > 0
         ? `
+        ${deprecatedComment}
         ${name}: <T extends Array<Selection>>(
           variables: { ${args.map(renderVariable).join(", ")} },
           select: (t: ${baseType.toString()}Selector) => T
@@ -482,6 +480,7 @@ export class Codegen {
             .join(", ")} ], SelectionSet<T>>,
       `
         : `
+        ${deprecatedComment}
         ${name}: <T extends Array<Selection>>(
           select: (t: ${baseType.toString()}Selector) => T
         ) => Field<"${name}", never, SelectionSet<T>>,

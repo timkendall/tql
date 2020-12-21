@@ -1,0 +1,146 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Schemas GitHub Viewer renders the expected operation 1`] = `
+"query Viewer {
+  viewer {
+    name
+    twitterUsername
+    status {
+      emoji
+      expiresAt
+    }
+    repositories(first: 3) {
+      pageInfo {
+        endCursor
+        startCursor
+        hasNextPage
+        hasPreviousPage
+      }
+      nodes {
+        __typename
+        id
+        name
+        createdAt
+      }
+      edges {
+        cursor
+        node {
+          id
+        }
+      }
+    }
+  }
+}"
+`;
+
+exports[`Schemas Star Wars Example renders an executable operation 1`] = `
+Object {
+  "data": Object {
+    "human": Object {
+      "__typename": "Human",
+      "appearsIn": Array [
+        "NEWHOPE",
+        "EMPIRE",
+        "JEDI",
+      ],
+      "friends": Array [
+        Object {
+          "__typename": "Human",
+          "appearsIn": Array [
+            "NEWHOPE",
+            "EMPIRE",
+            "JEDI",
+          ],
+          "homePlanet": "Tatooine",
+          "id": "1000",
+          "name": "Luke Skywalker",
+        },
+        Object {
+          "__typename": "Human",
+          "appearsIn": Array [
+            "NEWHOPE",
+            "EMPIRE",
+            "JEDI",
+          ],
+          "homePlanet": "Alderaan",
+          "id": "1003",
+          "name": "Leia Organa",
+        },
+        Object {
+          "__typename": "Droid",
+          "appearsIn": Array [
+            "NEWHOPE",
+            "EMPIRE",
+            "JEDI",
+          ],
+          "id": "2001",
+          "name": "R2-D2",
+          "primaryFunction": "Astromech",
+        },
+      ],
+      "homePlanet": null,
+      "id": "1002",
+      "mass": 80,
+      "name": "Han Solo",
+      "starships": Array [
+        Object {
+          "id": "3000",
+          "name": "Millenium Falcon",
+        },
+        Object {
+          "id": "3003",
+          "name": "Imperial shuttle",
+        },
+      ],
+    },
+    "reviews": Array [],
+    "search": Array [
+      Object {
+        "__typename": "Human",
+        "id": "1002",
+        "name": "Han Solo",
+      },
+    ],
+  },
+}
+`;
+
+exports[`Schemas Star Wars Example renders the expected operation 1`] = `
+"query Example {
+  search(text: \\"han\\") {
+    __typename
+    ... on Human {
+      id
+      name
+    }
+  }
+  reviews(episode: EMPIRE) {
+    stars
+    commentary
+  }
+  human(id: \\"1002\\") {
+    __typename
+    id
+    name
+    appearsIn
+    homePlanet
+    mass
+    friends {
+      __typename
+      id
+      name
+      appearsIn
+      ... on Human {
+        homePlanet
+      }
+      ... on Droid {
+        primaryFunction
+      }
+    }
+    starships {
+      id
+      name
+    }
+  }
+}"
+`;
