@@ -145,6 +145,7 @@ export class Field<
   get ast(): FieldNode {
     return fieldOf({
       name: this.name,
+      // @note Filter out args with `undefined` values so they are not included in the operation
       args: this.args
         ?.filter((arg) => Boolean(arg.value))
         .map((arg) => arg.ast),
