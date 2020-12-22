@@ -2,7 +2,7 @@
 
 > Note: this is **pre-production software** at this point, see the **[current limitations](./CURRENT_LIMITATIONS.md)**.
 
-**tql** is a fully TypeScript-native GraphQL operation writer; **codegen only when you schema changes**, **works with any GraphQL client**, **fully type-safe**.
+**tql** is a TypeScript GraphQL query builder.
 
 - **Codegen once** - regenerate your GraphQL API client only when your schema changes.
 - **Fully type-safe** - take advantage of the full power of TypeScript's advanced type-system.
@@ -14,12 +14,16 @@
 
 * **TypeScript 4.1+** is required for [Recursive Conditional Type](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#recursive-conditional-types) support
 
+
 ## Usage
 
-You will need to compile a type-safe client one time before using. Do this with the provided CLI - `yarn tql <schema>`.
+You will need to compile a type-safe client one time before using. Do this with the provided CLI:
+
+`yarn tql <schema> > example.api.ts`.
+
 
 ```typescript
-import { query, execute } from '@timkendall/tql'
+import { query } from './example.api'
 
 const operation = query("Example", (t) => [
   t.reviews({ episode: Episode.EMPIRE }, (t) => [

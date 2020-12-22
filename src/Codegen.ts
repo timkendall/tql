@@ -15,64 +15,9 @@ import {
   GraphQLInputField,
   GraphQLUnionType,
   GraphQLInputType,
+  GraphQLOutputType,
 } from "graphql";
 import prettier from "prettier";
-
-import { getBaseOutputType, getBaseInputType } from "./codegen/typescript";
-
-const toPrimitive = (
-  scalar: GraphQLScalarType
-): "number" | "string" | "boolean" | "unknown" => {
-  switch (scalar.name) {
-    case "ID":
-    case "String":
-      return "string";
-    case "Boolean":
-      return "boolean";
-    case "Int":
-    case "Float":
-      return "number";
-    default:
-      return "unknown";
-  }
-};
-
-const renderInterfaceField = (field: GraphQLField<any, any, any>): string => {
-  const isList =
-    field.type instanceof GraphQLList ||
-    (field.type instanceof GraphQLNonNull &&
-      field.type.ofType instanceof GraphQLList);
-  const isNonNull = field.type instanceof GraphQLNonNull;
-  const baseType = getBaseOutputType(field.type);
-
-  if (baseType instanceof GraphQLScalarType) {
-    return `${field.name}: ${toPrimitive(baseType)}` + (isList ? "[]" : "");
-  } else if (baseType instanceof GraphQLEnumType) {
-    return `${field.name}: ${baseType.name}` + (isList ? "[]" : "");
-  } else if (
-    baseType instanceof GraphQLInterfaceType ||
-    baseType instanceof GraphQLUnionType ||
-    baseType instanceof GraphQLObjectType
-  ) {
-    return `${field.name}: I${baseType.name}` + (isList ? "[]" : "");
-  } else {
-    throw new Error("Unable to render interface field.");
-  }
-};
-
-// ex. F extends "Human" ? HumanSelector : DroidSelector
-const renderConditionalSelectorArgument = (types: string[]) => {
-  const [first, ...rest] = types;
-
-  if (rest.length === 0) {
-    return `${first}Selector`;
-  } else {
-    return types
-      .map((t) => `F extends "${t}" ? ${t}Selector : `)
-      .join("")
-      .concat(" never");
-  }
-};
 
 export class Codegen {
   constructor(public readonly schema: GraphQLSchema) {}
@@ -583,3 +528,77 @@ export class Codegen {
     }
   }
 }
+
+function getBaseOutputType(type: GraphQLOutputType): GraphQLOutputType {
+  if (type instanceof GraphQLNonNull) {
+    return getBaseOutputType(type.ofType);
+  } else if (type instanceof GraphQLList) {
+    return getBaseOutputType(type.ofType);
+  } else {
+    return type;
+  }
+}
+
+function getBaseInputType(type: GraphQLInputType): GraphQLInputType {
+  if (type instanceof GraphQLNonNull) {
+    return getBaseInputType(type.ofType);
+  } else if (type instanceof GraphQLList) {
+    return getBaseInputType(type.ofType);
+  } else {
+    return type;
+  }
+}
+
+const toPrimitive = (
+  scalar: GraphQLScalarType
+): "number" | "string" | "boolean" | "unknown" => {
+  switch (scalar.name) {
+    case "ID":
+    case "String":
+      return "string";
+    case "Boolean":
+      return "boolean";
+    case "Int":
+    case "Float":
+      return "number";
+    default:
+      return "unknown";
+  }
+};
+
+const renderInterfaceField = (field: GraphQLField<any, any, any>): string => {
+  const isList =
+    field.type instanceof GraphQLList ||
+    (field.type instanceof GraphQLNonNull &&
+      field.type.ofType instanceof GraphQLList);
+  const isNonNull = field.type instanceof GraphQLNonNull;
+  const baseType = getBaseOutputType(field.type);
+
+  if (baseType instanceof GraphQLScalarType) {
+    return `${field.name}: ${toPrimitive(baseType)}` + (isList ? "[]" : "");
+  } else if (baseType instanceof GraphQLEnumType) {
+    return `${field.name}: ${baseType.name}` + (isList ? "[]" : "");
+  } else if (
+    baseType instanceof GraphQLInterfaceType ||
+    baseType instanceof GraphQLUnionType ||
+    baseType instanceof GraphQLObjectType
+  ) {
+    return `${field.name}: I${baseType.name}` + (isList ? "[]" : "");
+  } else {
+    throw new Error("Unable to render interface field.");
+  }
+};
+
+// ex. F extends "Human" ? HumanSelector : DroidSelector
+const renderConditionalSelectorArgument = (types: string[]) => {
+  const [first, ...rest] = types;
+
+  if (rest.length === 0) {
+    return `${first}Selector`;
+  } else {
+    return types
+      .map((t) => `F extends "${t}" ? ${t}Selector : `)
+      .join("")
+      .concat(" never");
+  }
+};
