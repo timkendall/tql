@@ -18,7 +18,7 @@
     "dev": "tsc -b -w",
     "prepush": "yarn test",
     "postpublish": "rm -r ./dist",
-    "test": "jest",
+    "test": "jest --cache=false",
     "format": "prettier --write"
   },
   "license": "MIT",
