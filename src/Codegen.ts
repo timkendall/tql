@@ -35,7 +35,7 @@ export class Codegen {
       Selection,
       SelectionSet,
       Variable,
-    } from '../src'
+    } from '@timkendall/tql'
     `,
     ];
   }

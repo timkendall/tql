@@ -1,7 +1,7 @@
 {
   "name": "@timkendall/tql",
   "author": "Timothy Kendall",
-  "version": "0.1.0-alpha.2",
+  "version": "0.1.0-alpha.3",
   "description": "Write GraphQL queries in TypeScript.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
