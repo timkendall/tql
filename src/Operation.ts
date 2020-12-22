@@ -162,7 +162,7 @@ export type Value = Variable<string> | Primitive;
 export class Argument<Name extends string, Value = any> {
   constructor(
     public readonly name: Name,
-    public readonly value: Value,
+    public readonly value?: Value,
     // @note Janky enum support
     public readonly _enum?: any
   ) {}
