@@ -8,6 +8,12 @@
 - **Fully type-safe** - take advantage of the full power of TypeScript's advanced type-system.
 - **Backendless** - integrate with any existing GraphQL client.
 
+## [Try it Out](https://repl.it/@timkendall/TQL-Starwars)
+
+Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)! 
+
+> Note: Repl.it seems to only support TypeScript 3.3 in it's editor so auto-complete will not work.
+
 ## Installation
 
 `npm install @timkendall/tql` or `yarn add @timkendall/tql` 
