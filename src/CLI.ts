@@ -9,16 +9,32 @@ import {
 } from "graphql";
 
 import { Codegen } from "./Codegen";
+import { Client } from "./Client";
 
 Yargs.command(
   "$0 <schema>",
   "Generate a fluent TypeScript client for your GraphQL API.",
   (yargs) =>
-    yargs.positional("schema", {
-      describe: "ex. https://graphql.org/swapi-graphql/",
-      type: "string",
-      demandOption: true,
-    }),
+    yargs
+      .positional("schema", {
+        describe: "ex. https://graphql.org/swapi-graphql/",
+        type: "string",
+        demandOption: true,
+      })
+      .option("client", {
+        type: "string",
+        requiresArg: true,
+        description: "Include an implementation of the Client class.",
+      })
+      .option("tag", {
+        type: "string",
+        default: "unversioned",
+        description: "Semantic versioning tag (ex. 1.0.0).",
+      })
+      .option("module-path", {
+        type: "string",
+        description: "Path to @timkendall/tql module.",
+      }),
   async (argv) => {
     const schemaPath = argv.schema;
 
@@ -26,7 +42,13 @@ Yargs.command(
       ? await remoteSchema(schemaPath)
       : await localSchema(schemaPath);
 
-    const codegen = new Codegen(schema);
+    const codegen = new Codegen({
+      schema,
+      client: argv.client
+        ? { name: argv.client, version: argv.tag }
+        : undefined,
+      modulePath: argv["module-path"],
+    });
 
     process.stdout.write(codegen.render());
   }

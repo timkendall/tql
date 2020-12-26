@@ -8,7 +8,13 @@ import {
   Selection,
   SelectionSet,
   Variable,
+  Executor,
+  Client,
 } from "../../src";
+
+export const VERSION = "unversioned";
+
+export const SCHEMA_SHA = "4c13c55";
 
 export enum Episode {
   NEWHOPE = "NEWHOPE",
@@ -905,3 +911,136 @@ export const mutation = <T extends Array<Selection>>(
   select: (t: typeof Mutation) => T
 ): Operation<SelectionSet<T>> =>
   new Operation(name, "mutation", new SelectionSet(select(Mutation)));
+
+export class Starwars extends Client<typeof Query, typeof Mutation, never> {
+  public static readonly VERSION = VERSION;
+  public static readonly SCHEMA_SHA = SCHEMA_SHA;
+
+  constructor(executor: Executor) {
+    super(executor, Query, Mutation);
+  }
+
+  public readonly query = {
+    hero: <T extends Array<Selection>>(
+      variables: { episode?: Episode },
+      select: (t: CharacterSelector) => T
+    ) =>
+      this.executor.execute<
+        IQuery,
+        Operation<SelectionSet<[Field<"hero", any, SelectionSet<T>>]>>
+      >(
+        new Operation(
+          "hero",
+          "query",
+          new SelectionSet([Query.hero<T>(variables, select)])
+        )
+      ),
+
+    reviews: <T extends Array<Selection>>(
+      variables: { episode?: Episode },
+      select: (t: ReviewSelector) => T
+    ) =>
+      this.executor.execute<
+        IQuery,
+        Operation<SelectionSet<[Field<"reviews", any, SelectionSet<T>>]>>
+      >(
+        new Operation(
+          "reviews",
+          "query",
+          new SelectionSet([Query.reviews<T>(variables, select)])
+        )
+      ),
+
+    search: <T extends Array<Selection>>(
+      variables: { text?: string },
+      select: (t: SearchResultSelector) => T
+    ) =>
+      this.executor.execute<
+        IQuery,
+        Operation<SelectionSet<[Field<"search", any, SelectionSet<T>>]>>
+      >(
+        new Operation(
+          "search",
+          "query",
+          new SelectionSet([Query.search<T>(variables, select)])
+        )
+      ),
+
+    character: <T extends Array<Selection>>(
+      variables: { id?: string },
+      select: (t: CharacterSelector) => T
+    ) =>
+      this.executor.execute<
+        IQuery,
+        Operation<SelectionSet<[Field<"character", any, SelectionSet<T>>]>>
+      >(
+        new Operation(
+          "character",
+          "query",
+          new SelectionSet([Query.character<T>(variables, select)])
+        )
+      ),
+
+    droid: <T extends Array<Selection>>(
+      variables: { id?: string },
+      select: (t: DroidSelector) => T
+    ) =>
+      this.executor.execute<
+        IQuery,
+        Operation<SelectionSet<[Field<"droid", any, SelectionSet<T>>]>>
+      >(
+        new Operation(
+          "droid",
+          "query",
+          new SelectionSet([Query.droid<T>(variables, select)])
+        )
+      ),
+
+    human: <T extends Array<Selection>>(
+      variables: { id?: string },
+      select: (t: HumanSelector) => T
+    ) =>
+      this.executor.execute<
+        IQuery,
+        Operation<SelectionSet<[Field<"human", any, SelectionSet<T>>]>>
+      >(
+        new Operation(
+          "human",
+          "query",
+          new SelectionSet([Query.human<T>(variables, select)])
+        )
+      ),
+
+    starship: <T extends Array<Selection>>(
+      variables: { id?: string },
+      select: (t: StarshipSelector) => T
+    ) =>
+      this.executor.execute<
+        IQuery,
+        Operation<SelectionSet<[Field<"starship", any, SelectionSet<T>>]>>
+      >(
+        new Operation(
+          "starship",
+          "query",
+          new SelectionSet([Query.starship<T>(variables, select)])
+        )
+      ),
+  };
+
+  public readonly mutate = {
+    createReview: <T extends Array<Selection>>(
+      variables: { episode?: Episode; review?: ReviewInput },
+      select: (t: ReviewSelector) => T
+    ) =>
+      this.executor.execute<
+        IMutation,
+        Operation<SelectionSet<[Field<"createReview", any, SelectionSet<T>>]>>
+      >(
+        new Operation(
+          "createReview",
+          "mutation",
+          new SelectionSet([Mutation.createReview<T>(variables, select)])
+        )
+      ),
+  };
+}
