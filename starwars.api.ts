@@ -10,7 +10,7 @@ import {
   Variable,
   Executor,
   Client,
-} from "../../src";
+} from "@timkendall/tql";
 
 export const VERSION = "unversioned";
 

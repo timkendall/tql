@@ -105,19 +105,12 @@ export class Codegen {
     const hasSubscription = Boolean(this.schema.getSubscriptionType());
 
     return `
-    export class ${this.options.client!.name} extends Client<typeof Query, ${
-      hasMutation ? "typeof Mutation" : "never"
-    }, ${hasSubscription ? "typeof Subscription" : "never"}> {
+    export class ${this.options.client!.name} extends Client {
       public static readonly VERSION = VERSION
       public static readonly SCHEMA_SHA = SCHEMA_SHA
       
       constructor(executor: Executor) {
-        super(
-          executor, 
-          Query, 
-          ${hasMutation ? "Mutation," : ""}
-          ${hasSubscription ? "Subscription," : ""}
-        )
+        super(executor)
       }
 
       ${
@@ -623,7 +616,7 @@ const renderClientRootField = (
     ${field.name}: <T extends Array<Selection>>(
       variables: { ${field.args.map(renderVariables).join(", ")} },
       select: (t: ${baseType.toString()}Selector) => T
-    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+    ) => super.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
         field.name
       }', any, SelectionSet<T>> ]>>>(
       new Operation(
@@ -642,7 +635,7 @@ const renderClientRootField = (
     ${jsDocComment}
     ${field.name}: <T extends Array<Selection>>(
       select: (t: ${baseType.toString()}Selector) => T
-    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+    ) => super.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
         field.name
       }', any, SelectionSet<T>> ]>>>(
         new Operation(
