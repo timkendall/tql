@@ -912,20 +912,18 @@ export const mutation = <T extends Array<Selection>>(
 ): Operation<SelectionSet<T>> =>
   new Operation(name, "mutation", new SelectionSet(select(Mutation)));
 
-export class Starwars extends Client {
+export class Starwars implements Client {
   public static readonly VERSION = VERSION;
   public static readonly SCHEMA_SHA = SCHEMA_SHA;
 
-  constructor(executor: Executor) {
-    super(executor);
-  }
+  constructor(public readonly executor: Executor) {}
 
   public readonly query = {
     hero: <T extends Array<Selection>>(
       variables: { episode?: Episode },
       select: (t: CharacterSelector) => T
     ) =>
-      super.executor.execute<
+      this.executor.execute<
         IQuery,
         Operation<SelectionSet<[Field<"hero", any, SelectionSet<T>>]>>
       >(
@@ -940,7 +938,7 @@ export class Starwars extends Client {
       variables: { episode?: Episode },
       select: (t: ReviewSelector) => T
     ) =>
-      super.executor.execute<
+      this.executor.execute<
         IQuery,
         Operation<SelectionSet<[Field<"reviews", any, SelectionSet<T>>]>>
       >(
@@ -955,7 +953,7 @@ export class Starwars extends Client {
       variables: { text?: string },
       select: (t: SearchResultSelector) => T
     ) =>
-      super.executor.execute<
+      this.executor.execute<
         IQuery,
         Operation<SelectionSet<[Field<"search", any, SelectionSet<T>>]>>
       >(
@@ -970,7 +968,7 @@ export class Starwars extends Client {
       variables: { id?: string },
       select: (t: CharacterSelector) => T
     ) =>
-      super.executor.execute<
+      this.executor.execute<
         IQuery,
         Operation<SelectionSet<[Field<"character", any, SelectionSet<T>>]>>
       >(
@@ -985,7 +983,7 @@ export class Starwars extends Client {
       variables: { id?: string },
       select: (t: DroidSelector) => T
     ) =>
-      super.executor.execute<
+      this.executor.execute<
         IQuery,
         Operation<SelectionSet<[Field<"droid", any, SelectionSet<T>>]>>
       >(
@@ -1000,7 +998,7 @@ export class Starwars extends Client {
       variables: { id?: string },
       select: (t: HumanSelector) => T
     ) =>
-      super.executor.execute<
+      this.executor.execute<
         IQuery,
         Operation<SelectionSet<[Field<"human", any, SelectionSet<T>>]>>
       >(
@@ -1015,7 +1013,7 @@ export class Starwars extends Client {
       variables: { id?: string },
       select: (t: StarshipSelector) => T
     ) =>
-      super.executor.execute<
+      this.executor.execute<
         IQuery,
         Operation<SelectionSet<[Field<"starship", any, SelectionSet<T>>]>>
       >(
@@ -1032,7 +1030,7 @@ export class Starwars extends Client {
       variables: { episode?: Episode; review?: ReviewInput },
       select: (t: ReviewSelector) => T
     ) =>
-      super.executor.execute<
+      this.executor.execute<
         IMutation,
         Operation<SelectionSet<[Field<"createReview", any, SelectionSet<T>>]>>
       >(

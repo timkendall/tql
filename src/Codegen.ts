@@ -105,13 +105,11 @@ export class Codegen {
     const hasSubscription = Boolean(this.schema.getSubscriptionType());
 
     return `
-    export class ${this.options.client!.name} extends Client {
+    export class ${this.options.client!.name} implements Client {
       public static readonly VERSION = VERSION
       public static readonly SCHEMA_SHA = SCHEMA_SHA
       
-      constructor(executor: Executor) {
-        super(executor)
-      }
+      constructor(public readonly executor: Executor) {}
 
       ${
         hasQuery
@@ -616,7 +614,7 @@ const renderClientRootField = (
     ${field.name}: <T extends Array<Selection>>(
       variables: { ${field.args.map(renderVariables).join(", ")} },
       select: (t: ${baseType.toString()}Selector) => T
-    ) => super.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
         field.name
       }', any, SelectionSet<T>> ]>>>(
       new Operation(
@@ -635,7 +633,7 @@ const renderClientRootField = (
     ${jsDocComment}
     ${field.name}: <T extends Array<Selection>>(
       select: (t: ${baseType.toString()}Selector) => T
-    ) => super.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
         field.name
       }', any, SelectionSet<T>> ]>>>(
         new Operation(

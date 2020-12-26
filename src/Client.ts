@@ -3,12 +3,10 @@ import { ExecutionResult } from "graphql";
 
 import { SelectionSet, Operation, Result } from "./Operation";
 
-export class Client {
-  public readonly query: Record<string, unknown>;
-  public readonly mutate?: Record<string, unknown>;
-  public readonly subscribe?: Record<string, unknown>;
-
-  constructor(protected readonly executor: Executor) {}
+export interface Client {
+  readonly query: Record<string, unknown>;
+  readonly mutate?: Record<string, unknown>;
+  readonly subscribe?: Record<string, unknown>;
 }
 
 export class HTTPExecutor implements Executor {
