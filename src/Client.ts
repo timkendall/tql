@@ -3,6 +3,28 @@ import { ExecutionResult } from "graphql";
 
 import { SelectionSet, Operation, Result } from "./Operation";
 
+export interface Client {
+  readonly query: Record<string, unknown>;
+  readonly mutate?: Record<string, unknown>;
+  readonly subscribe?: Record<string, unknown>;
+}
+
+export class HTTPExecutor implements Executor {
+  constructor(public readonly endpoint: string) {}
+
+  execute<RootType, TOperation extends Operation<SelectionSet<any>>>(
+    operation: TOperation
+  ): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>> {
+    return execute<RootType, TOperation>(this.endpoint, operation);
+  }
+}
+
+export interface Executor {
+  execute<RootType, TOperation extends Operation<SelectionSet<any>>>(
+    operation: TOperation
+  ): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>>;
+}
+
 export const execute = <
   RootType,
   TOperation extends Operation<SelectionSet<any>>

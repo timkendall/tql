@@ -16,11 +16,25 @@ import {
   GraphQLUnionType,
   GraphQLInputType,
   GraphQLOutputType,
+  printSchema,
 } from "graphql";
 import prettier from "prettier";
+import { createHash } from "crypto";
+
+export interface CodegenOptions {
+  readonly schema: GraphQLSchema;
+  readonly client?: { name: string; version?: string };
+  readonly modulePath?: string;
+}
 
 export class Codegen {
-  constructor(public readonly schema: GraphQLSchema) {}
+  public readonly schema: GraphQLSchema;
+  public readonly modulePath: string;
+
+  constructor(private readonly options: CodegenOptions) {
+    this.schema = options.schema;
+    this.modulePath = options.modulePath ?? "@timkendall/tql";
+  }
 
   private get imports() {
     return [
@@ -35,9 +49,23 @@ export class Codegen {
       Selection,
       SelectionSet,
       Variable,
-    } from '@timkendall/tql'
+      Executor,
+      Client,
+    } from '${this.modulePath}'
     `,
     ];
+  }
+
+  private get version() {
+    return `export const VERSION = "${
+      this.options.client?.version ?? "unversioned"
+    }"`;
+  }
+
+  private get schemaSha() {
+    return `export const SCHEMA_SHA = "${computeSha(
+      printSchema(this.schema)
+    )}"`;
   }
 
   private get query() {
@@ -69,6 +97,57 @@ export class Codegen {
       ): Operation<SelectionSet<T>> => new Operation(name, "subscription", new SelectionSet(select(Subscription)))
     `
       : "";
+  }
+
+  private get client() {
+    const hasQuery = Boolean(this.schema.getQueryType());
+    const hasMutation = Boolean(this.schema.getMutationType());
+    const hasSubscription = Boolean(this.schema.getSubscriptionType());
+
+    return `
+    export class ${this.options.client!.name} implements Client {
+      public static readonly VERSION = VERSION
+      public static readonly SCHEMA_SHA = SCHEMA_SHA
+      
+      constructor(public readonly executor: Executor) {}
+
+      ${
+        hasQuery
+          ? `
+      public readonly query = {
+        ${Object.values(this.schema.getQueryType()!.getFields())
+          .map((field) => renderClientRootField("Query", field))
+          .join("\n")}
+      }
+      `
+          : ""
+      }
+
+      ${
+        hasMutation
+          ? `
+      public readonly mutate = {
+        ${Object.values(this.schema.getMutationType()!.getFields())
+          .map((field) => renderClientRootField("Mutation", field))
+          .join("\n")}
+      }
+      `
+          : ""
+      }
+
+      ${
+        hasSubscription
+          ? `
+      public readonly subscribe = {
+        ${Object.values(this.schema.getSubscriptionType()!.getFields())
+          .map((field) => renderClientRootField("Subscription", field))
+          .join("\n")}
+      }
+      `
+          : ""
+      }
+    }
+    `;
   }
 
   public render(): string {
@@ -106,6 +185,8 @@ export class Codegen {
 
     const text = [
       ...this.imports,
+      this.version,
+      this.schemaSha,
       ...enums,
       ...interfaces,
       ...unions,
@@ -113,6 +194,7 @@ export class Codegen {
       this.query,
       this.mutation,
       this.subscription,
+      this.options.client && this.client,
     ];
 
     return prettier.format(text.join("\n\n"), { parser: "typescript" });
@@ -380,44 +462,6 @@ export class Codegen {
             .join(", ")} }) => Field<"${name}", [/* @todo */]>`
         : `${jsDocComment}\n${name}: () => Field<"${name}">`;
     } else {
-      const renderArgument = (arg: GraphQLArgument): string => {
-        const _base = getBaseInputType(arg.type);
-
-        // @note Janky enum value support
-        return _base instanceof GraphQLEnumType
-          ? `Argument<"${arg.name}", Variable<"${
-              arg.name
-            }"> | ${getBaseInputType(arg.type).toString()}>`
-          : `Argument<"${arg.name}", Variable<"${
-              arg.name
-            }"> | ${renderInputType(arg.type)}>`;
-      };
-
-      const renderInputType = (type: GraphQLInputType): string => {
-        const _base = getBaseInputType(type);
-
-        if (_base instanceof GraphQLScalarType) {
-          return toPrimitive(_base);
-        } else if (
-          _base instanceof GraphQLEnumType ||
-          _base instanceof GraphQLInputObjectType
-        ) {
-          return _base.name;
-        } else {
-          throw new Error("Unable to render inputType.");
-        }
-      };
-
-      const renderVariable = (arg: GraphQLArgument): string => {
-        return arg instanceof GraphQLNonNull
-          ? `${arg.name}: Variable<"${arg.name}"> | ${renderInputType(
-              arg.type
-            )}`
-          : `${arg.name}?: Variable<"${arg.name}"> | ${renderInputType(
-              arg.type
-            )}`;
-      };
-
       // @todo render arguments correctly
       // @todo restrict allowed Field types
       return args.length > 0
@@ -485,28 +529,6 @@ export class Codegen {
           : `new Argument("${arg.name}", variables.${arg.name})`;
       };
 
-      const renderInputType = (type: GraphQLInputType): string => {
-        const _base = getBaseInputType(type);
-
-        if (_base instanceof GraphQLScalarType) {
-          return toPrimitive(_base);
-        } else if (_base instanceof GraphQLEnumType) {
-          return _base.name;
-        } else {
-          return "unknown";
-        }
-      };
-
-      const renderVariable = (arg: GraphQLArgument): string => {
-        return arg instanceof GraphQLNonNull
-          ? `${arg.name}: Variable<"${arg.name}"> | ${renderInputType(
-              arg.type
-            )}`
-          : `${arg.name}?: Variable<"${arg.name}"> | ${renderInputType(
-              arg.type
-            )}`;
-      };
-
       // @todo render arguments correctly
       // @todo restrict allowed Field types
       return args.length > 0
@@ -566,6 +588,65 @@ const toPrimitive = (
   }
 };
 
+const renderClientRootField = (
+  rootType: "Query" | "Mutation" | "Subscription",
+  field: GraphQLField<any, any>
+): string => {
+  const baseType = getBaseOutputType(field.type);
+
+  const jsDocComments = [
+    field.description && `@description ${field.description}`,
+    field.deprecationReason && `@deprecated ${field.deprecationReason}`,
+  ].filter(Boolean);
+
+  const jsDocComment =
+    jsDocComments.length > 0
+      ? `
+  /**
+   ${jsDocComments.map((comment) => "* " + comment).join("\n")}
+   */
+  `
+      : "";
+
+  return field.args.length > 0
+    ? `
+    ${jsDocComment}
+    ${field.name}: <T extends Array<Selection>>(
+      variables: { ${field.args.map(renderVariables).join(", ")} },
+      select: (t: ${baseType.toString()}Selector) => T
+    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+        field.name
+      }', any, SelectionSet<T>> ]>>>(
+      new Operation(
+        "${field.name}", 
+        "${rootType.toLowerCase()}", 
+        new SelectionSet([
+          ${rootType}.${field.name}<T>(
+            variables, 
+            select,
+          ),
+        ]),
+      ),
+    ),
+  `
+    : `
+    ${jsDocComment}
+    ${field.name}: <T extends Array<Selection>>(
+      select: (t: ${baseType.toString()}Selector) => T
+    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+        field.name
+      }', any, SelectionSet<T>> ]>>>(
+        new Operation(
+          "${field.name}", 
+          "${rootType.toLowerCase()}", 
+          new SelectionSet([
+            ${rootType}.${field.name}<T>(select),
+          ]),
+        )
+      ),
+  `;
+};
+
 const renderInterfaceField = (field: GraphQLField<any, any, any>): string => {
   const isList =
     field.type instanceof GraphQLList ||
@@ -601,4 +682,48 @@ const renderConditionalSelectorArgument = (types: string[]) => {
       .join("")
       .concat(" never");
   }
+};
+
+const renderVariables = (arg: GraphQLArgument): string => {
+  return arg instanceof GraphQLNonNull
+    ? `${arg.name}: ${renderInputType(arg.type)}`
+    : `${arg.name}?: ${renderInputType(arg.type)}`;
+};
+
+const renderVariable = (arg: GraphQLArgument): string => {
+  return arg instanceof GraphQLNonNull
+    ? `${arg.name}: Variable<"${arg.name}"> | ${renderInputType(arg.type)}`
+    : `${arg.name}?: Variable<"${arg.name}"> | ${renderInputType(arg.type)}`;
+};
+
+const renderArgument = (arg: GraphQLArgument): string => {
+  const _base = getBaseInputType(arg.type);
+
+  // @note Janky enum value support
+  return _base instanceof GraphQLEnumType
+    ? `Argument<"${arg.name}", Variable<"${arg.name}"> | ${getBaseInputType(
+        arg.type
+      ).toString()}>`
+    : `Argument<"${arg.name}", Variable<"${arg.name}"> | ${renderInputType(
+        arg.type
+      )}>`;
+};
+
+const renderInputType = (type: GraphQLInputType): string => {
+  const _base = getBaseInputType(type);
+
+  if (_base instanceof GraphQLScalarType) {
+    return toPrimitive(_base);
+  } else if (
+    _base instanceof GraphQLEnumType ||
+    _base instanceof GraphQLInputObjectType
+  ) {
+    return _base.name;
+  } else {
+    throw new Error("Unable to render inputType.");
+  }
+};
+
+const computeSha = (typeDefs: string): string => {
+  return createHash("sha256").update(typeDefs).digest("hex").substring(0, 7);
 };
