@@ -1,11 +1,12 @@
+name: Publish to Package
+
 on:
   release:
-    types: [created]
-
-name: Publish to NPM
+    types: [released]
 
 jobs:
-  name: npm-publish
+  publish:
+    name: npm-publish
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
