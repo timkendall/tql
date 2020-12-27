@@ -1,6 +1,6 @@
 on:
   release:
-    types: [released]
+    types: [published]
 
 name: Publish to NPM
 
