@@ -1,6 +1,7 @@
 {
   "name": "@timkendall/tql",
   "author": "Timothy Kendall",
+  "license": "MIT",
   "version": "0.1.0",
   "description": "Write GraphQL queries in TypeScript.",
   "main": "dist/index.js",
@@ -22,7 +23,6 @@
     "format": "prettier --write",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
-  "license": "MIT",
   "dependencies": {
     "fs-extra": "^9.0.1",
     "node-fetch": "^2.6.1",
@@ -30,6 +30,7 @@
     "yargs": "^16.1.0"
   },
   "devDependencies": {
+    "@apollo/client": "^3.3.6",
     "@arkweid/lefthook": "^0.7.2",
     "@types/fs-extra": "^9.0.2",
     "@types/jest": "^26.0.19",
