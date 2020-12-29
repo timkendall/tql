@@ -10,6 +10,8 @@ import {
 const client = new ApolloClient({ cache: new InMemoryCache() });
 
 const example = query("Apollo Example", (t) => [
+  t.character({ id: "foo" }, (t) => [t.id(), t.friends((t) => [t.id()])]),
+
   t.starship({ id: "foo" }, (t) => [
     t.id(),
     t.name(),
@@ -23,5 +25,5 @@ const apolloQuery = client.query<
 >({ query: example.toDocument() });
 
 apolloQuery.then((result) => {
-  console.log(result.data.starship.length);
+  console.log(result.data.starship?.name);
 });

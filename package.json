@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "build": "tsc -b",
+    "build:release": "tsc --build tsconfig.release.json",
     "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "dev": "tsc -b -w",
     "prepush": "yarn test",
