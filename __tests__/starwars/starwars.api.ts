@@ -1,7 +1,6 @@
 import {
   NamedType,
   Argument,
-  Value,
   Field,
   InlineFragment,
   Operation,
@@ -425,7 +424,9 @@ interface HumanSelector {
    * @description Height in the preferred unit, default is meters
    */
 
-  height: (variables: { unit: unknown }) => Field<"height", [/* @todo */]>;
+  height: (variables: {
+    unit?: Variable<"unit"> | LengthUnit;
+  }) => Field<"height", [Argument<"unit", Variable<"unit"> | LengthUnit>]>;
 
   /**
    * @description Mass in kilograms, or null if unknown
@@ -875,7 +876,9 @@ interface StarshipSelector {
    * @description Length of the starship, along the longest axis
    */
 
-  length: (variables: { unit: unknown }) => Field<"length", [/* @todo */]>;
+  length: (variables: {
+    unit?: Variable<"unit"> | LengthUnit;
+  }) => Field<"length", [Argument<"unit", Variable<"unit"> | LengthUnit>]>;
 
   coordinates: () => Field<"coordinates">;
 }

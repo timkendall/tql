@@ -42,7 +42,6 @@ export class Codegen {
     import {
       NamedType,
       Argument,
-      Value,
       Field,
       InlineFragment,
       Operation,
@@ -455,14 +454,14 @@ export class Codegen {
           ? toPrimitive(baseType)
           : baseType.name;
 
-      // @todo render arguments correctly
       return args.length > 0
         ? `${jsDocComment}\n${name}: (variables: { ${args
-            .map((a) => `${a.name}: unknown`)
-            .join(", ")} }) => Field<"${name}", [/* @todo */]>`
+            .map(renderVariable)
+            .join(", ")} }) => Field<"${name}", [ ${args
+            .map(renderArgument)
+            .join(", ")} ]>`
         : `${jsDocComment}\n${name}: () => Field<"${name}">`;
     } else {
-      // @todo render arguments correctly
       // @todo restrict allowed Field types
       return args.length > 0
         ? `
@@ -486,10 +485,6 @@ export class Codegen {
   private field(field: GraphQLField<any, any, any>): string {
     const { name, args, type } = field;
 
-    const isList =
-      type instanceof GraphQLList ||
-      (type instanceof GraphQLNonNull && type.ofType instanceof GraphQLList);
-    const isNonNull = type instanceof GraphQLNonNull;
     const baseType = getBaseOutputType(type);
 
     const jsDocComments = [
@@ -510,11 +505,6 @@ export class Codegen {
       baseType instanceof GraphQLScalarType ||
       baseType instanceof GraphQLEnumType
     ) {
-      const fieldType =
-        baseType instanceof GraphQLScalarType
-          ? toPrimitive(baseType)
-          : baseType.name;
-
       // @todo render arguments correctly
       return args.length > 0
         ? jsDocComment.concat(`${name}: (variables) => new Field("${name}"),`)
@@ -529,7 +519,6 @@ export class Codegen {
           : `new Argument("${arg.name}", variables.${arg.name})`;
       };
 
-      // @todo render arguments correctly
       // @todo restrict allowed Field types
       return args.length > 0
         ? `
