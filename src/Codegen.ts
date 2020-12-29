@@ -645,15 +645,27 @@ const renderInterfaceField = (field: GraphQLField<any, any, any>): string => {
   const baseType = getBaseOutputType(field.type);
 
   if (baseType instanceof GraphQLScalarType) {
-    return `${field.name}: ${toPrimitive(baseType)}` + (isList ? "[]" : "");
+    return (
+      `${field.name}: ${toPrimitive(baseType)}` +
+      (isList ? "[]" : "") +
+      (isNonNull ? "" : " | null")
+    );
   } else if (baseType instanceof GraphQLEnumType) {
-    return `${field.name}: ${baseType.name}` + (isList ? "[]" : "");
+    return (
+      `${field.name}: ${baseType.name}` +
+      (isList ? "[]" : "") +
+      (isNonNull ? "" : " | null")
+    );
   } else if (
     baseType instanceof GraphQLInterfaceType ||
     baseType instanceof GraphQLUnionType ||
     baseType instanceof GraphQLObjectType
   ) {
-    return `${field.name}: I${baseType.name}` + (isList ? "[]" : "");
+    return (
+      `${field.name}: I${baseType.name}` +
+      (isList ? "[]" : "") +
+      (isNonNull ? "" : " | null")
+    );
   } else {
     throw new Error("Unable to render interface field.");
   }

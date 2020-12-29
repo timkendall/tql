@@ -91,13 +91,13 @@ export const SearchResult: SearchResultSelector = {
 };
 
 export interface IQuery {
-  hero: ICharacter;
-  reviews: IReview[];
-  search: ISearchResult[];
-  character: ICharacter;
-  droid: IDroid;
-  human: IHuman;
-  starship: IStarship;
+  hero: ICharacter | null;
+  reviews: IReview[] | null;
+  search: ISearchResult[] | null;
+  character: ICharacter | null;
+  droid: IDroid | null;
+  human: IHuman | null;
+  starship: IStarship | null;
 }
 
 interface QuerySelector {
@@ -221,7 +221,7 @@ export const Query: QuerySelector = {
 };
 
 export interface IMutation {
-  createReview: IReview;
+  createReview: IReview | null;
 }
 
 interface MutationSelector {
@@ -261,7 +261,7 @@ export interface ICharacter {
   __typename: string;
   id: string;
   name: string;
-  friends: ICharacter[];
+  friends: ICharacter[] | null;
   friendsConnection: IFriendsConnection;
   appearsIn: Episode[];
 }
@@ -393,10 +393,10 @@ export const Character: CharacterSelector = {
 
 export interface IHuman extends ICharacter {
   __typename: "Human";
-  homePlanet: string;
-  height: number;
-  mass: number;
-  starships: IStarship[];
+  homePlanet: string | null;
+  height: number | null;
+  mass: number | null;
+  starships: IStarship[] | null;
 }
 
 interface HumanSelector {
@@ -556,7 +556,7 @@ export const Human: HumanSelector = {
 
 export interface IDroid extends ICharacter {
   __typename: "Droid";
-  primaryFunction: string;
+  primaryFunction: string | null;
 }
 
 interface DroidSelector {
@@ -670,9 +670,9 @@ export const Droid: DroidSelector = {
 };
 
 export interface IFriendsConnection {
-  totalCount: number;
-  edges: IFriendsEdge[];
-  friends: ICharacter[];
+  totalCount: number | null;
+  edges: IFriendsEdge[] | null;
+  friends: ICharacter[] | null;
   pageInfo: IPageInfo;
 }
 
@@ -754,7 +754,7 @@ export const FriendsConnection: FriendsConnectionSelector = {
 
 export interface IFriendsEdge {
   cursor: string;
-  node: ICharacter;
+  node: ICharacter | null;
 }
 
 interface FriendsEdgeSelector {
@@ -792,8 +792,8 @@ export const FriendsEdge: FriendsEdgeSelector = {
 };
 
 export interface IPageInfo {
-  startCursor: string;
-  endCursor: string;
+  startCursor: string | null;
+  endCursor: string | null;
   hasNextPage: boolean;
 }
 
@@ -817,7 +817,7 @@ export const PageInfo: PageInfoSelector = {
 
 export interface IReview {
   stars: number;
-  commentary: string;
+  commentary: string | null;
 }
 
 interface ReviewSelector {
@@ -853,8 +853,8 @@ export const Review: ReviewSelector = {
 export interface IStarship {
   id: string;
   name: string;
-  length: number;
-  coordinates: number[];
+  length: number | null;
+  coordinates: number[] | null;
 }
 
 interface StarshipSelector {

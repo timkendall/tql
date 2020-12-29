@@ -5,7 +5,7 @@
 - [x] Nested input object support
 - [x] Union type support
 - [x] `mutation` or `subscription` operation support
-- [ ] Object and list nullability support (seems like maybe a TypeScript bug right now?)
+- [x] Nullable field support
 - [ ] Variable definition support
 
 ## perhaps in 1.x

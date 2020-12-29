@@ -27,11 +27,6 @@ import {
   documentOf,
 } from "./AST";
 
-// For each `Selection` in `SelectionSet<infer Selections>`
-// A. Map to scalar field if Selection is Field<any, never>
-// B. Map to object field if Selection is Field<any, SelectionSet<any>
-// C. Breakout to union object if Selection is InlineFragment<any, SelectionSet<any>>
-
 export type Result<
   Type,
   TSelectionSet extends SelectionSet<Array<Selection>>
@@ -49,15 +44,18 @@ export type Result<
         ? Type[Key]
         : TSelectionSet["selections"][number] extends infer U
         ? U extends Field<Key, any, infer Selections>
-          ? Result<Type[Key], Selections>
+          ? null extends Type[Key]
+            ? Result<NonNullable<Type[Key]>, Selections> | null
+            : Result<Type[Key], Selections>
           : never
         : never;
-      // @note Should result in ({common} & {specific1}) | ({common} & {specific2})?
     } &
       (TSelectionSet["selections"][number] extends infer U
         ? U extends InlineFragment<infer TypeCondition, infer SelectionSet>
           ? TypeCondition extends NamedType<any, infer Type>
-            ? Result<Type, SelectionSet>
+            ? null extends Type
+              ? Result<NonNullable<Type>, SelectionSet> | null
+              : Result<Type, SelectionSet>
             : {}
           : {}
         : {}); // @note need to use empty objects to not nuke the left side of our intersection type (&)

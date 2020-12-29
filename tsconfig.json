@@ -1,10 +1,10 @@
 {
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "examples/**/*", "__tests__/**/*"],
   "compilerOptions": {
     "strict": true,
-    "rootDir": "src",
-    "outDir": "dist",
-    "sourceMap": true,
+    "noEmit": true,
+    "rootDir": ".",
+    "sourceMap": false,
     "target": "ES2019",
     "module": "commonjs",
     "noUnusedLocals": false,
