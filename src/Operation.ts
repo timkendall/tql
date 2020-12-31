@@ -27,6 +27,8 @@ import {
   documentOf,
 } from "./AST";
 
+type SetIntersection<A, B> = A extends B ? A : never;
+
 export type Result<
   Type,
   TSelectionSet extends SelectionSet<Array<Selection>>
@@ -41,7 +43,7 @@ export type Result<
       [Key in FilterFragments<
         TSelectionSet["selections"]
       >[number]["name"]]: Type[Key] extends Primitive
-        ? Type[Key]
+        ? Type[Key] //SetIntersection<keyof Type, Key> extends never ?  unknown : Type[Key] // @note use `unknown` as the default type
         : TSelectionSet["selections"][number] extends infer U
         ? U extends Field<Key, any, infer Selections>
           ? null extends Type[Key]
@@ -207,18 +209,6 @@ export function getBaseType(type: Type): NamedType<any, any> {
   }
 }
 
-/**
- * Utility type for parsing the base type from a `Type`
- *
- * Example:
- * type User = NamedType<'User', { id: string}>
- *
- * type A = BaseType<User>
- * type B = BaseType<ListType<User>>
- * type C = BaseType<NonNullType<User>>
- * type D = BaseType<NonNullType<ListType<User>>>
- * type E = BaseType<NonNullType<ListType<NonNullType<User>>>>
- */
 export type BaseType<T extends Type> = T extends NamedType<string, infer Type>
   ? Type
   : T extends NonNullType<infer Type>
