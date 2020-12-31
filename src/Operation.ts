@@ -29,11 +29,6 @@ import {
 
 type SetIntersection<A, B> = A extends B ? A : never;
 
-interface TQ {
-  [field: string]: number;
-}
-type Test = SetIntersection<keyof TQ, "ff">;
-
 export type Result<
   Type,
   TSelectionSet extends SelectionSet<Array<Selection>>
@@ -214,18 +209,6 @@ export function getBaseType(type: Type): NamedType<any, any> {
   }
 }
 
-/**
- * Utility type for parsing the base type from a `Type`
- *
- * Example:
- * type User = NamedType<'User', { id: string}>
- *
- * type A = BaseType<User>
- * type B = BaseType<ListType<User>>
- * type C = BaseType<NonNullType<User>>
- * type D = BaseType<NonNullType<ListType<User>>>
- * type E = BaseType<NonNullType<ListType<NonNullType<User>>>>
- */
 export type BaseType<T extends Type> = T extends NamedType<string, infer Type>
   ? Type
   : T extends NonNullType<infer Type>
