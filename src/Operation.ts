@@ -27,6 +27,13 @@ import {
   documentOf,
 } from "./AST";
 
+type SetIntersection<A, B> = A extends B ? A : never;
+
+interface TQ {
+  [field: string]: number;
+}
+type Test = SetIntersection<keyof TQ, "ff">;
+
 export type Result<
   Type,
   TSelectionSet extends SelectionSet<Array<Selection>>
@@ -41,7 +48,7 @@ export type Result<
       [Key in FilterFragments<
         TSelectionSet["selections"]
       >[number]["name"]]: Type[Key] extends Primitive
-        ? Type[Key]
+        ? Type[Key] //SetIntersection<keyof Type, Key> extends never ?  unknown : Type[Key] // @note use `unknown` as the default type
         : TSelectionSet["selections"][number] extends infer U
         ? U extends Field<Key, any, infer Selections>
           ? null extends Type[Key]
