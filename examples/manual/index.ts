@@ -1,4 +1,4 @@
-import { selector, operation, Result } from "../../dist";
+import { selector, operation, Result } from "../../src";
 
 interface Query {
   foo: string;
