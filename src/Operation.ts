@@ -11,7 +11,6 @@ import {
   NamedTypeNode,
   InlineFragmentNode,
 } from "graphql";
-
 import {
   argumentOf,
   namedTypeOf,
@@ -54,7 +53,7 @@ export type Result<
     } &
       (TSelectionSet["selections"][number] extends infer U
         ? U extends InlineFragment<infer TypeCondition, infer SelectionSet>
-          ? TypeCondition extends NamedType<any, infer Type>
+          ? TypeCondition extends NamedType<string, infer Type>
             ? null extends Type
               ? Result<NonNullable<Type>, SelectionSet> | null
               : Result<Type, SelectionSet>
