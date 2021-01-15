@@ -283,6 +283,12 @@ export class Codegen {
       .map((type) => `I${type}`)
       .join(" | ")}
 
+      export const is${
+        type.name
+      } = (object: Record<string, any>): object is Partial<I${type.name}> => {
+        return object.__typename === "${type.name}";
+      };
+
       interface ${type.name}Selector {
         __typename: () => Field<"__typename">
 
@@ -293,7 +299,9 @@ export class Codegen {
           select: (t: ${renderConditionalSelectorArgument(
             implementations.map((name) => name)
           )}) => T
-        ) => InlineFragment<NamedType<F, any>, SelectionSet<T>>
+        ) => InlineFragment<NamedType<F, ${renderConditionalNamedType(
+          implementations.map((name) => name)
+        )}>, SelectionSet<T>>
       }
 
       export const ${type.name}: ${type.name}Selector = {
@@ -367,6 +375,7 @@ export class Codegen {
     } else {
       return `
         export interface I${type.name} {
+          __typename: "${type.name}"
           ${fields.map(renderInterfaceField).join("\n")}
         }
 
@@ -680,6 +689,19 @@ const renderConditionalSelectorArgument = (types: string[]) => {
   } else {
     return types
       .map((t) => `F extends "${t}" ? ${t}Selector : `)
+      .join("")
+      .concat(" never");
+  }
+};
+
+const renderConditionalNamedType = (types: string[]) => {
+  const [first, ...rest] = types;
+
+  if (rest.length === 0) {
+    return `I${first}`;
+  } else {
+    return types
+      .map((t) => `F extends "${t}" ? I${t} : `)
       .join("")
       .concat(" never");
   }
