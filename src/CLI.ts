@@ -9,7 +9,6 @@ import {
 } from "graphql";
 
 import { Codegen } from "./Codegen";
-import { Client } from "./Client";
 
 Yargs.command(
   "$0 <schema>",
@@ -31,6 +30,12 @@ Yargs.command(
         default: "unversioned",
         description: "Semantic versioning tag (ex. 1.0.0).",
       })
+      .option("mutableFields", {
+        type: "boolean",
+        default: false,
+        description:
+          "Generate schema types and results as mutable (default is read-only).",
+      })
       .option("module-path", {
         type: "string",
         description: "Path to @timkendall/tql module.",
@@ -47,6 +52,7 @@ Yargs.command(
       client: argv.client
         ? { name: argv.client, version: argv.tag }
         : undefined,
+      mutableFields: argv.mutableFields,
       modulePath: argv["module-path"],
     });
 

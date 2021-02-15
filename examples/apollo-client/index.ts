@@ -5,7 +5,8 @@ import {
   query,
   IQuery,
   LengthUnit,
-} from "../../__tests__/starwars/starwars.api";
+  Episode,
+} from "../../__tests__/starwars/starwars.sdk";
 
 const client = new ApolloClient({ cache: new InMemoryCache() });
 
@@ -18,6 +19,8 @@ const example = query("Apollo Example", (t) => [
     t.length({ unit: LengthUnit.FOOT }),
     t.coordinates(),
   ]),
+
+  t.reviews({ episode: Episode.JEDI }, (t) => [t.commentary()]),
 ]);
 
 const apolloQuery = client.query<

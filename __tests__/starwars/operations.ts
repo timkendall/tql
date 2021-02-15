@@ -1,4 +1,4 @@
-import { query, Episode } from "./starwars.api";
+import { query, Episode } from "./starwars.sdk";
 
 export const kitchensink = query("Example", (t) => [
   t.search({ text: "han" }, (t) => [

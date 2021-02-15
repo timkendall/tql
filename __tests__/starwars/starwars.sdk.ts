@@ -28,23 +28,32 @@ export enum LengthUnit {
 }
 
 export interface ReviewInput {
-  stars: number;
-  commentary?: string;
-  favorite_color?: ColorInput;
+  readonly stars: number;
+  readonly commentary?: string;
+  readonly favorite_color?: ColorInput;
 }
 
 export interface ColorInput {
-  red: number;
-  green: number;
-  blue: number;
+  readonly red: number;
+  readonly green: number;
+  readonly blue: number;
 }
 
 type ISearchResult = IHuman | IDroid | IStarship;
 
-interface SearchResultSelector {
-  __typename: () => Field<"__typename">;
+export const isSearchResult = (
+  object: Record<string, any>
+): object is Partial<ISearchResult> => {
+  return object.__typename === "SearchResult";
+};
 
-  on: <T extends Array<Selection>, F extends "Human" | "Droid" | "Starship">(
+interface SearchResultSelector {
+  readonly __typename: () => Field<"__typename">;
+
+  readonly on: <
+    T extends Array<Selection>,
+    F extends "Human" | "Droid" | "Starship"
+  >(
     type: F,
     select: (
       t: F extends "Human"
@@ -55,7 +64,19 @@ interface SearchResultSelector {
         ? StarshipSelector
         : never
     ) => T
-  ) => InlineFragment<NamedType<F, any>, SelectionSet<T>>;
+  ) => InlineFragment<
+    NamedType<
+      F,
+      F extends "Human"
+        ? IHuman
+        : F extends "Droid"
+        ? IDroid
+        : F extends "Starship"
+        ? IStarship
+        : never
+    >,
+    SelectionSet<T>
+  >;
 }
 
 export const SearchResult: SearchResultSelector = {
@@ -91,19 +112,20 @@ export const SearchResult: SearchResultSelector = {
 };
 
 export interface IQuery {
-  hero: ICharacter | null;
-  reviews: IReview[] | null;
-  search: ISearchResult[] | null;
-  character: ICharacter | null;
-  droid: IDroid | null;
-  human: IHuman | null;
-  starship: IStarship | null;
+  readonly __typename: "Query";
+  readonly hero: ICharacter | null;
+  readonly reviews: ReadonlyArray<IReview> | null;
+  readonly search: ReadonlyArray<ISearchResult> | null;
+  readonly character: ICharacter | null;
+  readonly droid: IDroid | null;
+  readonly human: IHuman | null;
+  readonly starship: IStarship | null;
 }
 
 interface QuerySelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
-  hero: <T extends Array<Selection>>(
+  readonly hero: <T extends Array<Selection>>(
     variables: { episode?: Variable<"episode"> | Episode },
     select: (t: CharacterSelector) => T
   ) => Field<
@@ -112,7 +134,7 @@ interface QuerySelector {
     SelectionSet<T>
   >;
 
-  reviews: <T extends Array<Selection>>(
+  readonly reviews: <T extends Array<Selection>>(
     variables: { episode?: Variable<"episode"> | Episode },
     select: (t: ReviewSelector) => T
   ) => Field<
@@ -121,7 +143,7 @@ interface QuerySelector {
     SelectionSet<T>
   >;
 
-  search: <T extends Array<Selection>>(
+  readonly search: <T extends Array<Selection>>(
     variables: { text?: Variable<"text"> | string },
     select: (t: SearchResultSelector) => T
   ) => Field<
@@ -130,7 +152,7 @@ interface QuerySelector {
     SelectionSet<T>
   >;
 
-  character: <T extends Array<Selection>>(
+  readonly character: <T extends Array<Selection>>(
     variables: { id?: Variable<"id"> | string },
     select: (t: CharacterSelector) => T
   ) => Field<
@@ -139,7 +161,7 @@ interface QuerySelector {
     SelectionSet<T>
   >;
 
-  droid: <T extends Array<Selection>>(
+  readonly droid: <T extends Array<Selection>>(
     variables: { id?: Variable<"id"> | string },
     select: (t: DroidSelector) => T
   ) => Field<
@@ -148,7 +170,7 @@ interface QuerySelector {
     SelectionSet<T>
   >;
 
-  human: <T extends Array<Selection>>(
+  readonly human: <T extends Array<Selection>>(
     variables: { id?: Variable<"id"> | string },
     select: (t: HumanSelector) => T
   ) => Field<
@@ -157,7 +179,7 @@ interface QuerySelector {
     SelectionSet<T>
   >;
 
-  starship: <T extends Array<Selection>>(
+  readonly starship: <T extends Array<Selection>>(
     variables: { id?: Variable<"id"> | string },
     select: (t: StarshipSelector) => T
   ) => Field<
@@ -221,13 +243,14 @@ export const Query: QuerySelector = {
 };
 
 export interface IMutation {
-  createReview: IReview | null;
+  readonly __typename: "Mutation";
+  readonly createReview: IReview | null;
 }
 
 interface MutationSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
-  createReview: <T extends Array<Selection>>(
+  readonly createReview: <T extends Array<Selection>>(
     variables: {
       episode?: Variable<"episode"> | Episode;
       review?: Variable<"review"> | ReviewInput;
@@ -258,34 +281,34 @@ export const Mutation: MutationSelector = {
 };
 
 export interface ICharacter {
-  __typename: string;
-  id: string;
-  name: string;
-  friends: ICharacter[] | null;
-  friendsConnection: IFriendsConnection;
-  appearsIn: Episode[];
+  readonly __typename: string;
+  readonly id: string;
+  readonly name: string;
+  readonly friends: ReadonlyArray<ICharacter> | null;
+  readonly friendsConnection: IFriendsConnection;
+  readonly appearsIn: ReadonlyArray<Episode>;
 }
 
 interface CharacterSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
   /**
    * @description The ID of the character
    */
 
-  id: () => Field<"id">;
+  readonly id: () => Field<"id">;
 
   /**
    * @description The name of the character
    */
 
-  name: () => Field<"name">;
+  readonly name: () => Field<"name">;
 
   /**
    * @description The friends of the character, or an empty list if they have none
    */
 
-  friends: <T extends Array<Selection>>(
+  readonly friends: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"friends", never, SelectionSet<T>>;
 
@@ -293,7 +316,7 @@ interface CharacterSelector {
    * @description The friends of the character exposed as a connection with edges
    */
 
-  friendsConnection: <T extends Array<Selection>>(
+  readonly friendsConnection: <T extends Array<Selection>>(
     variables: {
       first?: Variable<"first"> | number;
       after?: Variable<"after"> | string;
@@ -312,9 +335,9 @@ interface CharacterSelector {
    * @description The movies this character appears in
    */
 
-  appearsIn: () => Field<"appearsIn">;
+  readonly appearsIn: () => Field<"appearsIn">;
 
-  on: <T extends Array<Selection>, F extends "Human" | "Droid">(
+  readonly on: <T extends Array<Selection>, F extends "Human" | "Droid">(
     type: F,
     select: (
       t: F extends "Human"
@@ -392,39 +415,39 @@ export const Character: CharacterSelector = {
 };
 
 export interface IHuman extends ICharacter {
-  __typename: "Human";
-  homePlanet: string | null;
-  height: number | null;
-  mass: number | null;
-  starships: IStarship[] | null;
+  readonly __typename: "Human";
+  readonly homePlanet: string | null;
+  readonly height: number | null;
+  readonly mass: number | null;
+  readonly starships: ReadonlyArray<IStarship> | null;
 }
 
 interface HumanSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
   /**
    * @description The ID of the human
    */
 
-  id: () => Field<"id">;
+  readonly id: () => Field<"id">;
 
   /**
    * @description What this human calls themselves
    */
 
-  name: () => Field<"name">;
+  readonly name: () => Field<"name">;
 
   /**
    * @description The home planet of the human, or null if unknown
    */
 
-  homePlanet: () => Field<"homePlanet">;
+  readonly homePlanet: () => Field<"homePlanet">;
 
   /**
    * @description Height in the preferred unit, default is meters
    */
 
-  height: (variables: {
+  readonly height: (variables: {
     unit?: Variable<"unit"> | LengthUnit;
   }) => Field<"height", [Argument<"unit", Variable<"unit"> | LengthUnit>]>;
 
@@ -433,13 +456,13 @@ interface HumanSelector {
    * @deprecated Weight is a sensitive subject!
    */
 
-  mass: () => Field<"mass">;
+  readonly mass: () => Field<"mass">;
 
   /**
    * @description This human's friends, or an empty list if they have none
    */
 
-  friends: <T extends Array<Selection>>(
+  readonly friends: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"friends", never, SelectionSet<T>>;
 
@@ -447,7 +470,7 @@ interface HumanSelector {
    * @description The friends of the human exposed as a connection with edges
    */
 
-  friendsConnection: <T extends Array<Selection>>(
+  readonly friendsConnection: <T extends Array<Selection>>(
     variables: {
       first?: Variable<"first"> | number;
       after?: Variable<"after"> | string;
@@ -466,13 +489,13 @@ interface HumanSelector {
    * @description The movies this human appears in
    */
 
-  appearsIn: () => Field<"appearsIn">;
+  readonly appearsIn: () => Field<"appearsIn">;
 
   /**
    * @description A list of starships this person has piloted, or an empty list if none
    */
 
-  starships: <T extends Array<Selection>>(
+  readonly starships: <T extends Array<Selection>>(
     select: (t: StarshipSelector) => T
   ) => Field<"starships", never, SelectionSet<T>>;
 }
@@ -555,30 +578,30 @@ export const Human: HumanSelector = {
 };
 
 export interface IDroid extends ICharacter {
-  __typename: "Droid";
-  primaryFunction: string | null;
+  readonly __typename: "Droid";
+  readonly primaryFunction: string | null;
 }
 
 interface DroidSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
   /**
    * @description The ID of the droid
    */
 
-  id: () => Field<"id">;
+  readonly id: () => Field<"id">;
 
   /**
    * @description What others call this droid
    */
 
-  name: () => Field<"name">;
+  readonly name: () => Field<"name">;
 
   /**
    * @description This droid's friends, or an empty list if they have none
    */
 
-  friends: <T extends Array<Selection>>(
+  readonly friends: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"friends", never, SelectionSet<T>>;
 
@@ -586,7 +609,7 @@ interface DroidSelector {
    * @description The friends of the droid exposed as a connection with edges
    */
 
-  friendsConnection: <T extends Array<Selection>>(
+  readonly friendsConnection: <T extends Array<Selection>>(
     variables: {
       first?: Variable<"first"> | number;
       after?: Variable<"after"> | string;
@@ -605,13 +628,13 @@ interface DroidSelector {
    * @description The movies this droid appears in
    */
 
-  appearsIn: () => Field<"appearsIn">;
+  readonly appearsIn: () => Field<"appearsIn">;
 
   /**
    * @description This droid's primary function
    */
 
-  primaryFunction: () => Field<"primaryFunction">;
+  readonly primaryFunction: () => Field<"primaryFunction">;
 }
 
 export const isDroid = (
@@ -670,26 +693,27 @@ export const Droid: DroidSelector = {
 };
 
 export interface IFriendsConnection {
-  totalCount: number | null;
-  edges: IFriendsEdge[] | null;
-  friends: ICharacter[] | null;
-  pageInfo: IPageInfo;
+  readonly __typename: "FriendsConnection";
+  readonly totalCount: number | null;
+  readonly edges: ReadonlyArray<IFriendsEdge> | null;
+  readonly friends: ReadonlyArray<ICharacter> | null;
+  readonly pageInfo: IPageInfo;
 }
 
 interface FriendsConnectionSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
   /**
    * @description The total number of friends
    */
 
-  totalCount: () => Field<"totalCount">;
+  readonly totalCount: () => Field<"totalCount">;
 
   /**
    * @description The edges for each of the character's friends.
    */
 
-  edges: <T extends Array<Selection>>(
+  readonly edges: <T extends Array<Selection>>(
     select: (t: FriendsEdgeSelector) => T
   ) => Field<"edges", never, SelectionSet<T>>;
 
@@ -697,7 +721,7 @@ interface FriendsConnectionSelector {
    * @description A list of the friends, as a convenience when edges are not needed.
    */
 
-  friends: <T extends Array<Selection>>(
+  readonly friends: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"friends", never, SelectionSet<T>>;
 
@@ -705,7 +729,7 @@ interface FriendsConnectionSelector {
    * @description Information for paginating this connection
    */
 
-  pageInfo: <T extends Array<Selection>>(
+  readonly pageInfo: <T extends Array<Selection>>(
     select: (t: PageInfoSelector) => T
   ) => Field<"pageInfo", never, SelectionSet<T>>;
 }
@@ -753,24 +777,25 @@ export const FriendsConnection: FriendsConnectionSelector = {
 };
 
 export interface IFriendsEdge {
-  cursor: string;
-  node: ICharacter | null;
+  readonly __typename: "FriendsEdge";
+  readonly cursor: string;
+  readonly node: ICharacter | null;
 }
 
 interface FriendsEdgeSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
   /**
    * @description A cursor used for pagination
    */
 
-  cursor: () => Field<"cursor">;
+  readonly cursor: () => Field<"cursor">;
 
   /**
    * @description The character represented by this friendship edge
    */
 
-  node: <T extends Array<Selection>>(
+  readonly node: <T extends Array<Selection>>(
     select: (t: CharacterSelector) => T
   ) => Field<"node", never, SelectionSet<T>>;
 }
@@ -792,19 +817,20 @@ export const FriendsEdge: FriendsEdgeSelector = {
 };
 
 export interface IPageInfo {
-  startCursor: string | null;
-  endCursor: string | null;
-  hasNextPage: boolean;
+  readonly __typename: "PageInfo";
+  readonly startCursor: string | null;
+  readonly endCursor: string | null;
+  readonly hasNextPage: boolean;
 }
 
 interface PageInfoSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
-  startCursor: () => Field<"startCursor">;
+  readonly startCursor: () => Field<"startCursor">;
 
-  endCursor: () => Field<"endCursor">;
+  readonly endCursor: () => Field<"endCursor">;
 
-  hasNextPage: () => Field<"hasNextPage">;
+  readonly hasNextPage: () => Field<"hasNextPage">;
 }
 
 export const PageInfo: PageInfoSelector = {
@@ -816,24 +842,25 @@ export const PageInfo: PageInfoSelector = {
 };
 
 export interface IReview {
-  stars: number;
-  commentary: string | null;
+  readonly __typename: "Review";
+  readonly stars: number;
+  readonly commentary: string | null;
 }
 
 interface ReviewSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
   /**
    * @description The number of stars this review gave, 1-5
    */
 
-  stars: () => Field<"stars">;
+  readonly stars: () => Field<"stars">;
 
   /**
    * @description Comment about the movie
    */
 
-  commentary: () => Field<"commentary">;
+  readonly commentary: () => Field<"commentary">;
 }
 
 export const Review: ReviewSelector = {
@@ -851,36 +878,37 @@ export const Review: ReviewSelector = {
 };
 
 export interface IStarship {
-  id: string;
-  name: string;
-  length: number | null;
-  coordinates: number[] | null;
+  readonly __typename: "Starship";
+  readonly id: string;
+  readonly name: string;
+  readonly length: number | null;
+  readonly coordinates: ReadonlyArray<number> | null;
 }
 
 interface StarshipSelector {
-  __typename: () => Field<"__typename">;
+  readonly __typename: () => Field<"__typename">;
 
   /**
    * @description The ID of the starship
    */
 
-  id: () => Field<"id">;
+  readonly id: () => Field<"id">;
 
   /**
    * @description The name of the starship
    */
 
-  name: () => Field<"name">;
+  readonly name: () => Field<"name">;
 
   /**
    * @description Length of the starship, along the longest axis
    */
 
-  length: (variables: {
+  readonly length: (variables: {
     unit?: Variable<"unit"> | LengthUnit;
   }) => Field<"length", [Argument<"unit", Variable<"unit"> | LengthUnit>]>;
 
-  coordinates: () => Field<"coordinates">;
+  readonly coordinates: () => Field<"coordinates">;
 }
 
 export const Starship: StarshipSelector = {
