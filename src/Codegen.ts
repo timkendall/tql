@@ -24,6 +24,7 @@ import { createHash } from "crypto";
 export interface CodegenOptions {
   readonly schema: GraphQLSchema;
   readonly client?: { name: string; version?: string };
+  readonly mutableFields?: boolean;
   readonly modulePath?: string;
 }
 
@@ -223,16 +224,22 @@ export class Codegen {
 
     return `
       export interface I${type.name} {
-        __typename: string
-        ${fields.map(renderInterfaceField).join("\n")}
+        ${this.options.mutableFields ? "" : "readonly"} __typename: string
+        ${fields
+          .map(
+            (field) =>
+              (this.options.mutableFields ? "" : "readonly ") +
+              renderInterfaceField(field)
+          )
+          .join("\n")}
       }
 
       interface ${type.name}Selector {
-        __typename: () => Field<"__typename">
+        readonly __typename: () => Field<"__typename">
         
         ${fields.map((field) => this._fieldSignature(field)).join("\n")}
 
-        on: <T extends Array<Selection>, F extends ${implementations
+        readonly on: <T extends Array<Selection>, F extends ${implementations
           .map((name) => `"${name}"`)
           .join(" | ")}>(
           type: F,
@@ -290,9 +297,9 @@ export class Codegen {
       };
 
       interface ${type.name}Selector {
-        __typename: () => Field<"__typename">
+        readonly __typename: () => Field<"__typename">
 
-        on: <T extends Array<Selection>, F extends ${implementations
+        readonly on: <T extends Array<Selection>, F extends ${implementations
           .map((name) => `"${name}"`)
           .join(" | ")}>(
           type: F,
@@ -350,12 +357,20 @@ export class Codegen {
         export interface I${type.name} extends ${interfaces
         .map((i) => "I" + i.name)
         .join(", ")} {
-          __typename: "${type.name}"
-          ${uncommonFields.map(renderInterfaceField).join("\n")}
+          ${this.options.mutableFields ? "" : "readonly"} __typename: "${
+        type.name
+      }"
+          ${uncommonFields
+            .map(
+              (field) =>
+                (this.options.mutableFields ? "" : "readonly ") +
+                renderInterfaceField(field)
+            )
+            .join("\n")}
         }
 
         interface ${type.name}Selector {
-          __typename: () => Field<"__typename">
+          readonly __typename: () => Field<"__typename">
           
           ${fields.map((field) => this._fieldSignature(field)).join("\n")}
         }
@@ -375,12 +390,20 @@ export class Codegen {
     } else {
       return `
         export interface I${type.name} {
-          __typename: "${type.name}"
-          ${fields.map(renderInterfaceField).join("\n")}
+          ${this.options.mutableFields ? "" : "readonly"} __typename: "${
+        type.name
+      }"
+          ${fields
+            .map(
+              (field) =>
+                (this.options.mutableFields ? "" : "readonly ") +
+                renderInterfaceField(field)
+            )
+            .join("\n")}
         }
 
         interface ${type.name}Selector {
-          __typename: () => Field<"__typename">
+          readonly __typename: () => Field<"__typename">
           
           ${fields.map((field) => this._fieldSignature(field)).join("\n")}
         }
@@ -399,7 +422,13 @@ export class Codegen {
 
     return `
       export interface ${type.name} {
-        ${fields.map((field) => this.inputField(field)).join("\n")}
+        ${fields
+          .map(
+            (field) =>
+              (this.options.mutableFields ? "" : "readonly ") +
+              this.inputField(field)
+          )
+          .join("\n")}
       }
     `;
   }
@@ -464,18 +493,18 @@ export class Codegen {
           : baseType.name;
 
       return args.length > 0
-        ? `${jsDocComment}\n${name}: (variables: { ${args
+        ? `${jsDocComment}\n readonly ${name}: (variables: { ${args
             .map(renderVariable)
             .join(", ")} }) => Field<"${name}", [ ${args
             .map(renderArgument)
             .join(", ")} ]>`
-        : `${jsDocComment}\n${name}: () => Field<"${name}">`;
+        : `${jsDocComment}\n readonly ${name}: () => Field<"${name}">`;
     } else {
       // @todo restrict allowed Field types
       return args.length > 0
         ? `
         ${jsDocComment}
-        ${name}: <T extends Array<Selection>>(
+        readonly ${name}: <T extends Array<Selection>>(
           variables: { ${args.map(renderVariable).join(", ")} },
           select: (t: ${baseType.toString()}Selector) => T
         ) => Field<"${name}", [ ${args
@@ -484,7 +513,7 @@ export class Codegen {
       `
         : `
         ${jsDocComment}
-        ${name}: <T extends Array<Selection>>(
+        readonly ${name}: <T extends Array<Selection>>(
           select: (t: ${baseType.toString()}Selector) => T
         ) => Field<"${name}", never, SelectionSet<T>>,
       `;
@@ -645,7 +674,10 @@ const renderClientRootField = (
   `;
 };
 
-const renderInterfaceField = (field: GraphQLField<any, any, any>): string => {
+const renderInterfaceField = (
+  field: GraphQLField<any, any, any>,
+  mutable: boolean = false
+): string => {
   const isList =
     field.type instanceof GraphQLList ||
     (field.type instanceof GraphQLNonNull &&
@@ -654,27 +686,53 @@ const renderInterfaceField = (field: GraphQLField<any, any, any>): string => {
   const baseType = getBaseOutputType(field.type);
 
   if (baseType instanceof GraphQLScalarType) {
-    return (
-      `${field.name}: ${toPrimitive(baseType)}` +
-      (isList ? "[]" : "") +
-      (isNonNull ? "" : " | null")
-    );
+    if (mutable) {
+      return (
+        `${field.name}: ${toPrimitive(baseType)}` +
+        (isList ? "[]" : "") +
+        (isNonNull ? "" : " | null")
+      );
+    } else {
+      return (
+        `${field.name}: ${
+          isList
+            ? `ReadonlyArray<${toPrimitive(baseType)}>`
+            : `${toPrimitive(baseType)}`
+        }` + (isNonNull ? "" : " | null")
+      );
+    }
   } else if (baseType instanceof GraphQLEnumType) {
-    return (
-      `${field.name}: ${baseType.name}` +
-      (isList ? "[]" : "") +
-      (isNonNull ? "" : " | null")
-    );
+    if (mutable) {
+      return (
+        `${field.name}: ${baseType.name}` +
+        (isList ? "[]" : "") +
+        (isNonNull ? "" : " | null")
+      );
+    } else {
+      return (
+        `${field.name}: ${
+          isList ? `ReadonlyArray<${baseType.name}>` : `${baseType.name}`
+        }` + (isNonNull ? "" : " | null")
+      );
+    }
   } else if (
     baseType instanceof GraphQLInterfaceType ||
     baseType instanceof GraphQLUnionType ||
     baseType instanceof GraphQLObjectType
   ) {
-    return (
-      `${field.name}: I${baseType.name}` +
-      (isList ? "[]" : "") +
-      (isNonNull ? "" : " | null")
-    );
+    if (mutable) {
+      return (
+        `${field.name}: I${baseType.name}` +
+        (isList ? "[]" : "") +
+        (isNonNull ? "" : " | null")
+      );
+    } else {
+      return (
+        `${field.name}: ${
+          isList ? `ReadonlyArray<I${baseType.name}>` : `I${baseType.name}`
+        }` + (isNonNull ? "" : " | null")
+      );
+    }
   } else {
     throw new Error("Unable to render interface field.");
   }

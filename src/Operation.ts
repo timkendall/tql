@@ -11,6 +11,7 @@ import {
   NamedTypeNode,
   InlineFragmentNode,
 } from "graphql";
+
 import {
   argumentOf,
   namedTypeOf,
@@ -29,12 +30,17 @@ import {
 export type Result<
   Type,
   TSelectionSet extends SelectionSet<Array<Selection>>
+> = DeepReadonly<MutableResult<Type, TSelectionSet>>;
+
+export type MutableResult<
+  Type,
+  TSelectionSet extends SelectionSet<Array<Selection>>
 > = Type extends Array<infer T>
   ? T extends Primitive
     ? // @note Return scalar array
       Array<T>
     : // @note Wrap complex object in array
-      Array<Result<T, TSelectionSet>>
+      Array<MutableResult<T, TSelectionSet>>
   : {
       // @note Build out object from non-fragment field selections
       [Key in FilterFragments<
@@ -44,8 +50,8 @@ export type Result<
         : TSelectionSet["selections"][number] extends infer U
         ? U extends Field<Key, any, infer Selections>
           ? null extends Type[Key]
-            ? Result<NonNullable<Type[Key]>, Selections> | null
-            : Result<Type[Key], Selections>
+            ? MutableResult<NonNullable<Type[Key]>, Selections> | null
+            : MutableResult<Type[Key], Selections>
           : never
         : never;
     } &
@@ -53,8 +59,8 @@ export type Result<
         ? U extends InlineFragment<infer TypeCondition, infer SelectionSet>
           ? TypeCondition extends NamedType<string, infer Type>
             ? null extends Type
-              ? Result<NonNullable<Type>, SelectionSet> | null
-              : Result<Type, SelectionSet>
+              ? MutableResult<NonNullable<Type>, SelectionSet> | null
+              : MutableResult<Type, SelectionSet>
             : {}
           : {}
         : {}); // @note need to use empty objects to not nuke the left side of our intersection type (&)
@@ -68,6 +74,22 @@ type FilterFragments<
       : never
     : never
 >;
+
+// copied from https://github.com/piotrwitek/utility-types
+export type DeepReadonly<T> = T extends ((...args: any[]) => any) | Primitive
+  ? T
+  : T extends _DeepReadonlyArray<infer U>
+  ? _DeepReadonlyArray<U>
+  : T extends _DeepReadonlyObject<infer V>
+  ? _DeepReadonlyObject<V>
+  : T;
+/** @private */
+// tslint:disable-next-line:class-name
+interface _DeepReadonlyArray<T> extends ReadonlyArray<DeepReadonly<T>> {}
+/** @private */
+type _DeepReadonlyObject<T> = {
+  readonly [P in keyof T]: DeepReadonly<T[P]>;
+};
 
 export class Operation<TSelectionSet extends SelectionSet<any>> {
   constructor(
