@@ -18,16 +18,17 @@ jobs:
         with:
           node-version: '14'
 
+      - uses: olegtarasov/get-tag@v2.1
+        id: tagName
+
       - name: Generate Release Notes
-        run: npx auto-changelog --starting-version ${{ github.ref }} --output RELEASE_NOTES.md
+        run: npx auto-changelog --starting-version ${{ steps.tagName.outputs.tag }} --output RELEASE_NOTES.md
 
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
-        
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
         with:
           tag_name: ${{ github.ref }}
           release_name: ${{ github.ref }}
