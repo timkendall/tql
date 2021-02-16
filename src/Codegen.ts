@@ -51,6 +51,7 @@ export class Codegen {
       Variable,
       Executor,
       Client,
+      TypeConditionError,
     } from '${this.modulePath}'
     `,
     ];
@@ -272,7 +273,10 @@ export class Codegen {
               )
               .join("\n")}
             default:
-              throw new Error("Unknown type!")
+              throw new TypeConditionError({ 
+                selectedType: type, 
+                abstractType: "${type.name}",
+              })
           }
         },
       }
@@ -332,7 +336,10 @@ export class Codegen {
               )
               .join("\n")}
             default:
-              throw new Error("Unknown type!")
+              throw new TypeConditionError({ 
+                selectedType: type, 
+                abstractType: "${type.name}",
+              })
           }
         },
       }

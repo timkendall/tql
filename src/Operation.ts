@@ -27,6 +27,14 @@ import {
   documentOf,
 } from "./AST";
 
+export class TypeConditionError extends Error {
+  constructor(metadata: { selectedType: string; abstractType: string }) {
+    super(
+      `"${metadata.selectedType}" is not a valid type of abstract "${metadata.abstractType}" type.`
+    );
+  }
+}
+
 export type Result<
   Type,
   TSelectionSet extends SelectionSet<Array<Selection>>
