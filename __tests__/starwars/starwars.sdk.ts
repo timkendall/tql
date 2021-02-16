@@ -9,6 +9,7 @@ import {
   Variable,
   Executor,
   Client,
+  TypeConditionError,
 } from "../../src";
 
 export const VERSION = "unversioned";
@@ -106,7 +107,10 @@ export const SearchResult: SearchResultSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "SearchResult",
+        });
     }
   },
 };
@@ -409,7 +413,10 @@ export const Character: CharacterSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Character",
+        });
     }
   },
 };

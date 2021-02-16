@@ -9,6 +9,7 @@ import {
   Variable,
   Executor,
   Client,
+  TypeConditionError,
 } from "../../src";
 
 export const VERSION = "unversioned";
@@ -2180,7 +2181,10 @@ export const Assignee: AssigneeSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Assignee",
+        });
     }
   },
 };
@@ -2252,7 +2256,10 @@ export const AuditEntryActor: AuditEntryActorSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "AuditEntryActor",
+        });
     }
   },
 };
@@ -2310,7 +2317,10 @@ export const Closer: CloserSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Closer",
+        });
     }
   },
 };
@@ -2373,7 +2383,10 @@ export const CreatedIssueOrRestrictedContribution: CreatedIssueOrRestrictedContr
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "CreatedIssueOrRestrictedContribution",
+        });
     }
   },
 };
@@ -2436,7 +2449,10 @@ export const CreatedPullRequestOrRestrictedContribution: CreatedPullRequestOrRes
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "CreatedPullRequestOrRestrictedContribution",
+        });
     }
   },
 };
@@ -2499,7 +2515,10 @@ export const CreatedRepositoryOrRestrictedContribution: CreatedRepositoryOrRestr
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "CreatedRepositoryOrRestrictedContribution",
+        });
     }
   },
 };
@@ -2560,7 +2579,10 @@ export const EnterpriseMember: EnterpriseMemberSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "EnterpriseMember",
+        });
     }
   },
 };
@@ -2621,7 +2643,10 @@ export const IpAllowListOwner: IpAllowListOwnerSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "IpAllowListOwner",
+        });
     }
   },
 };
@@ -2679,7 +2704,10 @@ export const IssueOrPullRequest: IssueOrPullRequestSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "IssueOrPullRequest",
+        });
     }
   },
 };
@@ -2965,7 +2993,10 @@ export const IssueTimelineItem: IssueTimelineItemSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "IssueTimelineItem",
+        });
     }
   },
 };
@@ -3394,7 +3425,10 @@ export const IssueTimelineItems: IssueTimelineItemsSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "IssueTimelineItems",
+        });
     }
   },
 };
@@ -3452,7 +3486,10 @@ export const MilestoneItem: MilestoneItemSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "MilestoneItem",
+        });
     }
   },
 };
@@ -3540,7 +3577,10 @@ export const OrgRestoreMemberAuditEntryMembership: OrgRestoreMemberAuditEntryMem
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "OrgRestoreMemberAuditEntryMembership",
+        });
     }
   },
 };
@@ -4395,7 +4435,10 @@ export const OrganizationAuditEntry: OrganizationAuditEntrySelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "OrganizationAuditEntry",
+        });
     }
   },
 };
@@ -4467,7 +4510,10 @@ export const PermissionGranter: PermissionGranterSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "PermissionGranter",
+        });
     }
   },
 };
@@ -4521,7 +4567,10 @@ export const PinnableItem: PinnableItemSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "PinnableItem",
+        });
     }
   },
 };
@@ -4579,7 +4628,10 @@ export const ProjectCardItem: ProjectCardItemSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "ProjectCardItem",
+        });
     }
   },
 };
@@ -5047,7 +5099,10 @@ export const PullRequestTimelineItem: PullRequestTimelineItemSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "PullRequestTimelineItem",
+        });
     }
   },
 };
@@ -5749,7 +5804,10 @@ export const PullRequestTimelineItems: PullRequestTimelineItemsSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "PullRequestTimelineItems",
+        });
     }
   },
 };
@@ -5818,7 +5876,10 @@ export const PushAllowanceActor: PushAllowanceActorSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "PushAllowanceActor",
+        });
     }
   },
 };
@@ -5876,7 +5937,10 @@ export const ReferencedSubject: ReferencedSubjectSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "ReferencedSubject",
+        });
     }
   },
 };
@@ -5934,7 +5998,10 @@ export const RenamedTitleSubject: RenamedTitleSubjectSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "RenamedTitleSubject",
+        });
     }
   },
 };
@@ -6006,7 +6073,10 @@ export const RequestedReviewer: RequestedReviewerSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "RequestedReviewer",
+        });
     }
   },
 };
@@ -6057,7 +6127,10 @@ export const ReviewDismissalAllowanceActor: ReviewDismissalAllowanceActorSelecto
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "ReviewDismissalAllowanceActor",
+        });
     }
   },
 };
@@ -6187,7 +6260,10 @@ export const SearchResultItem: SearchResultItemSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "SearchResultItem",
+        });
     }
   },
 };
@@ -6245,7 +6321,10 @@ export const Sponsor: SponsorSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Sponsor",
+        });
     }
   },
 };
@@ -6306,7 +6385,10 @@ export const StatusCheckRollupContext: StatusCheckRollupContextSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "StatusCheckRollupContext",
+        });
     }
   },
 };
@@ -6531,7 +6613,10 @@ export const Actor: ActorSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Actor",
+        });
     }
   },
 };
@@ -7493,7 +7578,10 @@ export const Assignable: AssignableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Assignable",
+        });
     }
   },
 };
@@ -8447,7 +8535,10 @@ export const AuditEntry: AuditEntrySelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "AuditEntry",
+        });
     }
   },
 };
@@ -11474,7 +11565,10 @@ export const Closable: ClosableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Closable",
+        });
     }
   },
 };
@@ -12074,7 +12168,10 @@ export const Comment: CommentSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Comment",
+        });
     }
   },
 };
@@ -14292,7 +14389,10 @@ longer access.
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Contribution",
+        });
     }
   },
 };
@@ -17619,7 +17719,10 @@ export const Deletable: DeletableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Deletable",
+        });
     }
   },
 };
@@ -20269,7 +20372,10 @@ export const EnterpriseAuditEntryData: EnterpriseAuditEntryDataSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "EnterpriseAuditEntryData",
+        });
     }
   },
 };
@@ -26458,7 +26564,10 @@ export const GitObject: GitObjectSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "GitObject",
+        });
     }
   },
 };
@@ -26604,7 +26713,10 @@ GitHub, otherwise represents reason why signature is considered invalid.
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "GitSignature",
+        });
     }
   },
 };
@@ -27143,7 +27255,10 @@ export const HovercardContext: HovercardContextSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "HovercardContext",
+        });
     }
   },
 };
@@ -29950,7 +30065,10 @@ export const Labelable: LabelableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Labelable",
+        });
     }
   },
 };
@@ -30658,7 +30776,10 @@ export const Lockable: LockableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Lockable",
+        });
     }
   },
 };
@@ -32096,7 +32217,10 @@ export const MemberStatusable: MemberStatusableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "MemberStatusable",
+        });
     }
   },
 };
@@ -33828,7 +33952,10 @@ export const Minimizable: MinimizableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Minimizable",
+        });
     }
   },
 };
@@ -39324,7 +39451,10 @@ export const Node: NodeSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Node",
+        });
     }
   },
 };
@@ -39429,7 +39559,10 @@ export const OauthApplicationAuditEntryData: OauthApplicationAuditEntryDataSelec
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "OauthApplicationAuditEntryData",
+        });
     }
   },
 };
@@ -48880,7 +49013,10 @@ export const OrganizationAuditEntryData: OrganizationAuditEntryDataSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "OrganizationAuditEntryData",
+        });
     }
   },
 };
@@ -50456,7 +50592,10 @@ export const PackageOwner: PackageOwnerSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "PackageOwner",
+        });
     }
   },
 };
@@ -52157,7 +52296,10 @@ either curated or that have been selected automatically based on popularity.
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "ProfileOwner",
+        });
     }
   },
 };
@@ -53390,7 +53532,10 @@ export const ProjectOwner: ProjectOwnerSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "ProjectOwner",
+        });
     }
   },
 };
@@ -59715,7 +59860,10 @@ export const Reactable: ReactableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Reactable",
+        });
     }
   },
 };
@@ -70424,7 +70572,10 @@ export const RepositoryAuditEntryData: RepositoryAuditEntryDataSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "RepositoryAuditEntryData",
+        });
     }
   },
 };
@@ -71140,7 +71291,10 @@ export const RepositoryInfo: RepositoryInfoSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "RepositoryInfo",
+        });
     }
   },
 };
@@ -71564,7 +71718,10 @@ export const RepositoryNode: RepositoryNodeSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "RepositoryNode",
+        });
     }
   },
 };
@@ -71759,7 +71916,10 @@ export const RepositoryOwner: RepositoryOwnerSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "RepositoryOwner",
+        });
     }
   },
 };
@@ -75469,7 +75629,10 @@ export const Sponsorable: SponsorableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Sponsorable",
+        });
     }
   },
 };
@@ -76457,7 +76620,10 @@ export const Starrable: StarrableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Starrable",
+        });
     }
   },
 };
@@ -77431,7 +77597,10 @@ export const Subscribable: SubscribableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Subscribable",
+        });
     }
   },
 };
@@ -79199,7 +79368,10 @@ export const TeamAuditEntryData: TeamAuditEntryDataSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "TeamAuditEntryData",
+        });
     }
   },
 };
@@ -82157,7 +82329,10 @@ export const TopicAuditEntryData: TopicAuditEntryDataSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "TopicAuditEntryData",
+        });
     }
   },
 };
@@ -83008,7 +83183,10 @@ export const UniformResourceLocatable: UniformResourceLocatableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "UniformResourceLocatable",
+        });
     }
   },
 };
@@ -83936,7 +84114,10 @@ export const Updatable: UpdatableSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "Updatable",
+        });
     }
   },
 };
@@ -84067,7 +84248,10 @@ export const UpdatableComment: UpdatableCommentSelector = {
       }
 
       default:
-        throw new Error("Unknown type!");
+        throw new TypeConditionError({
+          selectedType: type,
+          abstractType: "UpdatableComment",
+        });
     }
   },
 };
