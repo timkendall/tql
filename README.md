@@ -25,7 +25,7 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 You will need to compile a type-safe client one time before using. Do this with the provided CLI:
 
-`yarn --slient tql <schema> > example.api.ts`.
+`yarn --silent tql <schema> > example.api.ts`.
 
 
 ```typescript
