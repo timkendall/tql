@@ -4,6 +4,7 @@ import { parse, validate, execute, buildSchema } from "graphql";
 
 import * as starwarsOps from "./starwars/operations";
 import * as githubOps from "./github/operations";
+import * as hasuraOps from "./hasura/operationts";
 
 import { StarWarsSchema } from "./starwars/starwars.schema";
 
@@ -50,6 +51,30 @@ describe("Schemas", () => {
     const schema = buildSchema(typeDefs);
 
     describe.each([[githubOps.viewer.name, githubOps.viewer]])(
+      `%s`,
+      (_operationName, operation) => {
+        it("renders the expected operation", () => {
+          expect(operation.toString()).toMatchSnapshot();
+        });
+
+        it("renders a parsable operation", () => {
+          expect(() => parse(operation.toString())).not.toThrow();
+        });
+
+        it("renders a valid operation", () => {
+          expect(validate(schema, operation.toDocument()).length).toBe(0);
+        });
+      }
+    );
+  });
+
+  describe("Hasura", () => {
+    const typeDefs = fs
+      .readFileSync(path.resolve(__dirname, "./hasura/hasura.schema.graphql"))
+      .toString("utf-8");
+    const schema = buildSchema(typeDefs);
+
+    describe.each([[hasuraOps.bookmarks.name, hasuraOps.bookmarks]])(
       `%s`,
       (_operationName, operation) => {
         it("renders the expected operation", () => {

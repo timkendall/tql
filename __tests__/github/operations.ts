@@ -1,4 +1,4 @@
-import { query } from "./github.api";
+import { query } from "./github.sdk";
 
 export const viewer = query("Viewer", (t) => [
   t.viewer((t) => [
