@@ -33,6 +33,34 @@ exports[`Schemas GitHub Viewer renders the expected operation 1`] = `
 }"
 `;
 
+exports[`Schemas Hasura Bookmarks renders the expected operation 1`] = `
+"query Bookmarks {
+  bookmarks(limit: 10) {
+    id
+    name
+    children_aggregate(distinct_on: createdUtc) {
+      aggregate {
+        min {
+          id
+        }
+        max {
+          id
+        }
+      }
+      nodes {
+        id
+        createdUtc
+      }
+    }
+  }
+  playlist_items_by_pk(id: 1) {
+    __typename
+    id
+    position
+  }
+}"
+`;
+
 exports[`Schemas Star Wars Example renders an executable operation 1`] = `
 Object {
   "data": Object {

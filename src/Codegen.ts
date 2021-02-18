@@ -70,40 +70,52 @@ export class Codegen {
   }
 
   private get query() {
-    return `
+    const type = this.schema.getQueryType();
+
+    return type
+      ? `
       export const query = <T extends Array<Selection>>(
         name: string,
-        select: (t: typeof Query) => T
-      ): Operation<SelectionSet<T>> => new Operation(name, "query", new SelectionSet(select(Query)))
-    `;
+        select: (t: typeof ${type.name}) => T
+      ): Operation<SelectionSet<T>> => new Operation(name, "query", new SelectionSet(select(${type.name})))
+     `
+      : "";
   }
 
   private get mutation() {
-    return this.schema.getMutationType()
+    const type = this.schema.getMutationType();
+
+    return type
       ? `
       export const mutation = <T extends Array<Selection>>(
         name: string,
-        select: (t: typeof Mutation) => T
-      ): Operation<SelectionSet<T>> => new Operation(name, "mutation", new SelectionSet(select(Mutation)))
+        select: (t: typeof ${type.name}) => T
+      ): Operation<SelectionSet<T>> => new Operation(name, "mutation", new SelectionSet(select(${type.name})))
     `
       : "";
   }
 
   private get subscription() {
-    return this.schema.getSubscriptionType()
+    const type = this.schema.getSubscriptionType();
+
+    return type
       ? `
       export const subscription = <T extends Array<Selection>>(
         name: string,
-        select: (t: typeof Subscription) => T
-      ): Operation<SelectionSet<T>> => new Operation(name, "subscription", new SelectionSet(select(Subscription)))
+        select: (t: typeof ${type.name}) => T
+      ): Operation<SelectionSet<T>> => new Operation(name, "subscription", new SelectionSet(select(${type})))
     `
       : "";
   }
 
   private get client() {
-    const hasQuery = Boolean(this.schema.getQueryType());
-    const hasMutation = Boolean(this.schema.getMutationType());
-    const hasSubscription = Boolean(this.schema.getSubscriptionType());
+    const queryType = this.schema.getQueryType();
+    const mutationType = this.schema.getMutationType();
+    const subscriptionType = this.schema.getSubscriptionType();
+
+    const hasQuery = Boolean(queryType);
+    const hasMutation = Boolean(mutationType);
+    const hasSubscription = Boolean(subscriptionType);
 
     return `
     export class ${this.options.client!.name} implements Client {
@@ -117,7 +129,9 @@ export class Codegen {
           ? `
       public readonly query = {
         ${Object.values(this.schema.getQueryType()!.getFields())
-          .map((field) => renderClientRootField("Query", field))
+          .map((field) =>
+            renderClientRootField("query", queryType!.name, field)
+          )
           .join("\n")}
       }
       `
@@ -129,7 +143,9 @@ export class Codegen {
           ? `
       public readonly mutate = {
         ${Object.values(this.schema.getMutationType()!.getFields())
-          .map((field) => renderClientRootField("Mutation", field))
+          .map((field) =>
+            renderClientRootField("mutation", mutationType!.name, field)
+          )
           .join("\n")}
       }
       `
@@ -141,7 +157,9 @@ export class Codegen {
           ? `
       public readonly subscribe = {
         ${Object.values(this.schema.getSubscriptionType()!.getFields())
-          .map((field) => renderClientRootField("Subscription", field))
+          .map((field) =>
+            renderClientRootField("subscription", subscriptionType!.name, field)
+          )
           .join("\n")}
       }
       `
@@ -623,7 +641,8 @@ const toPrimitive = (
 };
 
 const renderClientRootField = (
-  rootType: "Query" | "Mutation" | "Subscription",
+  rootOp: "query" | "mutation" | "subscription",
+  rootType: string,
   field: GraphQLField<any, any>
 ): string => {
   const baseType = getBaseOutputType(field.type);
@@ -653,7 +672,7 @@ const renderClientRootField = (
       }', any, SelectionSet<T>> ]>>>(
       new Operation(
         "${field.name}", 
-        "${rootType.toLowerCase()}", 
+        "${rootOp}", 
         new SelectionSet([
           ${rootType}.${field.name}<T>(
             variables, 
