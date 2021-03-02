@@ -20,9 +20,9 @@ export class HTTPExecutor implements Executor {
 }
 
 export interface Executor {
-  execute<_A extends any, B extends Operation<SelectionSet<any>>>(
-    operation: B
-  ): unknown;
+  execute<RootType, TOperation extends Operation<SelectionSet<any>>>(
+    operation: TOperation
+  ): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>>;
 }
 
 export const execute = <
