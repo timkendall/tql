@@ -10,7 +10,7 @@ import {
   Variable,
   Executor,
   Client,
-} from "../../src";
+} from "./src";
 
 export const VERSION = "unversioned";
 

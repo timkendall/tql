@@ -9,23 +9,25 @@ export interface Client {
   readonly subscribe?: Record<string, unknown>;
 }
 
-export class HTTPExecutor implements Executor {
+export class Executor {
   constructor(public readonly endpoint: string) {}
 
   execute<RootType, TOperation extends Operation<SelectionSet<any>>>(
     operation: TOperation
   ): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>> {
-    return execute<RootType, TOperation>(this.endpoint, operation);
+    return httpExecute<RootType, TOperation>(this.endpoint, operation);
   }
 }
 
-export interface Executor {
-  execute<RootType, TOperation extends Operation<SelectionSet<any>>>(
-    operation: TOperation
-  ): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>>;
-}
+// @bug TypeScript 4.2+ error when implementing this interface with HTTPExecutor
+// https://github.com/microsoft/TypeScript/issues/34933
+// export interface Executor {
+//   execute<RootType, TOperation extends Operation<SelectionSet<any>>>(
+//     operation: TOperation
+//   ): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>>;
+// }
 
-export const execute = <
+export const httpExecute = <
   RootType,
   TOperation extends Operation<SelectionSet<any>>
 >(
