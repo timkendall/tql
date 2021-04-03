@@ -19,7 +19,7 @@ import {
   printSchema,
 } from "graphql";
 import prettier from "prettier";
-import { createHash } from "crypto";
+import SHA from "jssha";
 
 export interface CodegenOptions {
   readonly schema: GraphQLSchema;
@@ -831,6 +831,8 @@ const renderInputType = (type: GraphQLInputType): string => {
   }
 };
 
-const computeSha = (typeDefs: string): string => {
-  return createHash("sha256").update(typeDefs).digest("hex").substring(0, 7);
+export const computeSha = (typeDefs: string): string => {
+  const sha = new SHA("SHA-256", "TEXT", { encoding: "UTF8" });
+  sha.update(typeDefs);
+  return sha.getHash("HEX").substring(0, 7);
 };
