@@ -661,15 +661,54 @@ const renderClientRootField = (
   `
       : "";
 
-  return field.args.length > 0
-    ? `
+  if (
+    baseType instanceof GraphQLScalarType ||
+    baseType instanceof GraphQLEnumType
+  ) {
+    return field.args.length > 0
+      ? `
+    ${jsDocComment}
+    ${field.name}: (
+      variables: { ${field.args.map(renderVariables).join(", ")} },
+    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+          field.name
+        }', any, never> ]>>>(
+      new Operation(
+        "${field.name}", 
+        "${rootOp}", 
+        new SelectionSet([
+          ${rootType}.${field.name}(
+            variables, 
+          ),
+        ]),
+      ),
+    ),
+  `
+      : `
+    ${jsDocComment}
+    ${field.name}: (
+    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+          field.name
+        }', never, never> ]>>>(
+        new Operation(
+          "${field.name}", 
+          "${rootType.toLowerCase()}", 
+          new SelectionSet([
+            ${rootType}.${field.name}(),
+          ]),
+        )
+      ),
+  `;
+  } else {
+    return field.args.length > 0
+      ? `
     ${jsDocComment}
     ${field.name}: <T extends Array<Selection>>(
       variables: { ${field.args.map(renderVariables).join(", ")} },
       select: (t: ${baseType.toString()}Selector) => T
     ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
-        field.name
-      }', any, SelectionSet<T>> ]>>>(
+          field.name
+        }', any, SelectionSet<T>> ]>>>(
       new Operation(
         "${field.name}", 
         "${rootOp}", 
@@ -682,13 +721,13 @@ const renderClientRootField = (
       ),
     ),
   `
-    : `
+      : `
     ${jsDocComment}
     ${field.name}: <T extends Array<Selection>>(
       select: (t: ${baseType.toString()}Selector) => T
     ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
-        field.name
-      }', any, SelectionSet<T>> ]>>>(
+          field.name
+        }', any, SelectionSet<T>> ]>>>(
         new Operation(
           "${field.name}", 
           "${rootType.toLowerCase()}", 
@@ -698,6 +737,7 @@ const renderClientRootField = (
         )
       ),
   `;
+  }
 };
 
 const renderInterfaceField = (
