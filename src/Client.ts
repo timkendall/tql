@@ -19,14 +19,6 @@ export class Executor {
   }
 }
 
-// @bug TypeScript 4.2+ error when implementing this interface with HTTPExecutor
-// https://github.com/microsoft/TypeScript/issues/34933
-// export interface Executor {
-//   execute<RootType, TOperation extends Operation<SelectionSet<any>>>(
-//     operation: TOperation
-//   ): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>>;
-// }
-
 export const httpExecute = <
   RootType,
   TOperation extends Operation<SelectionSet<any>>
@@ -46,3 +38,30 @@ export const httpExecute = <
   }).then((res) => res.json()) as Promise<
     ExecutionResult<Result<RootType, TOperation["selectionSet"]>>
   >;
+
+export class ExecutionError extends Error {
+  public readonly name: string;
+  public readonly result?: ExecutionResult;
+  public readonly transportError?: Error;
+
+  constructor({
+    name,
+    result,
+    transportError,
+  }: {
+    readonly name: string;
+    readonly result?: ExecutionResult;
+    readonly transportError?: Error;
+  }) {
+    super(
+      `Failed to execute operation on "${name}". See "ExecutionError.what" for more details.`
+    );
+
+    this.result = result;
+    this.transportError = transportError;
+  }
+
+  get what() {
+    return this.transportError ?? this.result;
+  }
+}

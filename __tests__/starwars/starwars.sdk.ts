@@ -10,6 +10,7 @@ import {
   Executor,
   Client,
   TypeConditionError,
+  ExecutionError,
 } from "../../src";
 
 export const VERSION = "unversioned";
@@ -957,126 +958,236 @@ export class Starwars implements Client {
   constructor(public readonly executor: Executor) {}
 
   public readonly query = {
-    hero: <T extends Array<Selection>>(
+    hero: async <T extends Array<Selection>>(
       variables: { episode?: Episode },
       select: (t: CharacterSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"hero", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "hero",
-          "query",
-          new SelectionSet([Query.hero<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"hero", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "hero",
+            "query",
+            new SelectionSet([Query.hero<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "hero", transportError: error });
+        });
 
-    reviews: <T extends Array<Selection>>(
+      if (result.errors) {
+        throw new ExecutionError({ name: "hero", result });
+      } else if (result.data) {
+        return result.data.hero;
+      } else {
+        throw new ExecutionError({ name: "hero", result });
+      }
+    },
+
+    reviews: async <T extends Array<Selection>>(
       variables: { episode?: Episode },
       select: (t: ReviewSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"reviews", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "reviews",
-          "query",
-          new SelectionSet([Query.reviews<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"reviews", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "reviews",
+            "query",
+            new SelectionSet([Query.reviews<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "reviews", transportError: error });
+        });
 
-    search: <T extends Array<Selection>>(
+      if (result.errors) {
+        throw new ExecutionError({ name: "reviews", result });
+      } else if (result.data) {
+        return result.data.reviews;
+      } else {
+        throw new ExecutionError({ name: "reviews", result });
+      }
+    },
+
+    search: async <T extends Array<Selection>>(
       variables: { text?: string },
       select: (t: SearchResultSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"search", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "search",
-          "query",
-          new SelectionSet([Query.search<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"search", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "search",
+            "query",
+            new SelectionSet([Query.search<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "search", transportError: error });
+        });
 
-    character: <T extends Array<Selection>>(
+      if (result.errors) {
+        throw new ExecutionError({ name: "search", result });
+      } else if (result.data) {
+        return result.data.search;
+      } else {
+        throw new ExecutionError({ name: "search", result });
+      }
+    },
+
+    character: async <T extends Array<Selection>>(
       variables: { id?: string },
       select: (t: CharacterSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"character", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "character",
-          "query",
-          new SelectionSet([Query.character<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"character", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "character",
+            "query",
+            new SelectionSet([Query.character<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "character",
+            transportError: error,
+          });
+        });
 
-    droid: <T extends Array<Selection>>(
+      if (result.errors) {
+        throw new ExecutionError({ name: "character", result });
+      } else if (result.data) {
+        return result.data.character;
+      } else {
+        throw new ExecutionError({ name: "character", result });
+      }
+    },
+
+    droid: async <T extends Array<Selection>>(
       variables: { id?: string },
       select: (t: DroidSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"droid", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "droid",
-          "query",
-          new SelectionSet([Query.droid<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"droid", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "droid",
+            "query",
+            new SelectionSet([Query.droid<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "droid", transportError: error });
+        });
 
-    human: <T extends Array<Selection>>(
+      if (result.errors) {
+        throw new ExecutionError({ name: "droid", result });
+      } else if (result.data) {
+        return result.data.droid;
+      } else {
+        throw new ExecutionError({ name: "droid", result });
+      }
+    },
+
+    human: async <T extends Array<Selection>>(
       variables: { id?: string },
       select: (t: HumanSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"human", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "human",
-          "query",
-          new SelectionSet([Query.human<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"human", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "human",
+            "query",
+            new SelectionSet([Query.human<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "human", transportError: error });
+        });
 
-    starship: <T extends Array<Selection>>(
+      if (result.errors) {
+        throw new ExecutionError({ name: "human", result });
+      } else if (result.data) {
+        return result.data.human;
+      } else {
+        throw new ExecutionError({ name: "human", result });
+      }
+    },
+
+    starship: async <T extends Array<Selection>>(
       variables: { id?: string },
       select: (t: StarshipSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"starship", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "starship",
-          "query",
-          new SelectionSet([Query.starship<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"starship", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "starship",
+            "query",
+            new SelectionSet([Query.starship<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "starship", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "starship", result });
+      } else if (result.data) {
+        return result.data.starship;
+      } else {
+        throw new ExecutionError({ name: "starship", result });
+      }
+    },
   };
 
   public readonly mutate = {
-    createReview: <T extends Array<Selection>>(
+    createReview: async <T extends Array<Selection>>(
       variables: { episode?: Episode; review?: ReviewInput },
       select: (t: ReviewSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"createReview", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "createReview",
-          "mutation",
-          new SelectionSet([Mutation.createReview<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"createReview", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "createReview",
+            "mutation",
+            new SelectionSet([Mutation.createReview<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createReview",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createReview", result });
+      } else if (result.data) {
+        return result.data.createReview;
+      } else {
+        throw new ExecutionError({ name: "createReview", result });
+      }
+    },
   };
 }

@@ -52,6 +52,7 @@ export class Codegen {
       Executor,
       Client,
       TypeConditionError,
+      ExecutionError,
     } from '${this.modulePath}'
     `,
     ];
@@ -640,6 +641,16 @@ const toPrimitive = (
   }
 };
 
+const unwrapResult = (fieldName: string) => `
+  if (result.errors) {
+    throw new ExecutionError({ name: '${fieldName}', result })
+  } else if (result.data) {
+    return result.data.${fieldName}
+  } else {
+    throw new ExecutionError({ name: '${fieldName}', result })
+  }
+`;
+
 const renderClientRootField = (
   rootOp: "query" | "mutation" | "subscription",
   rootType: string,
@@ -668,26 +679,35 @@ const renderClientRootField = (
     return field.args.length > 0
       ? `
     ${jsDocComment}
-    ${field.name}: (
+    ${field.name}: async (
       variables: { ${field.args.map(renderVariables).join(", ")} },
-    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+    ) => {
+      const result = await this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
           field.name
         }', any, never> ]>>>(
-      new Operation(
-        "${field.name}", 
-        "${rootOp}", 
-        new SelectionSet([
-          ${rootType}.${field.name}(
-            variables, 
-          ),
-        ]),
-      ),
-    ),
+        new Operation(
+          "${field.name}", 
+          "${rootOp}", 
+          new SelectionSet([
+            ${rootType}.${field.name}(
+              variables, 
+            ),
+          ]),
+        ),
+      ).catch((error: any) => { 
+        throw new ExecutionError({ name: '${
+          field.name
+        }', transportError: error })
+      })
+
+      ${unwrapResult(field.name)}
+    },
   `
       : `
     ${jsDocComment}
-    ${field.name}: (
-    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+    ${field.name}: async (
+    ) => {
+      const result = await this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
           field.name
         }', never, never> ]>>>(
         new Operation(
@@ -697,16 +717,24 @@ const renderClientRootField = (
             ${rootType}.${field.name}(),
           ]),
         )
-      ),
+      ).catch((error: any) => { 
+        throw new ExecutionError({ name: '${
+          field.name
+        }', transportError: error })
+      })
+
+      ${unwrapResult(field.name)}
+    },
   `;
   } else {
     return field.args.length > 0
       ? `
     ${jsDocComment}
-    ${field.name}: <T extends Array<Selection>>(
+    ${field.name}: async <T extends Array<Selection>>(
       variables: { ${field.args.map(renderVariables).join(", ")} },
       select: (t: ${baseType.toString()}Selector) => T
-    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+    ) => {
+      const result = await this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
           field.name
         }', any, SelectionSet<T>> ]>>>(
       new Operation(
@@ -719,13 +747,19 @@ const renderClientRootField = (
           ),
         ]),
       ),
-    ),
+    ).catch((error: any) => { 
+      throw new ExecutionError({ name: '${field.name}', transportError: error })
+    })
+
+    ${unwrapResult(field.name)}
+    },
   `
       : `
     ${jsDocComment}
-    ${field.name}: <T extends Array<Selection>>(
+    ${field.name}: async <T extends Array<Selection>>(
       select: (t: ${baseType.toString()}Selector) => T
-    ) => this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
+    ) => {
+      const result = await this.executor.execute<I${rootType}, Operation<SelectionSet<[ Field<'${
           field.name
         }', any, SelectionSet<T>> ]>>>(
         new Operation(
@@ -735,7 +769,14 @@ const renderClientRootField = (
             ${rootType}.${field.name}<T>(select),
           ]),
         )
-      ),
+      ).catch((error: any) => { 
+        throw new ExecutionError({ name: '${
+          field.name
+        }', transportError: error })
+      })
+
+      ${unwrapResult(field.name)}
+    },
   `;
   }
 };
