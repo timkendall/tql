@@ -12,8 +12,6 @@
 
 Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)! 
 
-> Note: Repl.it seems to only support TypeScript 3.3 in it's editor so auto-complete will not work.
-
 ## Installation
 
 `npm install @timkendall/tql` or `yarn add @timkendall/tql` 
