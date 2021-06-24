@@ -33,7 +33,6 @@
     "yargs": "^16.1.0"
   },
   "devDependencies": {
-    "@apollo/client": "^3.3.6",
     "@arkweid/lefthook": "^0.7.2",
     "@types/fs-extra": "^9.0.2",
     "@types/jest": "^26.0.19",
