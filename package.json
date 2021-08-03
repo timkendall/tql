@@ -20,7 +20,6 @@
     "dev": "tsc -b -w",
     "prepush": "yarn test",
     "prepublish": "yarn clean && yarn build:release",
-    "postpublish": "rm -r ./dist",
     "test": "jest --cache=false",
     "format": "prettier --write",
     "version": "auto-changelog -p && git add CHANGELOG.md"
@@ -43,6 +42,7 @@
     "@types/yargs": "^15.0.12",
     "auto-changelog": "^2.2.1",
     "graphql": "^15.3.0",
+    "graphql-request": "^3.5.0",
     "graphql-subscriptions": "^1.0.0",
     "graphql-tools": "^4.0.8",
     "jest": "^26.6.3",
