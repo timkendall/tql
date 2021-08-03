@@ -9,35 +9,40 @@ export interface Client {
   readonly subscribe?: Record<string, unknown>;
 }
 
+export interface ExecutorConfig {
+  uri: string;
+  httpHeaders?: Record<string, string> | (() => Record<string, string>);
+  fetch?: typeof fetch;
+}
+
 export class Executor {
-  constructor(public readonly endpoint: string) {}
+  constructor(public readonly config: ExecutorConfig) {}
 
   execute<RootType, TOperation extends Operation<SelectionSet<any>>>(
     operation: TOperation
   ): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>> {
-    return httpExecute<RootType, TOperation>(this.endpoint, operation);
+    const _fetch = this.config.fetch ?? fetch;
+    const headers =
+      typeof this.config.httpHeaders === "function"
+        ? this.config.httpHeaders()
+        : this.config.httpHeaders;
+
+    return _fetch(this.config.uri, {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+        ...headers,
+      },
+      body: JSON.stringify({
+        operationName: operation.name,
+        // variables,
+        query: operation.toString(),
+      }),
+    }).then((res) => res.json()) as Promise<
+      ExecutionResult<Result<RootType, TOperation["selectionSet"]>>
+    >;
   }
 }
-
-export const httpExecute = <
-  RootType,
-  TOperation extends Operation<SelectionSet<any>>
->(
-  endpoint: string,
-  operation: TOperation
-  /* @todo variables?: Variables */
-): Promise<ExecutionResult<Result<RootType, TOperation["selectionSet"]>>> =>
-  fetch(endpoint, {
-    method: "post",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      operationName: operation.name,
-      // variables,
-      query: operation.toString(),
-    }),
-  }).then((res) => res.json()) as Promise<
-    ExecutionResult<Result<RootType, TOperation["selectionSet"]>>
-  >;
 
 export class ExecutionError extends Error {
   public readonly name: string;
