@@ -4,6 +4,7 @@
   "license": "MIT",
   "version": "0.7.1",
   "description": "Write GraphQL queries in TypeScript.",
+  "keywords": ["graphql", "typescript", "query builder", "codegen"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
