@@ -1,7 +1,7 @@
 import { Executor } from "./src";
 import { Starwars } from "./starwars.api";
 (async () => {
-  const starwars = new Starwars(new Executor(""));
+  const starwars = new Starwars(new Executor({ uri: "" }));
 
   const character = await starwars.query.character({ id: "frf" }, (t) => [
     t.__typename(),
@@ -11,9 +11,7 @@ import { Starwars } from "./starwars.api";
       t.friends((t) => [t.id()]),
     ]),
 
-    // t.on('Droid', t => [
-    //   t.primaryFunction(),
-    // ])
+    t.on("Droid", (t) => [t.primaryFunction()]),
   ]);
 
   character.data.character.__typename;
