@@ -52,7 +52,7 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 ### (Option 1) Static Selectors
 
-The recommended way to use this library is to pre-compile your query builder API (vs. using the lower-level/dynamic `Selector` API). We have found this to generally provide the optimal developer experience. It also has runtime performance and type-saftey benefits (as types are not duplicated).
+The recommended way to use this library is to pre-compile your query builder API.
 
 1. Compile selectors `yarn --silent tql <sdl|endpoint> > api.ts`
 2. Write queries
@@ -72,7 +72,7 @@ const operation = query((t) => [
 
 ### (Option 2) Dynamic Selectors
 
-We export a lower level `Selector` API that can be used without any code-generation step while still preserving type-saftey if desired. It makes use of runtime [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects so there is likely a performance impact (though I have not benchmarked this).
+We export a lower level `selector` API that can be used without any code-generation step while still preserving type-saftey if desired. It makes use of runtime [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects so there is likely a performance impact (though I have not benchmarked this).
 
 Example:
 
