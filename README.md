@@ -110,11 +110,53 @@ const operation = query([
 
 #### Variables
 
+Variables are supported with the following API.
+
+```typescript
+import { query, $, VariablesOf } from './api'
+
+const example = query(t => [
+  t.user({ id: $`id!` }, t => [
+    t.id(),
+  ])
+])
+
+type ExampleVariables = VariablesOf<typeof example> // { id: string }
+```
+
 #### Fragments
+
+Both [named and inline fragments](https://spec.graphql.org/June2018/#sec-Language.Fragments) are supported.
+
+##### Named
+
+```typescript
+import { on, character } from './api'
+
+// "virtual" fragment (i.e just use the language)
+const virtualCharacterFields = character(t => [ t.id(), t.name() ])
+
+// proper named fragment
+const characterFields = on('Character', t => [ t.id(), t.name() ]).named('CharacterFields')
+
+const a = query(t => [
+  t.__typename(),
+  
+  // virtual 
+  ...virtualCharacterFields,
+  
+  // named
+  characterFields,
+  
+  // inline
+  t.on('Human', t => [ t.homePlanet() ])
+  t.on('Droid', t => [ t.primaryFunction() ])
+])
+
+```
 
 ##### Inline
 
-##### Named
 
 #### Directives
 
