@@ -4,7 +4,12 @@
   "license": "MIT",
   "version": "0.7.1",
   "description": "Write GraphQL queries in TypeScript.",
-  "keywords": ["graphql", "typescript", "query builder", "codegen"],
+  "keywords": [
+    "graphql",
+    "typescript",
+    "query builder",
+    "codegen"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -22,6 +27,7 @@
     "prepush": "yarn test",
     "prepublish": "yarn clean && yarn build:release",
     "test": "jest --cache=false",
+    "benchmark": "ts-node benchmarks/index.ts",
     "format": "prettier --write",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
@@ -42,6 +48,8 @@
     "@types/prettier": "^2.1.5",
     "@types/yargs": "^15.0.12",
     "auto-changelog": "^2.2.1",
+    "benny": "^3.6.15",
+    "gotql": "^2.1.0-alpha1",
     "graphql": "^15.3.0",
     "graphql-request": "^3.5.0",
     "graphql-subscriptions": "^1.0.0",
