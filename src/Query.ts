@@ -1,5 +1,7 @@
 import { ISelector } from "./Selector";
 
+// WIP
+
 // export const operation = <S extends ISelector<any>>(
 //   type: "query" | "mutation" | "subscription",
 //   selector: S
