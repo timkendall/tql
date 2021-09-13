@@ -11,6 +11,7 @@ import {
   NamedTypeNode,
   InlineFragmentNode,
 } from "graphql";
+import SHA256 from "jssha/dist/sha256";
 
 import {
   argumentOf,
@@ -93,6 +94,12 @@ export class Operation<TSelectionSet extends SelectionSet<any>> {
 
   toDocument() {
     return documentOf([this.ast]);
+  }
+
+  get sha256() {
+    const sha = new SHA256("SHA-256", "TEXT", { encoding: "UTF8" });
+    sha.update(this.toString());
+    return sha.getHash("HEX");
   }
 
   get ast(): OperationDefinitionNode {
