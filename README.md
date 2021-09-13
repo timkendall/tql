@@ -14,6 +14,33 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 <img src=".github/assets/react.ts.png" width="500" />
 
+## Quickstart
+
+1. [Installation](#Installation)
+1. [Usage](#Usage)
+    1. [(Recommended) Using Pre-built Selectors]()
+    1. [Using Dynamic Selectors]()
+    1. [Basics]()
+        1. [Operations]()
+        1. [Variables]()
+        1. [Fragments]()
+            1. [Inline]()
+            1. [Named]()
+        1. [Directives]()
+    1. [Client Examples]()
+        1. [`@apollo/client`]()
+        1. [`urql`]()
+        1. [`graphql-request`]()
+1. [Optimize with Compile-time APQs]()
+1. [Generating GraphQL API SDKs]()
+    1. [CLI]()
+    1. [GitHub Action]()
+1. [Performance & Benchmarks]()
+1. [Inspiration]()
+1. [License]()
+
+
+
 ## Installation
 
 `npm install @timkendall/tql` or `yarn add @timkendall/tql` 
@@ -22,17 +49,6 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 
 ## Usage
-
-1. [(Recommended) Usage w/Pre-compiled Selectors]()
-1. [`Selector` API]()
-1. [Example Client Usage]()
-    1. [`@apollo/client`]()
-    1. [`urql`]()
-    1. [`graphql-request`]()
-1. [(Optional) Compile-time APQ]()
-1. [Generating GraphQL SDKs]()
-    1. [CLI]()
-    1. [GitHub Action]()
 
 
 ### (Recommended) Usage w/Pre-compiled Selectors
