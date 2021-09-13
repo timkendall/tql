@@ -1,7 +1,8 @@
 import fetch from "node-fetch";
 import { ExecutionResult } from "graphql";
 
-import { SelectionSet, Operation, Result } from "./Operation";
+import { SelectionSet, Operation } from "./Operation";
+import { Result } from "./Result";
 
 export interface Client {
   readonly query: Record<string, unknown>;
@@ -68,5 +69,13 @@ export class ExecutionError extends Error {
 
   get what() {
     return this.transportError ?? this.result;
+  }
+}
+
+export class TypeConditionError extends Error {
+  constructor(metadata: { selectedType: string; abstractType: string }) {
+    super(
+      `"${metadata.selectedType}" is not a valid type of abstract "${metadata.abstractType}" type.`
+    );
   }
 }
