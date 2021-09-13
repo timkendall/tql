@@ -134,7 +134,7 @@ Both [named and inline fragments](https://spec.graphql.org/June2018/#sec-Languag
 import { on, character } from './api'
 
 // "virtual" fragment (i.e just use the language)
-const virtualCharacterFields = character(t => [ t.id(), t.name() ])
+const virtualCharacterFields = character(t => [ t.id(), t.name() ]) // maybe support converting selections to Fragments with `.toFragment(name: string)`
 
 // proper named fragment
 const characterFields = on('Character', t => [ t.id(), t.name() ]).named('CharacterFields')
