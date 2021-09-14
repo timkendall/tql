@@ -4,6 +4,7 @@ import {
   Selection,
   Argument,
   Primitive,
+  Value,
 } from "./Operation";
 
 export type ISelector<T> = {

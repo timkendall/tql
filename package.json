@@ -4,7 +4,12 @@
   "license": "MIT",
   "version": "0.7.1",
   "description": "Write GraphQL queries in TypeScript.",
-  "keywords": ["graphql", "typescript", "query builder", "codegen"],
+  "keywords": [
+    "graphql",
+    "typescript",
+    "query builder",
+    "codegen"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -47,8 +52,10 @@
     "graphql-subscriptions": "^1.0.0",
     "graphql-tools": "^4.0.8",
     "jest": "^26.6.3",
+    "ts-essentials": "^8.1.0",
     "ts-jest": "^26.4.4",
     "ts-node": "^9.0.0",
+    "type-fest": "^2.3.2",
     "typescript": "^4.2.3"
   },
   "peerDependencies": {

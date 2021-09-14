@@ -10,6 +10,7 @@ import {
   ListTypeNode,
   NamedTypeNode,
   InlineFragmentNode,
+  ExecutableDefinitionNode,
 } from "graphql";
 import SHA256 from "jssha/dist/sha256";
 

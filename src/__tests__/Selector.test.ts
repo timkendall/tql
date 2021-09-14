@@ -3,6 +3,7 @@ import { print } from "graphql";
 import { selector, Selector } from "../Selector";
 import { SelectionSet } from "../Operation";
 import { Result } from "../Result";
+import { $ } from "../Query";
 
 describe("Selector", () => {
   describe("type-saftey", () => {
