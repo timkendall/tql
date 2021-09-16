@@ -4,7 +4,12 @@
   "license": "MIT",
   "version": "0.7.1",
   "description": "Write GraphQL queries in TypeScript.",
-  "keywords": ["graphql", "typescript", "query builder", "codegen"],
+  "keywords": [
+    "graphql",
+    "typescript",
+    "query builder",
+    "codegen"
+  ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -26,10 +31,12 @@
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "dependencies": {
+    "@graphql-typed-document-node/core": "^3.1.0",
     "fs-extra": "^9.0.1",
     "jssha": "^3.2.0",
     "node-fetch": "^2.6.1",
     "prettier": "^2.1.2",
+    "typescript-tuple": "^5.0.1",
     "yargs": "^16.1.0"
   },
   "devDependencies": {

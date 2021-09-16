@@ -16,6 +16,7 @@ export type ISelector<T> = {
       ) => Field<F extends string ? F : never, never, SelectionSet<S>>;
 };
 
+// @rename to `Selection`?
 export class Selector<T> {
   constructor(public readonly select: (t: ISelector<T>) => Array<Selection>) {}
 
