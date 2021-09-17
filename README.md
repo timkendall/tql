@@ -165,11 +165,15 @@ const query = print(new SelectionSet(selection).ast);
 The module structure is relatively flat and can be grouped into three general categories.
 
 - Type-aware AST building 
-- Convieenience API 
-- Dynamic and static selector constructors
+- Selector API (i.e higer-level convenience API over the type-aware AST one)
+- Dynamic and static selector builders
 
-- [`AST.ts`]() - 
+Primary modules:
 
+- [`AST.ts`]() - Type-aware extensions of [graphql-js AST interfaces](https://github.com/graphql/graphql-js/blob/main/src/language/ast.ts)
+- [`Selector.ts`]() - DSL for dynamically constructing type-safe selections
+- [`Variables.ts`]() - Utility type for deriving variables from an operation
+- [`Result.ts`]() - Utility type for deriving the result type from an operation
 
 ## Inspiration
 
