@@ -1,7 +1,7 @@
 import { print } from "graphql";
 
 import { selectable, buildSelector } from "../Selector";
-import { Field, Argument, SelectionSet } from "../Operation";
+import { field, selectionSet, argument, SelectionSet } from "../AST";
 import { Result } from "../Result";
 
 describe("Selector", () => {
@@ -18,16 +18,13 @@ describe("Selector", () => {
 
       const { foo, bar, baz } = selectable<Query>();
 
-      expect(foo()).toEqual(new Field("foo"));
-      expect(bar()).toEqual(new Field("bar"));
+      expect(foo()).toEqual(field("foo"));
+      expect(bar()).toEqual(field("bar"));
       expect(baz((t) => [t.id(), t.count({ number: 69 })])).toEqual(
-        new Field(
+        field(
           "baz",
           undefined,
-          new SelectionSet([
-            new Field("id"),
-            new Field("count", [new Argument("number", 69)]),
-          ])
+          selectionSet([field("id"), field("count", [argument("number", 69)])])
         )
       );
     });

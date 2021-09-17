@@ -5,7 +5,7 @@ import {
   Selection,
   Field,
   InlineFragment,
-} from "./Operation";
+} from "./AST";
 
 type FilterFragments<
   T extends Array<Field<any, any, any> | InlineFragment<any, any>>
@@ -30,7 +30,7 @@ export type Result<
       readonly // @note Build out object from non-fragment field selections
       [Key in FilterFragments<
         TSelectionSet["selections"]
-      >[number]["name"]]: Type[Key] extends Primitive
+      >[number]["name"]["value"]]: Type[Key] extends Primitive
         ? Type[Key]
         : TSelectionSet["selections"][number] extends infer U
         ? U extends Field<Key, any, infer Selections>

@@ -9,7 +9,10 @@ import {
   Argument,
   Primitive,
   Variable,
-} from "./Operation";
+  field,
+  argument,
+  selectionSet,
+} from "./AST";
 
 import { Result } from "./Result";
 import { Variables as VariablesOf } from "./Variables";
@@ -51,6 +54,7 @@ type Variables<T> = { [K in keyof T]: T[K] | Variable<string> };
 // @todo how do we get a union of:
 // Argument<'a', string | Variable<string>> |  Argument<'b', number | Variable<string>
 // vs. Argument<'a' | 'b', string | number | Variables<string>>
+// @todo support arrays
 type Arguments<T extends Variables<any>> = keyof T extends string
   ? Argument<keyof T, T[keyof T]>
   : never;
@@ -103,7 +107,7 @@ export class Selected<
   }
 
   toString() {
-    return print(new SelectionSet(this.selections).ast);
+    return print(selectionSet(this.selections));
   }
 
   toFragment(name?: string) {
@@ -122,30 +126,30 @@ export class Selected<
 */
 export const selectable = <T>(): SelectionMap<T> =>
   new Proxy(Object.create(null), {
-    get(target, field) /*: FieldFn*/ {
+    get(target, fieldName) /*: FieldFn*/ {
       return function fieldFn(...args: any[]) {
         if (args.length === 0) {
-          return new Field<any, any, any>(field);
+          return field<any, any, any>(fieldName);
         } else if (typeof args[0] === "function") {
-          return new Field<any, any, any>(
-            field,
+          return field<any, any, any>(
+            fieldName,
             undefined,
-            new SelectionSet(args[0](selectable()))
+            selectionSet(args[0](selectable()))
           );
         } else if (typeof args[0] === "object") {
           if (typeof args[1] === "function") {
-            return new Field<any, any, any>(
-              field,
-              Object.entries(args[0]).map(
-                ([name, value]) => new Argument(name, value)
+            return field<any, any, any>(
+              fieldName,
+              Object.entries(args[0]).map(([name, value]) =>
+                argument(name, value)
               ),
-              new SelectionSet(args[1](selectable()))
+              selectionSet(args[1](selectable()))
             );
           } else {
-            return new Field<any, any, any>(
+            return field<any, any, any>(
               field,
-              Object.entries(args[0]).map(
-                ([name, value]) => new Argument(name, value)
+              Object.entries(args[0]).map(([name, value]) =>
+                argument(name, value)
               )
             );
           }
@@ -187,9 +191,7 @@ export function buildRootSelector<T>(
           ],
           selectionSet: {
             kind: "SelectionSet",
-            selections: [
-              ...select(selectable<T>()).map((selection) => selection.ast),
-            ],
+            selections: [...select(selectable<T>())],
           },
         },
       ],
