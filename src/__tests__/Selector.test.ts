@@ -1,11 +1,37 @@
 import { print } from "graphql";
 
-import { selector, Selector } from "../Selector";
-import { SelectionSet } from "../Operation";
+import { selectable, buildSelector } from "../Selector";
+import { Field, Argument, SelectionSet } from "../Operation";
 import { Result } from "../Result";
 
 describe("Selector", () => {
   describe("type-saftey", () => {
+    it("builds dynamic selection maps", () => {
+      interface Query {
+        foo: string;
+        bar: number;
+        baz: {
+          id: string;
+          count(variables: { number: number }): number;
+        };
+      }
+
+      const { foo, bar, baz } = selectable<Query>();
+
+      expect(foo()).toEqual(new Field("foo"));
+      expect(bar()).toEqual(new Field("bar"));
+      expect(baz((t) => [t.id(), t.count({ number: 69 })])).toEqual(
+        new Field(
+          "baz",
+          undefined,
+          new SelectionSet([
+            new Field("id"),
+            new Field("count", [new Argument("number", 69)]),
+          ])
+        )
+      );
+    });
+
     it("supports selecting against an interface", () => {
       interface Query {
         foo: string;
@@ -15,69 +41,31 @@ describe("Selector", () => {
         };
       }
 
-      const { foo, bar, baz } = selector<Query>();
+      // code-gen would replace this with static `SelectionMap`'s vs. calls to `selectable`
+      const query = buildSelector<Query>();
+      const selection = query((t) => [
+        t.foo(),
+        t.bar(),
+        t.baz((t) => [t.id()]),
+      ]);
 
-      const selection = [foo(), bar(), baz((t) => [t.id()])];
-      type ExampleResult = Result<Query, SelectionSet<typeof selection>>;
+      // const copied = [...selection]
+      // const copied: typeof selection['selections'] = [...selection]
+      // const selection = [foo(), bar(), baz((t) => [t.id()])];
 
-      const query = print(new SelectionSet(selection).ast);
+      type ExampleResult = Result<
+        Query,
+        SelectionSet<typeof selection["selections"]>
+      >;
 
-      expect(query).toMatchInlineSnapshot(`
+      const string = selection.toString();
+
+      expect(string).toMatchInlineSnapshot(`
         "{
           foo
           bar
           baz {
             id
-          }
-        }"
-      `);
-    });
-  });
-
-  describe("class API", () => {
-    it("supports arbitrarily deep seletions", () => {
-      const selector = new Selector<any>((t) => [
-        t.user({ id: "foo" }, (t) => [t.id()]),
-      ]);
-
-      const query = print(selector.toSelectionSet().ast);
-
-      expect(query).toMatchInlineSnapshot(`
-        "{
-          user(id: \\"foo\\") {
-            id
-          }
-        }"
-      `);
-    });
-  });
-
-  describe("function API", () => {
-    it("supports arbitrarily deep selections", () => {
-      const { authors, user } = selector<any>();
-
-      const selection = [
-        authors((t) => [t.name(), t.address((t) => [t.country()])]),
-
-        user({ id: "foo" }, (t) => [t.foo((t) => [t.bar((t) => [t.baz()])])]),
-      ];
-
-      const query = print(new SelectionSet(selection).ast);
-
-      expect(query).toMatchInlineSnapshot(`
-        "{
-          authors {
-            name
-            address {
-              country
-            }
-          }
-          user(id: \\"foo\\") {
-            foo {
-              bar {
-                baz
-              }
-            }
           }
         }"
       `);

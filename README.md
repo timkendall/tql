@@ -160,6 +160,16 @@ const query = print(new SelectionSet(selection).ast);
 */
 ```
 
+## Development
+
+The module structure is relatively flat and can be grouped into three general categories.
+
+- Type-aware AST building 
+- Convieenience API 
+- Dynamic and static selector constructors
+
+- [`AST.ts`]() - 
+
 
 ## Inspiration
 

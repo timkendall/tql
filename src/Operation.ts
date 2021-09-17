@@ -76,6 +76,8 @@ export class SelectionSet<T extends Array<Selection>> {
 
 export type Selection = Field<any, any, any> | InlineFragment<any, any>;
 
+export type Fragment = InlineFragment<any, any>; /*| NamedFragment */
+
 export class InlineFragment<
   TypeCondition extends Type,
   TSelectionSet extends SelectionSet<any>
