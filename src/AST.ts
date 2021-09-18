@@ -39,7 +39,9 @@ export interface NamedType<Name extends string, Type = unknown>
 
 export type Type = NamedType<string, any> | ListType<any> | NonNullType<any>;
 
-export interface Variable<Name extends string> extends VariableNode {}
+export interface Variable<Name extends string> extends VariableNode {
+  name: { kind: "Name"; value: Name };
+}
 
 export type Value = Variable<string> | Primitive;
 

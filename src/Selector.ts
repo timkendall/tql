@@ -1,5 +1,5 @@
-import { TypedQueryDocumentNode } from "graphql";
-import { print } from "graphql";
+import { TypedQueryDocumentNode, print } from "graphql";
+// import { IterableElement } from 'type-fest'
 
 import {
   Field,
@@ -99,11 +99,12 @@ export type SelectionMap<T> = {
     ])
   ])
 */
-export class Selected<
-  U extends Array<Selection>
-> extends Array<any /* @todo */> {
+
+type Element<T> = T extends Array<infer U> ? U : never;
+
+export class Selected<U extends Array<Selection>> extends Array<Element<U>> {
   constructor(public readonly selections: U) {
-    super(...selections);
+    super(selections as Element<U>);
   }
 
   toString() {

@@ -1,4 +1,5 @@
 import { print } from "graphql";
+import {} from "type-fest";
 
 import { selectable, buildSelector } from "../Selector";
 import { field, selectionSet, argument, SelectionSet } from "../AST";
@@ -46,14 +47,18 @@ describe("Selector", () => {
         t.baz((t) => [t.id()]),
       ]);
 
-      // const copied = [...selection]
-      // const copied: typeof selection['selections'] = [...selection]
-      // const selection = [foo(), bar(), baz((t) => [t.id()])];
+      const copied = [...selection];
+      // const selection2 = [foo(), bar(), baz((t) => [t.id()])];
 
       type ExampleResult = Result<
         Query,
         SelectionSet<typeof selection["selections"]>
       >;
+
+      // type ExampleCopiedResult = Result<
+      //   Query,
+      //   SelectionSet<typeof copied>
+      // >;
 
       const string = selection.toString();
 
