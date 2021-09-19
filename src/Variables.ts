@@ -1,10 +1,24 @@
 import {
+  Kind,
+  TypeNode,
+  parse,
+  visit,
+  visitWithTypeInfo,
+  TypeInfo,
+  buildSchema,
+  GraphQLSchema,
+} from "graphql";
+
+import { namedType, variableDefinition, Operation } from "./AST";
+
+import {
   Field,
   Argument,
   Selection,
   SelectionSet,
   Variable,
   VariableDefinition,
+  Value,
 } from "./AST";
 
 type VariableType<
@@ -45,9 +59,34 @@ export type Variables<
     : never
   : never;
 
-export const buildVariables = <T extends SelectionSet<Array<Selection>>>(
-  selectionSet: T
+export const isVariable = (value: any): value is Variable<string> =>
+  typeof value === "object" && value.kind === Kind.VARIABLE;
+
+export interface ArgumentTypeMap {
+  [field: string]: { [arg: string]: TypeNode };
+}
+
+export const buildVariableDefinitions = <T extends Operation<any>>(
+  schema: GraphQLSchema,
+  operation: T
 ): Array<VariableDefinition<any, any>> => {
-  // @todo walk selectionset tree extracting variable nodes from field arguments
-  return [];
+  const variableDefinitions: VariableDefinition<any, any>[] = [];
+  const typeInfo = new TypeInfo(schema);
+  const visitor = visitWithTypeInfo(typeInfo, {
+    [Kind.ARGUMENT]: (argNode) => {
+      if (isVariable(argNode.value) && typeInfo.getArgument()?.astNode?.type) {
+        // define the `VariableDefinition`
+        variableDefinitions.push(
+          variableDefinition(
+            argNode.value,
+            typeInfo.getArgument()?.astNode?.type!
+          )
+        );
+      }
+    },
+  });
+
+  visit(operation, visitor);
+
+  return variableDefinitions;
 };

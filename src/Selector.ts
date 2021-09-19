@@ -1,5 +1,4 @@
 import { TypedQueryDocumentNode, print } from "graphql";
-// import { IterableElement } from 'type-fest'
 
 import {
   Field,
@@ -107,7 +106,7 @@ type Element<T> = T extends Array<infer U> ? U : never;
 
 export class Selected<U extends Array<Selection>> extends Array<Element<U>> {
   constructor(public readonly selections: U) {
-    super(selections as Element<U> /* seems wrong*/);
+    super(...((selections as unknown) as Element<U>[]) /* seems wrong*/);
   }
 
   toString() {

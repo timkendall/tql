@@ -30,12 +30,26 @@ export interface NonNullType<
   Type extends NamedType<string, any> | ListType<any>
 > extends NonNullTypeNode {}
 
+export const nonNull = <Type extends NamedType<string, any> | ListType<any>>(
+  type: Type
+): NonNullType<Type> => ({
+  kind: Kind.NON_NULL_TYPE,
+  type,
+});
+
 export interface ListType<
   Type extends NamedType<string, any> | NonNullType<any>
 > extends ListTypeNode {}
 
 export interface NamedType<Name extends string, Type = unknown>
   extends NamedTypeNode {}
+
+export const namedType = <Name extends string>(
+  name: string
+): NamedType<Name> => ({
+  kind: Kind.NAMED_TYPE,
+  name: { kind: Kind.NAME, value: name },
+});
 
 export type Type = NamedType<string, any> | ListType<any> | NonNullType<any>;
 
@@ -67,6 +81,19 @@ export const argument = <Name extends string, Value = any>(
 
 export interface VariableDefinition<V extends Variable<string>, T extends Type>
   extends VariableDefinitionNode {}
+
+export const variableDefinition = <V extends Variable<string>, T extends Type>(
+  variable: V,
+  type: T
+): VariableDefinition<V, T> => ({
+  kind: "VariableDefinition",
+  variable,
+  type, // TypeNode =  NamedTypeNode | ListTypeNode | NonNullTypeNode;
+
+  // @todo
+  // defaultValue?: ValueNode;
+  // readonly directives?: ReadonlyArray<DirectiveNode>;
+});
 
 export interface SelectionSet<T extends Array<Selection>>
   extends SelectionSetNode {
@@ -120,8 +147,21 @@ export type Fragment = InlineFragment<any, any>; /*| NamedFragment */
 // readonly variableDefinitions?: ReadonlyArray<VariableDefinitionNode>;
 // readonly directives?: ReadonlyArray<DirectiveNode>;
 // readonly selectionSet: SelectionSetNode;
-export interface Operation<TSelectionSet extends SelectionSet<any>>
-  extends OperationDefinitionNode {}
+export interface Operation<T extends SelectionSet<any>>
+  extends OperationDefinitionNode {
+  selectionSet: T;
+}
+
+export const operation = <T extends SelectionSet<any>>(
+  selectionSet: T
+): Operation<T> => ({
+  kind: "OperationDefinition",
+  name: undefined, // @todo
+  operation: "query", // @todo
+  variableDefinitions: [], // @todo
+  directives: [], // @todo
+  selectionSet,
+});
 
 // export const documentOf = (
 //   nodes: ReadonlyArray<DefinitionNode>
@@ -269,19 +309,23 @@ export const toValueNode = (value: any, enums: any[] = []): ValueNode => {
       values: value.map((v) => toValueNode(v, enums)),
     };
   } else if (typeof value === "object") {
-    return {
-      kind: Kind.OBJECT,
-      fields: Object.entries(value)
-        .filter(([_, value]) => value !== undefined)
-        .map(([key, value]) => {
-          const keyValNode = toValueNode(value, enums);
-          return {
-            kind: Kind.OBJECT_FIELD,
-            name: { kind: Kind.NAME, value: key },
-            value: keyValNode,
-          };
-        }),
-    };
+    if (value.kind && value.kind === "Variable") {
+      return value;
+    } else {
+      return {
+        kind: Kind.OBJECT,
+        fields: Object.entries(value)
+          .filter(([_, value]) => value !== undefined)
+          .map(([key, value]) => {
+            const keyValNode = toValueNode(value, enums);
+            return {
+              kind: Kind.OBJECT_FIELD,
+              name: { kind: Kind.NAME, value: key },
+              value: keyValNode,
+            };
+          }),
+      };
+    }
   } else {
     throw new Error(`Unknown value type: ${value}`);
   }
