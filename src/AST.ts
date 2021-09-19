@@ -43,6 +43,14 @@ export interface Variable<Name extends string> extends VariableNode {
   name: { kind: "Name"; value: Name };
 }
 
+export const variable = <Name extends string>(name: Name): Variable<Name> => ({
+  kind: "Variable",
+  name: {
+    kind: "Name",
+    value: name,
+  },
+});
+
 export type Value = Variable<string> | Primitive;
 
 export interface Argument<Name extends string, Value = any>

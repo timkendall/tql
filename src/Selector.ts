@@ -15,7 +15,7 @@ import {
 } from "./AST";
 
 import { Result } from "./Result";
-import { Variables as VariablesOf } from "./Variables";
+import { Variables } from "./Variables";
 
 /*
   APIModel is a interface defining how a GraphQL API should
@@ -50,12 +50,12 @@ export interface APIModel {
     foods(variables: { limit?: number; after?: string }): Food[]; // @todo Array<infer T>
   }
 */
-type Variables<T> = { [K in keyof T]: T[K] | Variable<string> };
+type _Variables<T> = { [K in keyof T]: T[K] | Variable<string> };
 // @todo how do we get a union of:
 // Argument<'a', string | Variable<string>> |  Argument<'b', number | Variable<string>
 // vs. Argument<'a' | 'b', string | number | Variables<string>>
 // @todo support arrays
-type Arguments<T extends Variables<any>> = keyof T extends string
+type Arguments<T extends _Variables<any>> = keyof T extends string
   ? Argument<keyof T, T[keyof T]>
   : never;
 export type SelectionMap<T> = {
@@ -63,10 +63,13 @@ export type SelectionMap<T> = {
     ? U extends (variables: infer Vars) => infer Type // parameterized fields
       ? Type extends Primitive
         ? (
-            variables: Variables<Vars>
-          ) => Field<F extends string ? F : never, Arguments<Variables<Vars>>[]> // dumb
+            variables: _Variables<Vars>
+          ) => Field<
+            F extends string ? F : never,
+            Arguments<_Variables<Vars>>[]
+          > // dumb
         : <S extends Array<Selection>>(
-            variables: Variables<Vars>,
+            variables: _Variables<Vars>,
             select: (selector: SelectionMap<Type>) => S
           ) => Field<
             F extends string ? F : never,
@@ -178,7 +181,7 @@ export function buildRootSelector<T>(
     select: (map: SelectionMap<T>) => U
   ): TypedQueryDocumentNode<
     Result<T, SelectionSet<U>>,
-    VariablesOf<T, SelectionSet<U>>
+    Variables<T, SelectionSet<U>>
   > {
     // @todo documentOf(operationOf(...))
     return {
