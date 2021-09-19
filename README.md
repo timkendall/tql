@@ -18,8 +18,8 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 1. [Installation](#Installation)
 1. [Usage](#Usage)
-    1. [(Recommended) Using Pre-built Selectors]()
-    1. [Using Dynamic Selectors]()
+    1. [(Recommended) Usage]()
+    1. [Usage w/o Code-generation]()
     1. [Basics]()
         1. [Operations]()
         1. [Variables]()
@@ -40,7 +40,6 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 1. [License]()
 
 
-
 ## Installation
 
 `npm install @timkendall/tql` or `yarn add @timkendall/tql` 
@@ -50,20 +49,25 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 ## Usage
 
+This is our top-level API that can be used w/o any code-generation steps. We recommend that you [learn how this API is used]() by our [**recommened generated API's**]().
 
-### (Recommended) Usage w/Pre-compiled Selectors
+```typescript
+import { ObjectType, buildSelector, buildRootSelector, t, $, on, Result, Variables } from '@timkendall/tql'
+```
+
+### (Recommended) Usage
 
 The recommended way to use this library is to pre-compile your query builder API (vs. using the lower-level/dynamic `Selector` API). We have found this to generally provide the optimal developer experience. It also has runtime performance and type-saftey benefits (as types are not duplicated).
 
 You will need to compile a type-safe client one time before using. Do this with the provided CLI:
-`yarn --silent tql <schema SDL or GraphQL HTTP API endpoint> > example.api.ts`.
+`tql <schema SDL or GraphQL HTTP API endpoint> > example.api.ts`.
 
 Here is what the Starwars GraphQL API looks like:
 
 ```typescript
 import { query } from './example.api'
 
-const operation = query("Example", (t) => [
+const operation = query<'Example'>((t) => [
   t.reviews({ episode: Episode.EMPIRE }, (t) => [
     t.stars(),
     t.commentary(),
@@ -91,29 +95,46 @@ const operation = query("Example", (t) => [
 
     t.starships((t) => [t.id(), t.name()]),
   ]),
-]);
+]).withName('Example');
 ```
 
-### `Selector` API
+### Usage w/o Code-generation
 
 We export a lower level `Selector` API that can be used without any code-generation step while still preserving type-saftey if desired. It makes use of runtime [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects so there is likely a performance impact (though I have not benchmarked this).
 
 Example:
 
 ```typescript
-import { Selector } from '@timkendall/tql'
+import { ObjectType, buildRootSelector, buildSelector } from '@timkendall/tql'
 
-interface Query {
-  user(id: string): {
+interface Query extends ObjectType {
+  user(variables: { id: string }): {
     id: string
   }
 }
 
-const selector = new Selector<Query>((t) => [
-  t.user({ id: "foo" }, (t) => [t.id()]),
-]);
+interface User extends ObjectType {
+  id: string
+  name: string
+  age: number
+}
 
-const query = print(selector.toSelectionSet().ast);
+const query = buildRootSelector<Query>();
+const user = buildSelector<User>()
+
+const fields = user(t => [ t.id(), t.name(), t.age() ])
+const fragment = fields.toFragment('UserFieldsFragment')
+
+const serialized = print(query((t) => [
+  t.user({ id: "foo" }, (t) => [
+    t.id(),
+    ...fields,
+    // or inline fragment
+    fields.toFragment(),
+    // or named fragment
+    fragment,
+  ]),
+]));
 
 /*
 {
@@ -126,12 +147,12 @@ const query = print(selector.toSelectionSet().ast);
 */
 ```
 
-#### `selector`
+#### `selectable`
 
-Alternatively a `selector` function is exported to offer a more functional API.
+We also export a `selectable` function as a way to interact with selectors on individual objects (`buildRootSelector` and `buildSelector` use this internally).
 
 ```typescript
-import { selector } from '@timkendall/tql'
+import { selectable, selectionSet } from '@timkendall/tql'
 
 interface Query {
   foo: string;
@@ -141,13 +162,13 @@ interface Query {
   };
 }
 
-const { foo, bar, baz } = selector<Query>();
+const { foo, bar, baz } = selectable<Query>();
 
 const selection = [foo(), bar(), baz((t) => [t.id()])];
 
 type ExampleResult = Result<Query, SelectionSet<typeof selection>>;
 
-const query = print(new SelectionSet(selection).ast);
+const query = print(selectionSet(selection));
 
 /*
 {
@@ -159,6 +180,85 @@ const query = print(new SelectionSet(selection).ast);
 }
 */
 ```
+
+### Basics
+
+`tql` is a thin wrapper over the [canoncial TypeScript GraphQL implementation](). Here we detail the convenience API's we offer for building type-safe operations in TypeScript.
+
+#### Operations
+
+Operations are provided via the generated (or [manually defined]()) root-level type selectors of `query`, `mutation`, and `subscription`.
+
+```typescript
+import { query, mutation, subscription } from './sdk'
+
+const read = query((t) => [
+  t.user({ id: $('userId') }, t => [
+    t.id(),
+    t.name(),
+  ])
+]) // TypedDocumentNode
+
+const write = mutation((t) => [
+  t.createUser({ input: $('input') }, t => [ t.id() ])
+]) // TypedDocumentNode
+
+const subscribe = query((t) => [
+  t.onUser({ operation: 'CREATE' }, t => [ t.timestamp() ])
+]) // TypedDocumentNode
+```
+
+#### Variables
+
+Variables are automatically infered from operation defintions.
+
+```typescript
+import { query, $, Variables, Schema } from './sdk'
+
+const example = query((t) => [
+  t.user({ id: $('userId') }, t => [
+    t.id(),
+    t.name(),
+  ])
+])
+
+const variables: Variables<Schema, typeof example> = { userId: 'foo' }
+```
+
+#### Fragments
+
+Not yet implemented.
+
+#### Directives
+
+Not yet implemented.
+
+### Client Examples
+
+TODO
+
+### Generation GraphQL API SDK's
+
+The overall goal of `tql` is to support the creation of [GraphQL API SDKs]().
+
+#### CLI
+
+TODO
+
+#### GitHub Action
+
+TODO
+
+### Performance & Benchmarks
+
+Runtime comparisons to possible subsitutes (largely pulled from [awesome-fluent-graphql](https://github.com/hasura/awesome-fluent-graphql)).
+
+|  Library |  Version  | CPU | Memory | Ops/second |
+|---|---|---|---|---|
+| `graphql-tag`  |   |   |   |   |
+| `relay`  |   |   |   |   |
+| [`gqty`](https://github.com/gqty-dev/gqty) (formerly [`gqless`](https://github.com/gqless/gqless)) |   |   |   |   |
+
 
 ## Development
 

@@ -165,7 +165,13 @@ export const selectable = <T>(): SelectionMap<T> =>
 
 // @todo support  function selector<T extends Array<Selection>>(selection: T): Selected<T>
 
-export function buildSelector<T>() {
+export interface ObjectType {
+  [key: string]:
+    | (Primitive | ObjectType)
+    | ((variables: any) => Primitive | ObjectType);
+}
+
+export function buildSelector<T extends ObjectType>() {
   return function <U extends Array<Selection>>(
     select: (map: SelectionMap<T>) => U
   ): Selected<U> {

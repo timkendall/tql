@@ -1,4 +1,4 @@
-import { selectable, buildSelector } from "../Selector";
+import { ObjectType, selectable, buildSelector } from "../Selector";
 import { field, selectionSet, argument } from "../AST";
 
 describe("Selector", () => {
@@ -27,7 +27,7 @@ describe("Selector", () => {
     });
 
     it("supports selecting against an interface", () => {
-      interface Query {
+      interface Query extends ObjectType {
         foo: string;
         bar: number;
         baz: {
