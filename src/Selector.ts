@@ -104,7 +104,7 @@ type Element<T> = T extends Array<infer U> ? U : never;
 
 export class Selected<U extends Array<Selection>> extends Array<Element<U>> {
   constructor(public readonly selections: U) {
-    super(selections as Element<U>);
+    super(selections as Element<U> /* seems wrong*/);
   }
 
   toString() {
@@ -148,7 +148,7 @@ export const selectable = <T>(): SelectionMap<T> =>
             );
           } else {
             return field<any, any, any>(
-              field,
+              fieldName,
               Object.entries(args[0]).map(([name, value]) =>
                 argument(name, value)
               )

@@ -87,17 +87,14 @@ export const field = <
 >(
   name: Name,
   args?: Arguments,
-  ss?: SS
+  selectionSet?: SS
 ): Field<Name, Arguments, SS> => ({
   kind: "Field",
   name: { kind: "Name", value: name },
   directives: [],
-  arguments: [],
+  arguments: args,
   alias: undefined,
-  selectionSet: {
-    kind: "SelectionSet",
-    selections: [],
-  },
+  selectionSet,
 });
 
 export interface InlineFragment<
