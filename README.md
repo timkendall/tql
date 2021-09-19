@@ -55,14 +55,15 @@ This is our top-level API that can be used w/o any code-generation steps. We rec
 import { ObjectType, buildSelector, buildRootSelector, t, $, on, Result, Variables } from '@timkendall/tql'
 ```
 
-### (Recommended) Usage
+### Recommended
 
 The recommended way to use this library is to pre-compile your query builder API (vs. using the lower-level/dynamic `Selector` API). We have found this to generally provide the optimal developer experience. It also has runtime performance and type-saftey benefits (as types are not duplicated).
 
-You will need to compile a type-safe client one time before using. Do this with the provided CLI:
-`tql <schema SDL or GraphQL HTTP API endpoint> > example.api.ts`.
 
-Here is what the Starwars GraphQL API looks like:
+1. `tql <sdl|endpoint> > example.api.ts`.
+
+
+Example ([Starwars](https://github.com/graphql/swapi-graphql) API):
 
 ```typescript
 import { query } from './example.api'
@@ -98,13 +99,14 @@ const operation = query<'Example'>((t) => [
 ]).withName('Example');
 ```
 
-### Usage w/o Code-generation
+### w/o Code-generation
 
 We export a lower level `Selector` API that can be used without any code-generation step while still preserving type-saftey if desired. It makes use of runtime [Proxy](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) objects so there is likely a performance impact (though I have not benchmarked this).
 
 Example:
 
 ```typescript
+import { print } from 'graphql'
 import { ObjectType, buildRootSelector, buildSelector } from '@timkendall/tql'
 
 interface Query extends ObjectType {

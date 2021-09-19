@@ -27,7 +27,7 @@ export interface APIModel {
     | ((variables: Record<string, any>) => Primitive | APIModel);
 }
 /*
-  `SelectionMap<T>` is a utility type that derives a convineicne
+  `Selector<T>` is a utility type that derives a convineicne
   object used to build type-safe selections on a pre-defined API.
 
   Example API:
@@ -57,7 +57,7 @@ type _Variables<T> = { [K in keyof T]: T[K] | Variable<string> };
 type Arguments<T extends _Variables<any>> = keyof T extends string
   ? Argument<keyof T, T[keyof T]>
   : never;
-export type SelectionMap<T> = {
+export type Selector<T> = {
   [F in keyof T]: T[F] extends infer U
     ? U extends (variables: infer Vars) => infer Type // parameterized fields
       ? Type extends Primitive
@@ -69,7 +69,7 @@ export type SelectionMap<T> = {
           > // dumb
         : <S extends Array<Selection>>(
             variables: _Variables<Vars>,
-            select: (selector: SelectionMap<Type>) => S
+            select: (selector: Selector<Type>) => S
           ) => Field<
             F extends string ? F : never,
             never /* @todo add arguments */,
@@ -79,7 +79,7 @@ export type SelectionMap<T> = {
       ? Type extends Primitive
         ? () => Field<F extends string ? F : never>
         : <S extends Array<Selection>>(
-            select: (selector: SelectionMap<Type>) => S
+            select: (selector: Selector<Type>) => S
           ) => Field<F extends string ? F : never, never, SelectionSet<S>>
       : never
     : never;
@@ -127,7 +127,7 @@ export class Selected<U extends Array<Selection>> extends Array<Element<U>> {
  `selectable` is a utility function to build a dynamic selector 
   map at runtime using reflection.
 */
-export const selectable = <T>(): SelectionMap<T> =>
+export const selectable = <T>(): Selector<T> =>
   new Proxy(Object.create(null), {
     get(target, fieldName) /*: FieldFn*/ {
       return function fieldFn(...args: any[]) {
@@ -173,7 +173,7 @@ export interface ObjectType {
 
 export function buildSelector<T extends ObjectType>() {
   return function <U extends Array<Selection>>(
-    select: (map: SelectionMap<T>) => U
+    select: (map: Selector<T>) => U
   ): Selected<U> {
     return new Selected(select(selectable<T>()));
   };
@@ -183,7 +183,7 @@ export function buildRootSelector<T>(
   operation: "query" | "mutation" | "subscription"
 ) {
   return function <U extends Array<Selection>>(
-    select: (map: SelectionMap<T>) => U
+    select: (map: Selector<T>) => U
   ): TypedQueryDocumentNode<
     Result<T, SelectionSet<U>>,
     Variables<T, SelectionSet<U>>
