@@ -133,9 +133,24 @@ export const field = <
 });
 
 export interface InlineFragment<
-  TypeCondition extends Type,
-  TSelectionSet extends SelectionSet<any>
+  TypeCondition extends NamedType<string, any>,
+  SS extends SelectionSet<Array<Selection>>
 > extends InlineFragmentNode {}
+
+export const inlineFragment = <
+  TypeCondition extends NamedType<string, any>,
+  SS extends SelectionSet<Array<Selection>>
+>(
+  typeCondition: TypeCondition,
+  selectionSet: SS
+): InlineFragment<TypeCondition, SS> => ({
+  kind: Kind.INLINE_FRAGMENT,
+  typeCondition,
+  directives: [
+    /* @todo*/
+  ],
+  selectionSet,
+});
 
 export type Selection = Field<any, any, any> | InlineFragment<any, any>;
 
@@ -163,132 +178,12 @@ export const operation = <T extends SelectionSet<any>>(
   selectionSet,
 });
 
-// export const documentOf = (
-//   nodes: ReadonlyArray<DefinitionNode>
-// ): DocumentNode => ({
-//   kind: Kind.DOCUMENT,
-//   definitions: nodes,
-// });
-
-// export const operationOf = ({
-//   operation,
-//   name,
-//   variables = [],
-//   directives = [],
-//   selectionSet,
-// }: {
-//   operation: OperationTypeNode;
-//   name: string;
-//   selectionSet: SelectionSetNode;
-//   variables?: ReadonlyArray<VariableDefinitionNode>;
-//   directives?: DirectiveNode[];
-// }): OperationDefinitionNode => ({
-//   kind: Kind.OPERATION_DEFINITION,
-//   operation,
-//   name: nameNodeOf(name),
-//   variableDefinitions: variables,
-//   selectionSet,
-//   directives,
-// });
-
-// export const selectionSetOf = (
-//   selections: SelectionNode[]
-// ): SelectionSetNode => ({
-//   kind: Kind.SELECTION_SET,
-//   selections,
-// });
-
-// export const inlineFragmentOf = ({
-//   typeCondition,
-//   directives = [],
-//   selectionSet,
-// }: {
-//   typeCondition: NamedTypeNode;
-//   directives?: DirectiveNode[];
-//   selectionSet: SelectionSetNode;
-// }): InlineFragmentNode => ({
-//   kind: Kind.INLINE_FRAGMENT,
-//   typeCondition,
-//   directives,
-//   selectionSet,
-// });
-
-// export const fieldOf = ({
-//   name,
-//   args = [],
-//   directives = [],
-//   selectionSet,
-// }: {
-//   name: string;
-//   args?: ArgumentNode[];
-//   directives?: DirectiveNode[];
-//   selectionSet?: SelectionSetNode;
-// }): FieldNode => ({
-//   kind: Kind.FIELD,
-//   name: nameNodeOf(name),
-//   arguments: args,
-//   directives,
-//   selectionSet,
-// });
-
-// export const argumentOf = ({
-//   name,
-//   value,
-// }: {
-//   name: string;
-//   value: ValueNode;
-// }): ArgumentNode => ({
-//   kind: Kind.ARGUMENT,
-//   name: nameNodeOf(name),
-//   value,
-// });
-
-// export const variableOf = ({ name }: { name: string }): VariableNode => ({
-//   kind: Kind.VARIABLE,
-//   name: nameNodeOf(name),
-// });
-
-// export const variableDefinitionOf = ({
-//   variable,
-//   type,
-//   directives = [],
-//   defaultValue,
-// }: {
-//   variable: VariableNode;
-//   type: TypeNode;
-//   defaultValue?: ValueNode;
-//   directives?: DirectiveNode[];
-// }): VariableDefinitionNode => ({
-//   kind: Kind.VARIABLE_DEFINITION,
-//   variable,
-//   type,
-//   defaultValue,
-//   directives,
-// });
-
-// export const nonNullTypeOf = ({
-//   type,
-// }: {
-//   type: NamedTypeNode | ListTypeNode;
-// }): NonNullTypeNode => ({
-//   kind: Kind.NON_NULL_TYPE,
-//   type,
-// });
-
-// export const listTypeOf = ({ type }: { type: TypeNode }): ListTypeNode => ({
-//   kind: Kind.LIST_TYPE,
-//   type,
-// });
-
-// export const namedTypeOf = ({ name }: { name: string }): NamedTypeNode => ({
-//   kind: Kind.NAMED_TYPE,
-//   name: nameNodeOf(name),
-// });
-
-// export const nameNodeOf = (name: string): NameNode => ({
-//   kind: Kind.NAME,
-//   value: name,
-// });
+export const document = (
+  nodes: ReadonlyArray<DefinitionNode>
+): DocumentNode => ({
+  kind: Kind.DOCUMENT,
+  definitions: nodes,
+});
 
 export const toValueNode = (value: any, enums: any[] = []): ValueNode => {
   if (typeof value === "string") {

@@ -33,7 +33,7 @@ describe("Variables", () => {
     };
   });
 
-  it.only("builds variable definitions", () => {
+  it("builds variable definitions", () => {
     const selection = new Selected([
       field("hello", [argument("name", variable("name"))]),
     ]);

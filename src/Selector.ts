@@ -57,6 +57,7 @@ type _Variables<T> = { [K in keyof T]: T[K] | Variable<string> };
 type Arguments<T extends _Variables<any>> = keyof T extends string
   ? Argument<keyof T, T[keyof T]>
   : never;
+
 export type Selector<T> = {
   [F in keyof T]: T[F] extends infer U
     ? U extends (variables: infer Vars) => infer Type // parameterized fields
@@ -179,6 +180,7 @@ export function buildSelector<T extends ObjectType>() {
   };
 }
 
+// in codegen selectors are statically defined with the appropriate `T` filled in for `Result` and `Variables`
 export function buildRootSelector<T>(
   operation: "query" | "mutation" | "subscription"
 ) {
