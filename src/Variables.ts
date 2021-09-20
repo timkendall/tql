@@ -19,6 +19,7 @@ import {
   Variable,
   VariableDefinition,
   Value,
+  variable,
 } from "./AST";
 
 type VariableType<
@@ -90,3 +91,6 @@ export const buildVariableDefinitions = <T extends Operation<any>>(
 
   return variableDefinitions;
 };
+
+export const $ = <Name extends string>(name: Name): Variable<Name> =>
+  variable(name);
