@@ -1,5 +1,14 @@
-import { ObjectType, selectable, buildSelector } from "../Selector";
+import { buildSchema, print } from "graphql";
+import { ResultOf, VariablesOf } from "@graphql-typed-document-node/core";
+
 import { field, selectionSet, argument } from "../AST";
+import { $ } from "../Variables";
+import {
+  ObjectType,
+  selectable,
+  buildSelector,
+  buildRootSelector,
+} from "../Selector";
 
 describe("Selector", () => {
   describe("type-saftey", () => {
@@ -53,6 +62,35 @@ describe("Selector", () => {
             id
           }
         }"
+      `);
+    });
+
+    it.only("builds root selectors", () => {
+      interface Query {
+        hello(variables: { name: string }): string;
+      }
+
+      const schema = buildSchema(
+        `
+        type Query {
+          hello(name: String!): String!
+        }
+      `,
+        { noLocation: true }
+      );
+
+      const query = buildRootSelector<Query>("query", schema);
+      // @todo add `query.withName('Foo')`
+      const test = query((t) => [t.hello({ name: $("helloName") })]);
+
+      type Variables = VariablesOf<typeof test>;
+      type Result = ResultOf<typeof test>;
+
+      expect(print(test)).toMatchInlineSnapshot(`
+        "query ($helloName: String!) {
+          hello(name: $helloName)
+        }
+        "
       `);
     });
   });

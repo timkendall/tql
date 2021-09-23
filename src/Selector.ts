@@ -1,4 +1,4 @@
-import { TypedQueryDocumentNode, print } from "graphql";
+import { TypedQueryDocumentNode, print, GraphQLSchema } from "graphql";
 
 import {
   Field,
@@ -11,10 +11,12 @@ import {
   field,
   argument,
   selectionSet,
+  operation,
+  document,
 } from "./AST";
 
 import { Result } from "./Result";
-import { Variables } from "./Variables";
+import { Variables, buildVariableDefinitions } from "./Variables";
 
 /*
   APIModel is a interface defining how a GraphQL API should
@@ -181,8 +183,10 @@ export function buildSelector<T extends ObjectType>() {
 }
 
 // in codegen selectors are statically defined with the appropriate `T` filled in for `Result` and `Variables`
+// @todo do const { query, mutation, subscription } = `buildRootSelectors<Schema>(schema)`
 export function buildRootSelector<T>(
-  operation: "query" | "mutation" | "subscription"
+  op: "query" | "mutation" | "subscription",
+  schema: GraphQLSchema
 ) {
   return function <U extends Array<Selection>>(
     select: (map: Selector<T>) => U
@@ -190,20 +194,20 @@ export function buildRootSelector<T>(
     Result<T, SelectionSet<U>>,
     Variables<T, SelectionSet<U>>
   > {
-    // @todo documentOf(operationOf(...))
+    const operationDefinition = operation(
+      selectionSet(select(selectable<T>()))
+    );
+    const variableDefinitions = buildVariableDefinitions(
+      schema,
+      operationDefinition
+    );
+
     return {
       kind: "Document",
       definitions: [
         {
-          kind: "OperationDefinition",
-          operation,
-          variableDefinitions: [
-            /* @todo `discoverVariables` */
-          ],
-          selectionSet: {
-            kind: "SelectionSet",
-            selections: [...select(selectable<T>())],
-          },
+          ...operationDefinition,
+          variableDefinitions,
         },
       ],
     };
