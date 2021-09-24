@@ -18,26 +18,26 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 1. [Installation](#Installation)
 1. [Usage](#Usage)
-    1. [(Recommended) Usage]()
-    1. [Usage w/o Code-generation]()
-    1. [Basics]()
-        1. [Operations]()
-        1. [Variables]()
-        1. [Fragments]()
-            1. [Inline]()
-            1. [Named]()
-        1. [Directives]()
-    1. [Client Examples]()
-        1. [`@apollo/client`]()
-        1. [`urql`]()
-        1. [`graphql-request`]()
-1. [Optimize with Compile-time APQs]()
-1. [Generating GraphQL API SDKs]()
-    1. [CLI]()
-    1. [GitHub Action]()
-1. [Performance & Benchmarks]()
-1. [Inspiration]()
-1. [License]()
+    1. [(Recommended) Usage](#recommended-usage)
+    1. [Usage w/o Code-generation](#usage-wo-code-generation)
+    1. [Basics](#basics)
+        1. [Operations](#operations)
+        1. [Variables](#variables)
+        1. [Fragments](#fragments)
+            1. [Inline](#inline)
+            1. [Named](#named)
+        1. [Directives](#directives)
+    1. [Client Examples](#client-examples)
+        1. [`@apollo/client`](#apollo-client)
+        1. [`urql`](#urql)
+        1. [`graphql-request`](#graphql-request)
+1. [Optimize with Compile-time APQs](#optimize-with-compile-time-apqs)
+1. [Generating GraphQL API SDKs](#generating-graphql-api-sdks)
+    1. [CLI](#cli)
+    1. [GitHub Action](#github-action)
+1. [Performance & Benchmarks](#performance-and-benchmarks)
+1. [Inspiration](#inspiration)
+1. [License](#license)
 
 
 ## Installation
@@ -57,7 +57,7 @@ import { ObjectType, buildSelector, buildRootSelector, t, $, on, Result, Variabl
 
 ### Recommended
 
-The recommended way to use this library is to pre-compile your query builder API (vs. using the lower-level/dynamic `Selector` API). We have found this to generally provide the optimal developer experience. It also has runtime performance and type-saftey benefits (as types are not duplicated).
+The recommended way to use this library is to pre-compile your query builder API when your GraphQL schema changes. We have found this to generally provide the optimal developer experience. It also has runtime performance and type-saftey benefits (as types are not duplicated).
 
 
 1. `tql <sdl|endpoint> > example.api.ts`.
