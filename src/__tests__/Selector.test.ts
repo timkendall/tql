@@ -1,13 +1,15 @@
 import { buildSchema, print } from "graphql";
 import { ResultOf, VariablesOf } from "@graphql-typed-document-node/core";
 
-import { field, selectionSet, argument } from "../AST";
-import { $ } from "../Variables";
+import { field, selectionSet, SelectionSet, argument } from "../AST";
+import { $, Variables } from "../Variables";
+import { Result } from "../Result";
 import {
   ObjectType,
   selectable,
   buildSelector,
   buildRootSelector,
+  buildRootDocumentSelector,
 } from "../Selector";
 
 describe("Selector", () => {
@@ -52,6 +54,8 @@ describe("Selector", () => {
         t.baz((t) => [t.id()]),
       ]);
 
+      type SS = Result<Query, SelectionSet<typeof selection>>;
+
       const string = selection.toString();
 
       expect(string).toMatchInlineSnapshot(`
@@ -65,7 +69,7 @@ describe("Selector", () => {
       `);
     });
 
-    it.only("builds root selectors", () => {
+    it("builds root selectors", () => {
       interface Query {
         hello(variables: { name: string }): string;
       }
@@ -80,17 +84,112 @@ describe("Selector", () => {
       );
 
       const query = buildRootSelector<Query>("query", schema);
-      // @todo add `query.withName('Foo')`
-      const test = query((t) => [t.hello({ name: $("helloName") })]);
+      const test = query((t) => [t.hello({ name: $("helloName") })]).withName(
+        "Test"
+      );
+
+      type Re = Result<Query, typeof test["selectionSet"]>;
+      type Vars = Variables<Query, typeof test["selectionSet"]>;
+
+      expect(print(test)).toMatchInlineSnapshot(`
+        "query Test($helloName: String!) {
+          hello(name: $helloName)
+        }"
+      `);
+    });
+
+    it("builds root selectors", () => {
+      interface Query {
+        hello(variables: { name: string }): string;
+      }
+
+      const schema = buildSchema(
+        `
+        type Query {
+          hello(name: String!): String!
+        }
+      `,
+        { noLocation: true }
+      );
+
+      const query = buildRootDocumentSelector<Query>("query", schema);
+      const test = query((t) => [t.hello({ name: $("helloName") })]); //.withName("Test")
 
       type Variables = VariablesOf<typeof test>;
       type Result = ResultOf<typeof test>;
 
-      expect(print(test)).toMatchInlineSnapshot(`
-        "query ($helloName: String!) {
-          hello(name: $helloName)
+      expect(test).toMatchInlineSnapshot(`
+        Object {
+          "definitions": Array [
+            Object {
+              "directives": Array [],
+              "kind": "OperationDefinition",
+              "name": Object {
+                "kind": "Name",
+                "value": "",
+              },
+              "operation": "query",
+              "selectionSet": Object {
+                "kind": "SelectionSet",
+                "selections": Array [
+                  Object {
+                    "alias": undefined,
+                    "arguments": Array [
+                      Object {
+                        "kind": "Argument",
+                        "name": Object {
+                          "kind": "Name",
+                          "value": "name",
+                        },
+                        "value": Object {
+                          "kind": "Variable",
+                          "name": Object {
+                            "kind": "Name",
+                            "value": "helloName",
+                          },
+                        },
+                      },
+                    ],
+                    "directives": Array [],
+                    "kind": "Field",
+                    "name": Object {
+                      "kind": "Name",
+                      "value": "hello",
+                    },
+                    "selectionSet": undefined,
+                  },
+                ],
+              },
+              "variableDefinitions": Array [
+                Object {
+                  "kind": "VariableDefinition",
+                  "type": Object {
+                    "kind": "NonNullType",
+                    "loc": undefined,
+                    "type": Object {
+                      "kind": "NamedType",
+                      "loc": undefined,
+                      "name": Object {
+                        "kind": "Name",
+                        "loc": undefined,
+                        "value": "String",
+                      },
+                    },
+                  },
+                  "variable": Object {
+                    "kind": "Variable",
+                    "name": Object {
+                      "kind": "Name",
+                      "value": "helloName",
+                    },
+                  },
+                },
+              ],
+              "withName": [Function],
+            },
+          ],
+          "kind": "Document",
         }
-        "
       `);
     });
   });

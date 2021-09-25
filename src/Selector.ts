@@ -1,4 +1,10 @@
-import { TypedQueryDocumentNode, print, GraphQLSchema } from "graphql";
+import {
+  TypedQueryDocumentNode,
+  print,
+  GraphQLSchema,
+  NameNode,
+} from "graphql";
+import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
 import {
   Field,
@@ -12,6 +18,7 @@ import {
   argument,
   selectionSet,
   operation,
+  Operation,
   document,
 } from "./AST";
 
@@ -121,9 +128,8 @@ export class Selected<U extends Array<Selection>> extends Array<Element<U>> {
     throw new Error("Not implemented.");
   }
 
-  toDocument() {
-    // @todo return object conforming to `TypeDocumentNode` interface
-    throw new Error("Not implemented.");
+  toSelectionSet(): SelectionSet<U> {
+    return selectionSet(this.selections);
   }
 }
 /*
@@ -135,7 +141,7 @@ export const selectable = <T>(): Selector<T> =>
     get(target, fieldName) /*: FieldFn*/ {
       return function fieldFn(...args: any[]) {
         if (args.length === 0) {
-          return field<any, any, any>(fieldName);
+          return field<any, any, any>(fieldName, undefined, undefined);
         } else if (typeof args[0] === "function") {
           return field<any, any, any>(
             fieldName,
@@ -156,7 +162,8 @@ export const selectable = <T>(): Selector<T> =>
               fieldName,
               Object.entries(args[0]).map(([name, value]) =>
                 argument(name, value)
-              )
+              ),
+              undefined
             );
           }
         }
@@ -188,28 +195,63 @@ export function buildRootSelector<T>(
   op: "query" | "mutation" | "subscription",
   schema: GraphQLSchema
 ) {
-  return function <U extends Array<Selection>>(
+  return function <U extends ReadonlyArray<Selection>>(
     select: (map: Selector<T>) => U
-  ): TypedQueryDocumentNode<
+  ): Operation<typeof op, "", [], SelectionSet<U>> {
+    // Op, Name, VariableDefinitions, SS
+    //   TypedQueryDocumentNode<
+    //   Result<T, SelectionSet<U>>,
+    //   Variables<T, SelectionSet<U>>
+    // >
+    const selection = selectionSet(select(selectable<T>()));
+
+    const variableDefinitions = buildVariableDefinitions(op, schema, selection);
+
+    const operationDefinition = operation(
+      op,
+      "",
+      selection,
+      variableDefinitions
+    );
+
+    return operationDefinition as Operation<typeof op, "", [], SelectionSet<U>>;
+
+    // return {
+    //   kind: "Document",
+    //   definitions: [
+    //     {
+    //       ...operationDefinition,
+    //       variableDefinitions,
+    //     },
+    //   ],
+    // };
+  };
+}
+
+export function buildRootDocumentSelector<T>(
+  op: "query" | "mutation" | "subscription",
+  schema: GraphQLSchema
+) {
+  return function <U extends ReadonlyArray<Selection>>(
+    select: (map: Selector<T>) => U
+  ): TypedDocumentNode<
     Result<T, SelectionSet<U>>,
     Variables<T, SelectionSet<U>>
   > {
+    const selection = selectionSet(select(selectable<T>()));
+
+    const variableDefinitions = buildVariableDefinitions(op, schema, selection);
+
     const operationDefinition = operation(
-      selectionSet(select(selectable<T>()))
-    );
-    const variableDefinitions = buildVariableDefinitions(
-      schema,
-      operationDefinition
+      op,
+      "",
+      selection,
+      variableDefinitions
     );
 
-    return {
-      kind: "Document",
-      definitions: [
-        {
-          ...operationDefinition,
-          variableDefinitions,
-        },
-      ],
-    };
+    return document([operationDefinition]) as TypedDocumentNode<
+      Result<T, SelectionSet<U>>,
+      Variables<T, SelectionSet<U>>
+    >;
   };
 }

@@ -9,7 +9,13 @@ import {
   GraphQLSchema,
 } from "graphql";
 
-import { namedType, variableDefinition, Operation } from "./AST";
+import {
+  namedType,
+  variableDefinition,
+  Operation,
+  operation as operationOf,
+  document,
+} from "./AST";
 
 import {
   Field,
@@ -29,7 +35,7 @@ type VariableType<
 > = Parent[Field] extends (variables: any) => any
   ? Parameters<Parent[Field]>[0] extends infer U // get the `variables`  arg
     ? U extends Record<any, infer V>
-      ? U[Arg]
+      ? V // U[Arg]
       : never //Parameters<Parent[Field]>[0][Arg]
     : never
   : never;
@@ -43,7 +49,7 @@ type MapReturnType<
 
 export type Variables<
   Type /* type is really a map of resolvers w/inline variable defs */,
-  S extends SelectionSet<Array<Selection>>
+  S extends SelectionSet<ReadonlyArray<Selection>>
 > = S["selections"][number] extends infer U
   ? U extends Field<infer Key, Array<Argument<infer N, infer V>>, infer SS>
     ? V extends Variable<infer VName>
@@ -56,7 +62,9 @@ export type Variables<
         }
       : undefined extends SS
       ? never
-      : Variables<MapReturnType<Type, Key> /*Type*/, SS> // @todo recurse...
+      : SS extends SelectionSet<any>
+      ? Variables<MapReturnType<Type, Key> /*Type*/, SS>
+      : never // @todo recurse... :
     : never
   : never;
 
@@ -67,9 +75,10 @@ export interface ArgumentTypeMap {
   [field: string]: { [arg: string]: TypeNode };
 }
 
-export const buildVariableDefinitions = <T extends Operation<any>>(
+export const buildVariableDefinitions = <T extends SelectionSet<any>>(
+  op: "query" | "mutation" | "subscription",
   schema: GraphQLSchema,
-  operation: T
+  selectionSet: T
 ): Array<VariableDefinition<any, any>> => {
   const variableDefinitions: VariableDefinition<any, any>[] = [];
   const typeInfo = new TypeInfo(schema);
@@ -87,7 +96,7 @@ export const buildVariableDefinitions = <T extends Operation<any>>(
     },
   });
 
-  visit(operation, visitor);
+  visit(operationOf(op, "", selectionSet, []), visitor);
 
   return variableDefinitions;
 };

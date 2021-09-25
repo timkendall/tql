@@ -15,6 +15,7 @@ import {
   DocumentNode,
   FieldNode,
   InlineFragmentNode,
+  FragmentSpreadNode,
 } from "graphql/language";
 
 export type Primitive =
@@ -28,7 +29,9 @@ export type Primitive =
 
 export interface NonNullType<
   Type extends NamedType<string, any> | ListType<any>
-> extends NonNullTypeNode {}
+> extends NonNullTypeNode {
+  type: Type;
+}
 
 export const nonNull = <Type extends NamedType<string, any> | ListType<any>>(
   type: Type
@@ -39,7 +42,9 @@ export const nonNull = <Type extends NamedType<string, any> | ListType<any>>(
 
 export interface ListType<
   Type extends NamedType<string, any> | NonNullType<any>
-> extends ListTypeNode {}
+> extends ListTypeNode {
+  type: Type;
+}
 
 export interface NamedType<Name extends string, Type = unknown>
   extends NamedTypeNode {}
@@ -95,12 +100,12 @@ export const variableDefinition = <V extends Variable<string>, T extends Type>(
   // readonly directives?: ReadonlyArray<DirectiveNode>;
 });
 
-export interface SelectionSet<T extends Array<Selection>>
+export interface SelectionSet<T extends ReadonlyArray<Selection>>
   extends SelectionSetNode {
   selections: T;
 }
 
-export const selectionSet = <T extends Array<Selection>>(
+export const selectionSet = <T extends ReadonlyArray<Selection>>(
   selections: T
 ): SelectionSet<T> => ({
   kind: Kind.SELECTION_SET,
@@ -109,16 +114,18 @@ export const selectionSet = <T extends Array<Selection>>(
 
 export interface Field<
   Name extends string,
-  Arguments extends Array<Argument<string, any>> | never = never,
-  SS extends SelectionSet<any> | never = never
+  Arguments extends Array<Argument<string, any>> | undefined = undefined,
+  SS extends SelectionSet<any> | undefined = undefined
 > extends FieldNode {
   name: { kind: "Name"; value: Name };
+  arguments?: Arguments;
+  selectionSet?: SS;
 }
 
 export const field = <
   Name extends string,
-  Arguments extends Array<Argument<string, any>> | never = never,
-  SS extends SelectionSet<any> | never = never
+  Arguments extends Array<Argument<string, any>> | undefined = undefined,
+  SS extends SelectionSet<any> | undefined = undefined
 >(
   name: Name,
   args?: Arguments,
@@ -129,7 +136,7 @@ export const field = <
   directives: [],
   arguments: args,
   alias: undefined,
-  selectionSet,
+  selectionSet: selectionSet,
 });
 
 export interface InlineFragment<
@@ -152,37 +159,75 @@ export const inlineFragment = <
   selectionSet,
 });
 
-export type Selection = Field<any, any, any> | InlineFragment<any, any>;
+export interface FragmentSpread<Name extends string>
+  extends FragmentSpreadNode {
+  readonly name: { kind: "Name"; value: Name };
+  // readonly directives?: ReadonlyArray<DirectiveNode>;
+}
+
+export type Selection =
+  | Field<any, any, any>
+  | InlineFragment<any, any>
+  | FragmentSpread<any>;
 
 export type Fragment = InlineFragment<any, any>; /*| NamedFragment */
 
-// @todo
-// readonly operation: OperationTypeNode;
-// readonly name?: NameNode;
-// readonly variableDefinitions?: ReadonlyArray<VariableDefinitionNode>;
-// readonly directives?: ReadonlyArray<DirectiveNode>;
-// readonly selectionSet: SelectionSetNode;
-export interface Operation<T extends SelectionSet<any>>
-  extends OperationDefinitionNode {
-  selectionSet: T;
+export interface Operation<
+  Op extends "query" | "mutation" | "subscription",
+  Name extends string,
+  VariableDefinitions extends Array<VariableDefinition<any, any>> | never,
+  SS extends SelectionSet<any>
+> extends OperationDefinitionNode {
+  operation: Op;
+  name: { kind: "Name"; value: Name };
+  variableDefinitions: VariableDefinitions;
+  selectionSet: SS;
+
+  withName<NewName extends string>(
+    name: NewName
+  ): Operation<Op, NewName, VariableDefinitions, SS>;
 }
 
-export const operation = <T extends SelectionSet<any>>(
-  selectionSet: T
-): Operation<T> => ({
+export const operation = <
+  Op extends "query" | "mutation" | "subscription",
+  Name extends string | never,
+  VariableDefinitions extends Array<VariableDefinition<any, any>> | never,
+  SS extends SelectionSet<any>
+>(
+  op: Op,
+  name: Name,
+  selectionSet: SS,
+  variableDefinitions: VariableDefinitions
+): Operation<Op, Name, VariableDefinitions, SS> => ({
   kind: "OperationDefinition",
-  name: undefined, // @todo
-  operation: "query", // @todo
-  variableDefinitions: [], // @todo
-  directives: [], // @todo
+  name: { kind: "Name", value: name },
+  operation: op,
+  variableDefinitions,
   selectionSet,
+  directives: [
+    /* @todo */
+  ],
+
+  withName<NewName extends string>(name: NewName) {
+    return {
+      ...this,
+      name: { kind: "Name", value: name },
+    };
+  },
 });
 
-export const document = (
-  nodes: ReadonlyArray<DefinitionNode>
+export type Definition = Operation<any, any, any, any>; // | Fragment
+
+export interface Document<T extends ReadonlyArray<Definition>>
+  extends DocumentNode {
+  definitions: T;
+}
+
+export const document = <T extends ReadonlyArray<Definition>>(
+  definitions: T
 ): DocumentNode => ({
   kind: Kind.DOCUMENT,
-  definitions: nodes,
+  definitions,
 });
 
 export const toValueNode = (value: any, enums: any[] = []): ValueNode => {

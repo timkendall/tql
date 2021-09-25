@@ -12,11 +12,7 @@ import {
   operation,
 } from "../AST";
 import { Selected } from "../Selector";
-import {
-  ArgumentTypeMap,
-  buildVariableDefinitions,
-  Variables,
-} from "../Variables";
+import { buildVariableDefinitions, Variables } from "../Variables";
 
 describe("Variables", () => {
   it("infers variable definitions", () => {
@@ -64,8 +60,9 @@ describe("Variables", () => {
 
     // @note we need a way to get the input type at runtime
     const variableDefinitions = buildVariableDefinitions(
+      "query",
       schema,
-      operation(selectionSet(selection))
+      selectionSet(selection)
     );
 
     expect(variableDefinitions).toEqual([
