@@ -58,3 +58,16 @@ export type Result<
             : {}
           : {}
         : {}); // @note need to use empty objects to not nuke the left side of our intersection type (&)*/
+
+// export type InlineFragmentResult<
+//   Type,
+//   F extends InlineFragment<any, SelectionSet<ReadonlyArray<Field<any,any,any>>>>
+// > = Type extends Array<infer T> | ReadonlyArray<infer T>
+//   ? T extends Primitive
+//     ? // @note Return scalar array
+//       ReadonlyArray<T>
+//     : // @note Wrap complex object in array
+//       ReadonlyArray<InlineFragmentResult<T, F>>
+//   : {
+//       readonly [Key in F['selectionSet']['selections'][number]['name']['value']]: Key
+//     };

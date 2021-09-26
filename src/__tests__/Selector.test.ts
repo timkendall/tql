@@ -1,20 +1,29 @@
 import { buildSchema, print } from "graphql";
 import { ResultOf, VariablesOf } from "@graphql-typed-document-node/core";
 
-import { field, selectionSet, SelectionSet, argument } from "../AST";
+import {
+  field,
+  selectionSet,
+  SelectionSet,
+  argument,
+  Variable,
+  Selection,
+} from "../AST";
 import { $, Variables } from "../Variables";
 import { Result } from "../Result";
 import {
   ObjectType,
+  Selector,
   selectable,
+  Selected,
   buildSelector,
   buildRootSelector,
   buildRootDocumentSelector,
 } from "../Selector";
 
 describe("Selector", () => {
-  describe("type-saftey", () => {
-    it("builds dynamic selection maps", () => {
+  describe("dynamic", () => {
+    test("selectable", () => {
       interface Query {
         foo: string;
         bar: number;
@@ -37,7 +46,7 @@ describe("Selector", () => {
       );
     });
 
-    it("supports selecting against an interface", () => {
+    test("buildSelector", () => {
       interface Query extends ObjectType {
         foo: string;
         bar: number;
@@ -47,14 +56,22 @@ describe("Selector", () => {
       }
 
       // code-gen would replace this with static `SelectionMap`'s vs. calls to `selectable`
-      const query = buildSelector<Query>();
+      const query = buildSelector<Query>("Query");
       const selection = query((t) => [
         t.foo(),
         t.bar(),
         t.baz((t) => [t.id()]),
       ]);
 
-      type SS = Result<Query, SelectionSet<typeof selection>>;
+      const ss = selection.toSelectionSet();
+      const inline = selection.toFragment();
+      const named = selection.toFragment("QueryFragment");
+
+      type Raw = Result<Query, SelectionSet<typeof selection>>;
+      type SS = Result<Query, typeof ss>;
+      // @todo
+      // type Inline = InlineFragmentResult<Query, typeof inline>;
+      // type Named = Result<Query, typeof named['selectionSet']>;
 
       const string = selection.toString();
 
@@ -69,8 +86,8 @@ describe("Selector", () => {
       `);
     });
 
-    it("builds root selectors", () => {
-      interface Query {
+    test("buildRootSelector", () => {
+      interface Query extends ObjectType {
         hello(variables: { name: string }): string;
       }
 
@@ -98,8 +115,8 @@ describe("Selector", () => {
       `);
     });
 
-    it("builds root selectors", () => {
-      interface Query {
+    it("buildRootDocumentSelector", () => {
+      interface Query extends ObjectType {
         hello(variables: { name: string }): string;
       }
 
@@ -190,6 +207,84 @@ describe("Selector", () => {
           ],
           "kind": "Document",
         }
+      `);
+    });
+  });
+
+  describe("static", () => {
+    it("agrees with type definitions", () => {
+      interface Query {
+        foo: string;
+        bar: number;
+        baz: {
+          id: string;
+          count(variables: { number: number }): number;
+        };
+      }
+
+      const BazSelector: Selector<Query["baz"]> = {
+        id: () => field("id"),
+        count: (variables: { number: number | Variable<"number"> }) =>
+          field("count", [argument("number", variables.number)]),
+      };
+
+      const QuerySelector: Selector<Query> = {
+        foo: () => field("foo"),
+        bar: () => field("bar"),
+        baz: <T extends Array<Selection>>(
+          select: (selector: typeof BazSelector) => T
+        ) =>
+          field("baz", undefined as never, selectionSet(select(BazSelector))),
+      };
+
+      const baz = <T extends Array<Selection>>(
+        select: (selector: typeof BazSelector) => T
+      ) => new Selected("Baz", select(BazSelector));
+
+      const query = <T extends Array<Selection>>(
+        select: (selector: typeof QuerySelector) => T
+      ) => new Selected("Query", select(QuerySelector));
+
+      expect(QuerySelector.foo()).toEqual(field("foo"));
+
+      const selection = query((t) => [
+        t.foo(),
+        t.bar(),
+        t.baz((t) => [t.id(), t.count({ number: 69 })]),
+      ]);
+
+      type R = Result<Query, ReturnType<typeof selection["toSelectionSet"]>>;
+      type V = Variables<Query, ReturnType<typeof selection["toSelectionSet"]>>;
+
+      expect(print(selection.toFragment())).toMatchInlineSnapshot(`
+        "... on Query {
+          foo
+          bar
+          baz {
+            id
+            count(number: 69)
+          }
+        }"
+      `);
+      expect(print(selection.toFragment("MyFragment"))).toMatchInlineSnapshot(`
+        "fragment MyFragment on Query {
+          foo
+          bar
+          baz {
+            id
+            count(number: 69)
+          }
+        }"
+      `);
+      expect(print(selection.toSelectionSet())).toMatchInlineSnapshot(`
+        "{
+          foo
+          bar
+          baz {
+            id
+            count(number: 69)
+          }
+        }"
       `);
     });
   });

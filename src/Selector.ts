@@ -15,6 +15,11 @@ import {
   Primitive,
   Variable,
   field,
+  FragmentDefinition,
+  fragmentDefinition,
+  inlineFragment,
+  NamedType,
+  namedType,
   argument,
   selectionSet,
   operation,
@@ -24,6 +29,7 @@ import {
 
 import { Result } from "./Result";
 import { Variables, buildVariableDefinitions } from "./Variables";
+import { InlineFragment } from ".";
 
 /*
   APIModel is a interface defining how a GraphQL API should
@@ -58,7 +64,7 @@ export interface APIModel {
     foods(variables: { limit?: number; after?: string }): Food[]; // @todo Array<infer T>
   }
 */
-type _Variables<T> = { [K in keyof T]: T[K] | Variable<string> };
+type _Variables<T> = { [K in keyof T]: T[K] | Variable<any> };
 // @todo how do we get a union of:
 // Argument<'a', string | Variable<string>> |  Argument<'b', number | Variable<string>
 // vs. Argument<'a' | 'b', string | number | Variables<string>>
@@ -115,21 +121,33 @@ export type Selector<T> = {
 type Element<T> = T extends Array<infer U> ? U : never;
 
 export class Selected<U extends Array<Selection>> extends Array<Element<U>> {
-  constructor(public readonly selections: U) {
+  constructor(public readonly type: string, public readonly selections: U) {
     super(...((selections as unknown) as Element<U>[]) /* seems wrong*/);
   }
 
   toString() {
-    return print(selectionSet(this.selections));
-  }
-
-  toFragment(name?: string) {
-    // @todo return InlineFragment or NamedFragment
-    throw new Error("Not implemented.");
+    return print(this.toSelectionSet());
   }
 
   toSelectionSet(): SelectionSet<U> {
     return selectionSet(this.selections);
+  }
+
+  // Name extends string
+  // ? FragmentDefinition<
+  //     Name,
+  //     NamedType<this['type']>,
+  //     SelectionSet<this['selections']>
+  //   >
+  // : InlineFragment<NamedType<this['type']>, SelectionSet<this['selections']>>
+  toFragment<Name extends string | undefined>(name?: Name) {
+    return name
+      ? fragmentDefinition(
+          name,
+          namedType(this.type),
+          selectionSet(this.selections)
+        )
+      : inlineFragment(namedType(this.type), selectionSet(this.selections));
   }
 }
 /*
@@ -181,11 +199,11 @@ export interface ObjectType {
     | ((variables: any) => Primitive | ObjectType);
 }
 
-export function buildSelector<T extends ObjectType>() {
+export function buildSelector<T extends ObjectType>(type: string) {
   return function <U extends Array<Selection>>(
     select: (map: Selector<T>) => U
   ): Selected<U> {
-    return new Selected(select(selectable<T>()));
+    return new Selected(type, select(selectable<T>()));
   };
 }
 
@@ -198,11 +216,6 @@ export function buildRootSelector<T>(
   return function <U extends ReadonlyArray<Selection>>(
     select: (map: Selector<T>) => U
   ): Operation<typeof op, "", [], SelectionSet<U>> {
-    // Op, Name, VariableDefinitions, SS
-    //   TypedQueryDocumentNode<
-    //   Result<T, SelectionSet<U>>,
-    //   Variables<T, SelectionSet<U>>
-    // >
     const selection = selectionSet(select(selectable<T>()));
 
     const variableDefinitions = buildVariableDefinitions(op, schema, selection);

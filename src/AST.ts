@@ -15,6 +15,7 @@ import {
   DocumentNode,
   FieldNode,
   InlineFragmentNode,
+  FragmentDefinitionNode,
   FragmentSpreadNode,
 } from "graphql/language";
 
@@ -70,10 +71,13 @@ export const variable = <Name extends string>(name: Name): Variable<Name> => ({
   },
 });
 
-export type Value = Variable<string> | Primitive;
+// @todo define extensions on `ValueNode`
+export type Value = Variable<any> | Primitive;
 
 export interface Argument<Name extends string, Value = any>
-  extends ArgumentNode {}
+  extends ArgumentNode {
+  readonly name: { kind: "Name"; value: Name };
+}
 
 export const argument = <Name extends string, Value = any>(
   name: Name,
@@ -141,12 +145,12 @@ export const field = <
 
 export interface InlineFragment<
   TypeCondition extends NamedType<string, any>,
-  SS extends SelectionSet<Array<Selection>>
+  SS extends SelectionSet<ReadonlyArray<Selection>>
 > extends InlineFragmentNode {}
 
 export const inlineFragment = <
   TypeCondition extends NamedType<string, any>,
-  SS extends SelectionSet<Array<Selection>>
+  SS extends SelectionSet<ReadonlyArray<Selection>>
 >(
   typeCondition: TypeCondition,
   selectionSet: SS
@@ -157,6 +161,32 @@ export const inlineFragment = <
     /* @todo*/
   ],
   selectionSet,
+});
+
+export interface FragmentDefinition<
+  Name extends string,
+  TypeCondition extends NamedType<string, any>,
+  SS extends SelectionSet<ReadonlyArray<Selection>>
+> extends FragmentDefinitionNode {
+  readonly name: { kind: "Name"; value: Name };
+  readonly typeCondition: TypeCondition;
+  readonly selectionSet: SS;
+}
+
+export const fragmentDefinition = <
+  Name extends string,
+  TypeCondition extends NamedType<string, any>,
+  SS extends SelectionSet<ReadonlyArray<Selection>>
+>(
+  name: Name,
+  typeCondition: TypeCondition,
+  selectionSet: SS
+): FragmentDefinition<Name, TypeCondition, SS> => ({
+  kind: "FragmentDefinition",
+  name: { kind: "Name", value: name },
+  typeCondition,
+  selectionSet,
+  // directives @todo
 });
 
 export interface FragmentSpread<Name extends string>
