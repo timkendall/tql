@@ -47,10 +47,14 @@ type MapReturnType<
   ? ReturnType<Parent[Field]>
   : never;
 
+type EachSelection<
+  T extends SelectionSet<ReadonlyArray<Selection>>
+> = T["selections"][number];
+
 export type Variables<
   Type /* type is really a map of resolvers w/inline variable defs */,
   S extends SelectionSet<ReadonlyArray<Selection>>
-> = S["selections"][number] extends infer U
+> = EachSelection<S> extends infer U
   ? U extends Field<infer Key, Array<Argument<infer N, infer V>>, infer SS>
     ? V extends Variable<infer VName>
       ? {

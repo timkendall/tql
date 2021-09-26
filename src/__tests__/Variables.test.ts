@@ -10,6 +10,10 @@ import {
   SelectionSet,
   variableDefinition,
   operation,
+  Selection,
+  Field,
+  Argument,
+  Variable,
 } from "../AST";
 import { Selected } from "../Selector";
 import { buildVariableDefinitions, Variables } from "../Variables";
@@ -34,17 +38,6 @@ describe("Variables", () => {
       field("hello", [argument("name", variable("name"))]),
     ]);
 
-    /*
-      We could go full-bore and define a partial
-      type-safe API for schema definitions (we would codegen this):
-
-      const Query = object((t) => ({
-        hello: t.field({
-          type: t.string(),
-          args: { name: t.nonNull(t.string()) }
-        })
-      }))
-    */
     interface Query {
       hello(variables: { name: string }): string;
     }
@@ -70,7 +63,7 @@ describe("Variables", () => {
     ]);
   });
 
-  it.skip("infers nested variable definitions", () => {
+  it("infers nested variable definitions", () => {
     const selection = new Selected("Query", [
       field(
         "viewer",
@@ -83,7 +76,7 @@ describe("Variables", () => {
           ),
         ])
       ),
-    ]);
+    ]).toSelectionSet();
 
     interface Query {
       viewer: User;
@@ -94,7 +87,7 @@ describe("Variables", () => {
       friends(variables: { limit?: number }): User[];
     }
 
-    const variables: Variables<Query, SelectionSet<typeof selection>> = {
+    const variables: Variables<Query, typeof selection> = {
       friendsLimit: 5,
     };
   });
