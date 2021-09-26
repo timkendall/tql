@@ -4,7 +4,11 @@ import { Result } from "../Result";
 
 describe("Result", () => {
   it("infers simple selections", () => {
-    const selection = new Selected([field("foo"), field("bar"), field("baz")]);
+    const selection = new Selected("Query", [
+      field("foo"),
+      field("bar"),
+      field("baz"),
+    ]);
 
     interface Query {
       foo: string;
@@ -20,7 +24,7 @@ describe("Result", () => {
   });
 
   it("infers nested selections", () => {
-    const selection = new Selected([
+    const selection = new Selected("Query", [
       field(
         "viewer",
         undefined,
@@ -60,7 +64,11 @@ describe("Result", () => {
   });
 
   it("infers spread selections", () => {
-    const selection = new Selected([field("foo"), field("bar"), field("baz")]);
+    const selection = new Selected("Query", [
+      field("foo"),
+      field("bar"),
+      field("baz"),
+    ]);
 
     interface Query {
       foo: string;

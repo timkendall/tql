@@ -16,7 +16,7 @@ import { buildVariableDefinitions, Variables } from "../Variables";
 
 describe("Variables", () => {
   it("infers variable definitions", () => {
-    const selection = new Selected([
+    const selection = new Selected("Query", [
       field("hello", [argument("name", variable("name"))]),
     ]);
 
@@ -30,7 +30,7 @@ describe("Variables", () => {
   });
 
   it("builds variable definitions", () => {
-    const selection = new Selected([
+    const selection = new Selected("Query", [
       field("hello", [argument("name", variable("name"))]),
     ]);
 
@@ -71,7 +71,7 @@ describe("Variables", () => {
   });
 
   it.skip("infers nested variable definitions", () => {
-    const selection = new Selected([
+    const selection = new Selected("Query", [
       field(
         "viewer",
         undefined,
@@ -94,8 +94,8 @@ describe("Variables", () => {
       friends(variables: { limit?: number }): User[];
     }
 
-    // const variables: Variables<Query, SelectionSet<typeof selection>> = {
-    //   friendsLimit: 5,
-    // };
+    const variables: Variables<Query, SelectionSet<typeof selection>> = {
+      friendsLimit: 5,
+    };
   });
 });
