@@ -36,6 +36,7 @@
     "jssha": "^3.2.0",
     "node-fetch": "^2.6.1",
     "prettier": "^2.1.2",
+    "type-fest": "^2.3.4",
     "typescript-tuple": "^5.0.1",
     "yargs": "^16.1.0"
   },

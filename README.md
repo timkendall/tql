@@ -68,7 +68,7 @@ Example ([Starwars](https://github.com/graphql/swapi-graphql) API):
 ```typescript
 import { query } from './example.api'
 
-const operation = query<'Example'>((t) => [
+const operation = query((t) => [
   t.reviews({ episode: Episode.EMPIRE }, (t) => [
     t.stars(),
     t.commentary(),
@@ -149,40 +149,6 @@ const serialized = print(query((t) => [
 */
 ```
 
-#### `selectable`
-
-We also export a `selectable` function as a way to interact with selectors on individual objects (`buildRootSelector` and `buildSelector` use this internally).
-
-```typescript
-import { selectable, selectionSet } from '@timkendall/tql'
-
-interface Query {
-  foo: string;
-  bar: number;
-  baz: {
-    id: string;
-  };
-}
-
-const { foo, bar, baz } = selectable<Query>();
-
-const selection = [foo(), bar(), baz((t) => [t.id()])];
-
-type ExampleResult = Result<Query, SelectionSet<typeof selection>>;
-
-const query = print(selectionSet(selection));
-
-/*
-{
-  foo
-  bar
-  baz {
-    id
-  }
-}
-*/
-```
-
 ### Basics
 
 `tql` is a thin wrapper over the [canoncial TypeScript GraphQL implementation](). Here we detail the convenience API's we offer for building type-safe operations in TypeScript.
@@ -205,7 +171,7 @@ const write = mutation((t) => [
   t.createUser({ input: $('input') }, t => [ t.id() ])
 ]) // TypedDocumentNode
 
-const subscribe = query((t) => [
+const subscribe = subscription((t) => [
   t.onUser({ operation: 'CREATE' }, t => [ t.timestamp() ])
 ]) // TypedDocumentNode
 ```

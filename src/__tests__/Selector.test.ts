@@ -224,6 +224,7 @@ describe("Selector", () => {
 
       const BazSelector: Selector<Query["baz"]> = {
         id: () => field("id"),
+        on: (type: string, select: (selector: any) => any) => [],
         count: (variables: { number: number | Variable<"number"> }) =>
           field("count", [argument("number", variables.number)]),
       };

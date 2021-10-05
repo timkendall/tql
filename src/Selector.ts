@@ -16,6 +16,7 @@ import {
   Variable,
   field,
   FragmentDefinition,
+  InlineFragment,
   fragmentDefinition,
   inlineFragment,
   NamedType,
@@ -29,7 +30,6 @@ import {
 
 import { Result } from "./Result";
 import { Variables, buildVariableDefinitions } from "./Variables";
-import { InlineFragment } from ".";
 
 /*
   APIModel is a interface defining how a GraphQL API should
@@ -73,10 +73,18 @@ type Arguments<T extends _Variables<any>> = keyof T extends string
   ? Argument<keyof T, T[keyof T]>
   : never;
 
-export type Selector<T> = {
+// Type extends Array<infer T> | ReadonlyArray<infer T>
+// @todo add `on` inline fragment selectors for interface/unions
+
+export type TypeMap = { [name: string]: { __typename: string } };
+
+type Inner<T extends Array<any>> = T extends Array<infer U> ? U : never;
+// @todo Pass an entire type-map so we can resolve abstract types?
+// ex.Selectors<{ Query, Mutation User }>
+export type Selector<T, Map extends TypeMap> = {
   [F in keyof T]: T[F] extends infer U
     ? U extends (variables: infer Vars) => infer Type // parameterized fields
-      ? Type extends Primitive
+      ? Type extends Primitive | Array<Primitive> | ReadonlyArray<Primitive>
         ? (
             variables: _Variables<Vars>
           ) => Field<
@@ -85,21 +93,50 @@ export type Selector<T> = {
           > // dumb
         : <S extends Array<Selection>>(
             variables: _Variables<Vars>,
-            select: (selector: Selector<Type>) => S
+            select: (
+              selector: Selector<
+                Type extends Array<infer Inner> ? NonNullable<Inner> : Type,
+                Map
+              >
+            ) => S
           ) => Field<
             F extends string ? F : never,
             never /* @todo add arguments */,
             SelectionSet<S>
           >
       : U extends infer Type // non-paramaterized fields
-      ? Type extends Primitive
+      ? Type extends Primitive | Array<Primitive> | ReadonlyArray<Primitive>
         ? () => Field<F extends string ? F : never>
         : <S extends Array<Selection>>(
-            select: (selector: Selector<Type>) => S
+            select: (
+              selector: Selector<
+                Type extends Array<infer Inner> ? NonNullable<Inner> : Type,
+                Map
+              >
+            ) => S
           ) => Field<F extends string ? F : never, never, SelectionSet<S>>
       : never
     : never;
-};
+} &
+  (T extends Primitive
+    ? {}
+    : T extends infer U // @todo support arrays
+    ? U extends Array<{ __typename: string }>
+      ? {
+          on: <S extends Array<Selection>, F extends Inner<U>["__typename"]>(
+            type: F /* distributed */,
+            select: (selector: Selector<NonNullable<Map[F]>, Map>) => S
+          ) => InlineFragment<NamedType<F>, SelectionSet<S>>;
+        }
+      : U extends { __typename: string }
+      ? {
+          on: <S extends Array<Selection>, F extends U["__typename"]>(
+            type: F /* distributed */,
+            select: (selector: Selector<Map[F], Map>) => S
+          ) => InlineFragment<NamedType<F>, SelectionSet<S>>;
+        }
+      : {}
+    : {});
 /*
   `Selected` provides a convienciene runtime representation of
   a collection of `Selection`'s on some type.
@@ -154,7 +191,7 @@ export class Selected<U extends Array<Selection>> extends Array<Element<U>> {
  `selectable` is a utility function to build a dynamic selector 
   map at runtime using reflection.
 */
-export const selectable = <T>(): Selector<T> =>
+export const selectable = <T, M extends TypeMap>(): Selector<T, M> =>
   new Proxy(Object.create(null), {
     get(target, fieldName) /*: FieldFn*/ {
       return function fieldFn(...args: any[]) {
@@ -199,24 +236,26 @@ export interface ObjectType {
     | ((variables: any) => Primitive | ObjectType);
 }
 
-export function buildSelector<T extends ObjectType>(type: string) {
+export function buildSelector<T extends ObjectType, M extends TypeMap>(
+  type: string
+) {
   return function <U extends Array<Selection>>(
-    select: (map: Selector<T>) => U
+    select: (map: Selector<T, M>) => U
   ): Selected<U> {
-    return new Selected(type, select(selectable<T>()));
+    return new Selected(type, select(selectable<T, M>()));
   };
 }
 
 // in codegen selectors are statically defined with the appropriate `T` filled in for `Result` and `Variables`
 // @todo do const { query, mutation, subscription } = `buildRootSelectors<Schema>(schema)`
-export function buildRootSelector<T>(
+export function buildRootSelector<T, M extends TypeMap>(
   op: "query" | "mutation" | "subscription",
   schema: GraphQLSchema
 ) {
   return function <U extends ReadonlyArray<Selection>>(
-    select: (map: Selector<T>) => U
+    select: (map: Selector<T, M>) => U
   ): Operation<typeof op, "", [], SelectionSet<U>> {
-    const selection = selectionSet(select(selectable<T>()));
+    const selection = selectionSet(select(selectable<T, M>()));
 
     const variableDefinitions = buildVariableDefinitions(op, schema, selection);
 
@@ -241,17 +280,17 @@ export function buildRootSelector<T>(
   };
 }
 
-export function buildRootDocumentSelector<T>(
+export function buildRootDocumentSelector<T, M extends TypeMap>(
   op: "query" | "mutation" | "subscription",
   schema: GraphQLSchema
 ) {
   return function <U extends ReadonlyArray<Selection>>(
-    select: (map: Selector<T>) => U
+    select: (map: Selector<T, M>) => U
   ): TypedDocumentNode<
     Result<T, SelectionSet<U>>,
     Variables<T, SelectionSet<U>>
   > {
-    const selection = selectionSet(select(selectable<T>()));
+    const selection = selectionSet(select(selectable<T, M>()));
 
     const variableDefinitions = buildVariableDefinitions(op, schema, selection);
 
