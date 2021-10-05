@@ -152,7 +152,7 @@ test("Starwars", () => {
         t.__typename(),
         t.id(),
 
-        t.on("Droid", (t) => [t.primaryFunction(), t.id()]),
+        t.on("Droid", (t) => [t.primaryFunction()]),
         t.on("Human", (t) => [t.homePlanet()]),
       ]),
     ]),
@@ -176,6 +176,8 @@ test("Starwars", () => {
 
   result.then(({ data }) => {
     data.reviews?.map((review) => review?.stars);
+
+    // @todo need to update `Result` to correctly derive fields from `InlineFragment`s
     data.search?.map((result) => result?.name);
     data.character?.friends?.map((result) => result?.id);
   });

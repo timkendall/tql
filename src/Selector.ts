@@ -118,25 +118,33 @@ export type Selector<T, Map extends TypeMap> = {
       : never
     : never;
 } &
-  (T extends Primitive
-    ? {}
-    : T extends infer U // @todo support arrays
-    ? U extends Array<{ __typename: string }>
-      ? {
-          on: <S extends Array<Selection>, F extends Inner<U>["__typename"]>(
-            type: F /* distributed */,
-            select: (selector: Selector<NonNullable<Map[F]>, Map>) => S
-          ) => InlineFragment<NamedType<F>, SelectionSet<S>>;
-        }
-      : U extends { __typename: string }
-      ? {
-          on: <S extends Array<Selection>, F extends U["__typename"]>(
-            type: F /* distributed */,
-            select: (selector: Selector<Map[F], Map>) => S
-          ) => InlineFragment<NamedType<F>, SelectionSet<S>>;
-        }
-      : {}
+  // Example of statically rendered:
+  // on: <T extends Array<Selection>, F extends "Human" | "Droid">(
+  //   type: F,
+  //   select: (
+  //     t: F extends "Human"
+  //       ? HumanSelector
+  //       : F extends "Droid"
+  //       ? DroidSelector
+  //       : never
+  //   ) => T
+  // ) => InlineFragment<NamedType<F, any>, SelectionSet<T>>;
+  //
+  // @note Don't need to account for Array types since we unwrap those
+  // in subsequent iterations and don't allow an Array root type to be
+  // passed to this type.
+  (T extends { __typename: string }
+    ? {
+        on: <
+          S extends Array<Selection>,
+          F extends T["__typename"] /* distributed */
+        >(
+          type: F,
+          select: (selector: Selector<Map[F], Map>) => S
+        ) => InlineFragment<NamedType<F>, SelectionSet<S>>;
+      }
     : {});
+
 /*
   `Selected` provides a convienciene runtime representation of
   a collection of `Selection`'s on some type.
