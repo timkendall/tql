@@ -110,7 +110,7 @@ test("Starwars", () => {
   // const query = buildRootSelector<Query>('query', {/* schema */} as any)
   // //.withName('Example');
   const query = buildRootDocumentSelector<Query, TypeMap>("query", {
-    /* schema; eventually our own `Schema` representation? */
+    /* a GraphQLSchema; eventually our own `Schema` representation? */
   } as any);
 
   // type Data = Result<Query, typeof example['selectionSet']>
@@ -164,8 +164,8 @@ test("Starwars", () => {
       t.name(),
 
       // Possible TS issue? https://github.com/microsoft/TypeScript/issues/33591
-      t.on("Droid", (t) => [t.primaryFunction()]),
-      t.on("Human", (t) => [t.homePlanet()]),
+      // t.on("Droid", (t) => [t.primaryFunction()]),
+      // t.on("Human", (t) => [t.homePlanet()]),
     ]),
   ]);
 
