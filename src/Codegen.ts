@@ -32,6 +32,8 @@ export class Codegen {
   public readonly schema: GraphQLSchema;
   public readonly modulePath: string;
 
+  private static readonly ENUM_VALUE_MAP = "_ENUM_VALUES";
+
   constructor(private readonly options: CodegenOptions) {
     this.schema = options.schema;
     this.modulePath = options.modulePath ?? "@timkendall/tql";
@@ -170,6 +172,23 @@ export class Codegen {
     `;
   }
 
+  private get enumMap() {
+    const enums = Object.values(this.schema.getTypeMap())
+      .filter((type) => type instanceof GraphQLEnumType)
+      .flatMap((type) => (type as GraphQLEnumType).getValues())
+      .map((enumValue) => enumValue.value);
+
+    const deduplicated = new Set(enums);
+
+    return `
+      const ${Codegen.ENUM_VALUE_MAP} = {
+        ${Array.from(deduplicated)
+          .map((value) => `${value}: true`)
+          .join(",\n")}
+      } as const
+    `;
+  }
+
   public render(): string {
     const types = Object.values(this.schema.getTypeMap()).filter(
       ({ name }) => !name.startsWith("__")
@@ -207,6 +226,7 @@ export class Codegen {
       ...this.imports,
       this.version,
       this.schemaSha,
+      this.enumMap,
       ...enums,
       ...interfaces,
       ...unions,
@@ -575,12 +595,8 @@ export class Codegen {
         : jsDocComment.concat(`${name}: () => new Field("${name}"),`);
     } else {
       const renderArgument = (arg: GraphQLArgument): string => {
-        const _base = getBaseInputType(arg.type);
-
         // @note Janky enum value support
-        return _base instanceof GraphQLEnumType
-          ? `new Argument("${arg.name}", variables.${arg.name}, ${_base.name})`
-          : `new Argument("${arg.name}", variables.${arg.name})`;
+        return `new Argument("${arg.name}", variables.${arg.name}, ${Codegen.ENUM_VALUE_MAP})`;
       };
 
       // @todo restrict allowed Field types

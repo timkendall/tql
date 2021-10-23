@@ -10,11 +10,59 @@ import {
   Executor,
   Client,
   TypeConditionError,
+  ExecutionError,
 } from "../../src";
 
 export const VERSION = "unversioned";
 
 export const SCHEMA_SHA = "12df668";
+
+const _ENUM_VALUES = {
+  idx_16652_primary: true,
+  createdUtc: true,
+  id: true,
+  name: true,
+  ownerUserId: true,
+  parent: true,
+  value: true,
+  asc: true,
+  asc_nulls_first: true,
+  asc_nulls_last: true,
+  desc: true,
+  desc_nulls_first: true,
+  desc_nulls_last: true,
+  idx_16694_primary: true,
+  playlistId: true,
+  position: true,
+  trackId: true,
+  idx_16687_primary: true,
+  idx_16710_napsterid: true,
+  idx_16710_primary: true,
+  napsterId: true,
+  idx_16717_primary: true,
+  email: true,
+  SCALAR: true,
+  OBJECT: true,
+  INTERFACE: true,
+  UNION: true,
+  ENUM: true,
+  INPUT_OBJECT: true,
+  LIST: true,
+  NON_NULL: true,
+  QUERY: true,
+  MUTATION: true,
+  SUBSCRIPTION: true,
+  FIELD: true,
+  FRAGMENT_DEFINITION: true,
+  FRAGMENT_SPREAD: true,
+  INLINE_FRAGMENT: true,
+  VARIABLE_DEFINITION: true,
+  SCHEMA: true,
+  FIELD_DEFINITION: true,
+  ARGUMENT_DEFINITION: true,
+  ENUM_VALUE: true,
+  INPUT_FIELD_DEFINITION: true,
+} as const;
 
 export enum bookmarks_constraint {
   idx_16652_primary = "idx_16652_primary",
@@ -955,15 +1003,11 @@ export const bookmarks: bookmarksSelector = {
     new Field(
       "children",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          bookmarks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks))
     ),
@@ -976,15 +1020,11 @@ export const bookmarks: bookmarksSelector = {
     new Field(
       "children_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          bookmarks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks_aggregate))
     ),
@@ -2098,7 +2138,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_bookmarks: (variables, select) =>
     new Field(
       "delete_bookmarks",
-      [new Argument("where", variables.where)],
+      [new Argument("where", variables.where, _ENUM_VALUES)],
       new SelectionSet(select(bookmarks_mutation_response))
     ),
 
@@ -2109,7 +2149,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_bookmarks_by_pk: (variables, select) =>
     new Field(
       "delete_bookmarks_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(bookmarks))
     ),
 
@@ -2120,7 +2160,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_playlist_items: (variables, select) =>
     new Field(
       "delete_playlist_items",
-      [new Argument("where", variables.where)],
+      [new Argument("where", variables.where, _ENUM_VALUES)],
       new SelectionSet(select(playlist_items_mutation_response))
     ),
 
@@ -2131,7 +2171,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_playlist_items_by_pk: (variables, select) =>
     new Field(
       "delete_playlist_items_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(playlist_items))
     ),
 
@@ -2142,7 +2182,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_playlists: (variables, select) =>
     new Field(
       "delete_playlists",
-      [new Argument("where", variables.where)],
+      [new Argument("where", variables.where, _ENUM_VALUES)],
       new SelectionSet(select(playlists_mutation_response))
     ),
 
@@ -2153,7 +2193,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_playlists_by_pk: (variables, select) =>
     new Field(
       "delete_playlists_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(playlists))
     ),
 
@@ -2164,7 +2204,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_tracks: (variables, select) =>
     new Field(
       "delete_tracks",
-      [new Argument("where", variables.where)],
+      [new Argument("where", variables.where, _ENUM_VALUES)],
       new SelectionSet(select(tracks_mutation_response))
     ),
 
@@ -2175,7 +2215,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_tracks_by_pk: (variables, select) =>
     new Field(
       "delete_tracks_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(tracks))
     ),
 
@@ -2186,7 +2226,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_users: (variables, select) =>
     new Field(
       "delete_users",
-      [new Argument("where", variables.where)],
+      [new Argument("where", variables.where, _ENUM_VALUES)],
       new SelectionSet(select(users_mutation_response))
     ),
 
@@ -2197,7 +2237,7 @@ export const mutation_root: mutation_rootSelector = {
   delete_users_by_pk: (variables, select) =>
     new Field(
       "delete_users_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(users))
     ),
 
@@ -2209,8 +2249,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_bookmarks",
       [
-        new Argument("objects", variables.objects),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("objects", variables.objects, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks_mutation_response))
     ),
@@ -2223,8 +2263,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_bookmarks_one",
       [
-        new Argument("object", variables.object),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("object", variables.object, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks))
     ),
@@ -2237,8 +2277,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_playlist_items",
       [
-        new Argument("objects", variables.objects),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("objects", variables.objects, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlist_items_mutation_response))
     ),
@@ -2251,8 +2291,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_playlist_items_one",
       [
-        new Argument("object", variables.object),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("object", variables.object, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlist_items))
     ),
@@ -2265,8 +2305,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_playlists",
       [
-        new Argument("objects", variables.objects),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("objects", variables.objects, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists_mutation_response))
     ),
@@ -2279,8 +2319,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_playlists_one",
       [
-        new Argument("object", variables.object),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("object", variables.object, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists))
     ),
@@ -2293,8 +2333,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_tracks",
       [
-        new Argument("objects", variables.objects),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("objects", variables.objects, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(tracks_mutation_response))
     ),
@@ -2307,8 +2347,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_tracks_one",
       [
-        new Argument("object", variables.object),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("object", variables.object, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(tracks))
     ),
@@ -2321,8 +2361,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_users",
       [
-        new Argument("objects", variables.objects),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("objects", variables.objects, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(users_mutation_response))
     ),
@@ -2335,8 +2375,8 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "insert_users_one",
       [
-        new Argument("object", variables.object),
-        new Argument("on_conflict", variables.on_conflict),
+        new Argument("object", variables.object, _ENUM_VALUES),
+        new Argument("on_conflict", variables.on_conflict, _ENUM_VALUES),
       ],
       new SelectionSet(select(users))
     ),
@@ -2349,9 +2389,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_bookmarks",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("where", variables.where),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks_mutation_response))
     ),
@@ -2364,9 +2404,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_bookmarks_by_pk",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("pk_columns", variables.pk_columns),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("pk_columns", variables.pk_columns, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks))
     ),
@@ -2379,9 +2419,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_playlist_items",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("where", variables.where),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlist_items_mutation_response))
     ),
@@ -2394,9 +2434,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_playlist_items_by_pk",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("pk_columns", variables.pk_columns),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("pk_columns", variables.pk_columns, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlist_items))
     ),
@@ -2409,9 +2449,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_playlists",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("where", variables.where),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists_mutation_response))
     ),
@@ -2424,9 +2464,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_playlists_by_pk",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("pk_columns", variables.pk_columns),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("pk_columns", variables.pk_columns, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists))
     ),
@@ -2439,9 +2479,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_tracks",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("where", variables.where),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(tracks_mutation_response))
     ),
@@ -2454,9 +2494,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_tracks_by_pk",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("pk_columns", variables.pk_columns),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("pk_columns", variables.pk_columns, _ENUM_VALUES),
       ],
       new SelectionSet(select(tracks))
     ),
@@ -2469,9 +2509,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_users",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("where", variables.where),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(users_mutation_response))
     ),
@@ -2484,9 +2524,9 @@ export const mutation_root: mutation_rootSelector = {
     new Field(
       "update_users_by_pk",
       [
-        new Argument("_inc", variables._inc),
-        new Argument("_set", variables._set),
-        new Argument("pk_columns", variables.pk_columns),
+        new Argument("_inc", variables._inc, _ENUM_VALUES),
+        new Argument("_set", variables._set, _ENUM_VALUES),
+        new Argument("pk_columns", variables.pk_columns, _ENUM_VALUES),
       ],
       new SelectionSet(select(users))
     ),
@@ -3893,15 +3933,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "bookmarks",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          bookmarks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks))
     ),
@@ -3914,15 +3950,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "bookmarks_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          bookmarks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks_aggregate))
     ),
@@ -3934,7 +3966,7 @@ export const query_root: query_rootSelector = {
   bookmarks_by_pk: (variables, select) =>
     new Field(
       "bookmarks_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(bookmarks))
     ),
 
@@ -3946,15 +3978,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "playlist_items",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlist_items_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlist_items))
     ),
@@ -3967,15 +3995,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "playlist_items_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlist_items_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlist_items_aggregate))
     ),
@@ -3987,7 +4011,7 @@ export const query_root: query_rootSelector = {
   playlist_items_by_pk: (variables, select) =>
     new Field(
       "playlist_items_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(playlist_items))
     ),
 
@@ -3999,15 +4023,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "playlists",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlists_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists))
     ),
@@ -4020,15 +4040,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "playlists_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlists_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists_aggregate))
     ),
@@ -4040,7 +4056,7 @@ export const query_root: query_rootSelector = {
   playlists_by_pk: (variables, select) =>
     new Field(
       "playlists_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(playlists))
     ),
 
@@ -4052,15 +4068,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "tracks",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          tracks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(tracks))
     ),
@@ -4073,15 +4085,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "tracks_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          tracks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(tracks_aggregate))
     ),
@@ -4093,7 +4101,7 @@ export const query_root: query_rootSelector = {
   tracks_by_pk: (variables, select) =>
     new Field(
       "tracks_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(tracks))
     ),
 
@@ -4105,11 +4113,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "users",
       [
-        new Argument("distinct_on", variables.distinct_on, users_select_column),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(users))
     ),
@@ -4122,11 +4130,11 @@ export const query_root: query_rootSelector = {
     new Field(
       "users_aggregate",
       [
-        new Argument("distinct_on", variables.distinct_on, users_select_column),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(users_aggregate))
     ),
@@ -4138,7 +4146,7 @@ export const query_root: query_rootSelector = {
   users_by_pk: (variables, select) =>
     new Field(
       "users_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(users))
     ),
 };
@@ -4510,15 +4518,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "bookmarks",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          bookmarks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks))
     ),
@@ -4531,15 +4535,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "bookmarks_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          bookmarks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks_aggregate))
     ),
@@ -4551,7 +4551,7 @@ export const subscription_root: subscription_rootSelector = {
   bookmarks_by_pk: (variables, select) =>
     new Field(
       "bookmarks_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(bookmarks))
     ),
 
@@ -4563,15 +4563,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "playlist_items",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlist_items_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlist_items))
     ),
@@ -4584,15 +4580,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "playlist_items_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlist_items_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlist_items_aggregate))
     ),
@@ -4604,7 +4596,7 @@ export const subscription_root: subscription_rootSelector = {
   playlist_items_by_pk: (variables, select) =>
     new Field(
       "playlist_items_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(playlist_items))
     ),
 
@@ -4616,15 +4608,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "playlists",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlists_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists))
     ),
@@ -4637,15 +4625,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "playlists_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlists_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists_aggregate))
     ),
@@ -4657,7 +4641,7 @@ export const subscription_root: subscription_rootSelector = {
   playlists_by_pk: (variables, select) =>
     new Field(
       "playlists_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(playlists))
     ),
 
@@ -4669,15 +4653,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "tracks",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          tracks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(tracks))
     ),
@@ -4690,15 +4670,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "tracks_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          tracks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(tracks_aggregate))
     ),
@@ -4710,7 +4686,7 @@ export const subscription_root: subscription_rootSelector = {
   tracks_by_pk: (variables, select) =>
     new Field(
       "tracks_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(tracks))
     ),
 
@@ -4722,11 +4698,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "users",
       [
-        new Argument("distinct_on", variables.distinct_on, users_select_column),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(users))
     ),
@@ -4739,11 +4715,11 @@ export const subscription_root: subscription_rootSelector = {
     new Field(
       "users_aggregate",
       [
-        new Argument("distinct_on", variables.distinct_on, users_select_column),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(users_aggregate))
     ),
@@ -4755,7 +4731,7 @@ export const subscription_root: subscription_rootSelector = {
   users_by_pk: (variables, select) =>
     new Field(
       "users_by_pk",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(users))
     ),
 };
@@ -5349,15 +5325,11 @@ export const users: usersSelector = {
     new Field(
       "bookmarks",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          bookmarks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks))
     ),
@@ -5370,15 +5342,11 @@ export const users: usersSelector = {
     new Field(
       "bookmarks_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          bookmarks_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(bookmarks_aggregate))
     ),
@@ -5395,15 +5363,11 @@ export const users: usersSelector = {
     new Field(
       "playlists",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlists_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists))
     ),
@@ -5416,15 +5380,11 @@ export const users: usersSelector = {
     new Field(
       "playlists_aggregate",
       [
-        new Argument(
-          "distinct_on",
-          variables.distinct_on,
-          playlists_select_column
-        ),
-        new Argument("limit", variables.limit),
-        new Argument("offset", variables.offset),
-        new Argument("order_by", variables.order_by),
-        new Argument("where", variables.where),
+        new Argument("distinct_on", variables.distinct_on, _ENUM_VALUES),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("offset", variables.offset, _ENUM_VALUES),
+        new Argument("order_by", variables.order_by, _ENUM_VALUES),
+        new Argument("where", variables.where, _ENUM_VALUES),
       ],
       new SelectionSet(select(playlists_aggregate))
     ),
@@ -5867,7 +5827,7 @@ export class Hasura implements Client {
      * @description fetch data from the table: "bookmarks"
      */
 
-    bookmarks: <T extends Array<Selection>>(
+    bookmarks: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: bookmarks_select_column;
         limit?: number;
@@ -5876,23 +5836,39 @@ export class Hasura implements Client {
         where?: bookmarks_bool_exp;
       },
       select: (t: bookmarksSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<SelectionSet<[Field<"bookmarks", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "bookmarks",
-          "query",
-          new SelectionSet([query_root.bookmarks<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<SelectionSet<[Field<"bookmarks", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "bookmarks",
+            "query",
+            new SelectionSet([query_root.bookmarks<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "bookmarks",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "bookmarks", result });
+      } else if (result.data) {
+        return result.data.bookmarks;
+      } else {
+        throw new ExecutionError({ name: "bookmarks", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "bookmarks"
      */
 
-    bookmarks_aggregate: <T extends Array<Selection>>(
+    bookmarks_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: bookmarks_select_column;
         limit?: number;
@@ -5901,48 +5877,80 @@ export class Hasura implements Client {
         where?: bookmarks_bool_exp;
       },
       select: (t: bookmarks_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<
-          SelectionSet<[Field<"bookmarks_aggregate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "bookmarks_aggregate",
-          "query",
-          new SelectionSet([
-            query_root.bookmarks_aggregate<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<[Field<"bookmarks_aggregate", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "bookmarks_aggregate",
+            "query",
+            new SelectionSet([
+              query_root.bookmarks_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "bookmarks_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "bookmarks_aggregate", result });
+      } else if (result.data) {
+        return result.data.bookmarks_aggregate;
+      } else {
+        throw new ExecutionError({ name: "bookmarks_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "bookmarks" using primary key columns
      */
 
-    bookmarks_by_pk: <T extends Array<Selection>>(
+    bookmarks_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: bookmarksSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<
-          SelectionSet<[Field<"bookmarks_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "bookmarks_by_pk",
-          "query",
-          new SelectionSet([query_root.bookmarks_by_pk<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<[Field<"bookmarks_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "bookmarks_by_pk",
+            "query",
+            new SelectionSet([query_root.bookmarks_by_pk<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "bookmarks_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "bookmarks_by_pk", result });
+      } else if (result.data) {
+        return result.data.bookmarks_by_pk;
+      } else {
+        throw new ExecutionError({ name: "bookmarks_by_pk", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "playlist_items"
      */
 
-    playlist_items: <T extends Array<Selection>>(
+    playlist_items: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: playlist_items_select_column;
         limit?: number;
@@ -5951,23 +5959,41 @@ export class Hasura implements Client {
         where?: playlist_items_bool_exp;
       },
       select: (t: playlist_itemsSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<SelectionSet<[Field<"playlist_items", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "playlist_items",
-          "query",
-          new SelectionSet([query_root.playlist_items<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<[Field<"playlist_items", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "playlist_items",
+            "query",
+            new SelectionSet([query_root.playlist_items<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlist_items",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlist_items", result });
+      } else if (result.data) {
+        return result.data.playlist_items;
+      } else {
+        throw new ExecutionError({ name: "playlist_items", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "playlist_items"
      */
 
-    playlist_items_aggregate: <T extends Array<Selection>>(
+    playlist_items_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: playlist_items_select_column;
         limit?: number;
@@ -5976,52 +6002,84 @@ export class Hasura implements Client {
         where?: playlist_items_bool_exp;
       },
       select: (t: playlist_items_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<
-          SelectionSet<
-            [Field<"playlist_items_aggregate", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<
+              [Field<"playlist_items_aggregate", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "playlist_items_aggregate",
-          "query",
-          new SelectionSet([
-            query_root.playlist_items_aggregate<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "playlist_items_aggregate",
+            "query",
+            new SelectionSet([
+              query_root.playlist_items_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlist_items_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlist_items_aggregate", result });
+      } else if (result.data) {
+        return result.data.playlist_items_aggregate;
+      } else {
+        throw new ExecutionError({ name: "playlist_items_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "playlist_items" using primary key columns
      */
 
-    playlist_items_by_pk: <T extends Array<Selection>>(
+    playlist_items_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: playlist_itemsSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<
-          SelectionSet<[Field<"playlist_items_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "playlist_items_by_pk",
-          "query",
-          new SelectionSet([
-            query_root.playlist_items_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<[Field<"playlist_items_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "playlist_items_by_pk",
+            "query",
+            new SelectionSet([
+              query_root.playlist_items_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlist_items_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlist_items_by_pk", result });
+      } else if (result.data) {
+        return result.data.playlist_items_by_pk;
+      } else {
+        throw new ExecutionError({ name: "playlist_items_by_pk", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "playlists"
      */
 
-    playlists: <T extends Array<Selection>>(
+    playlists: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: playlists_select_column;
         limit?: number;
@@ -6030,23 +6088,39 @@ export class Hasura implements Client {
         where?: playlists_bool_exp;
       },
       select: (t: playlistsSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<SelectionSet<[Field<"playlists", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "playlists",
-          "query",
-          new SelectionSet([query_root.playlists<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<SelectionSet<[Field<"playlists", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "playlists",
+            "query",
+            new SelectionSet([query_root.playlists<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlists",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlists", result });
+      } else if (result.data) {
+        return result.data.playlists;
+      } else {
+        throw new ExecutionError({ name: "playlists", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "playlists"
      */
 
-    playlists_aggregate: <T extends Array<Selection>>(
+    playlists_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: playlists_select_column;
         limit?: number;
@@ -6055,48 +6129,80 @@ export class Hasura implements Client {
         where?: playlists_bool_exp;
       },
       select: (t: playlists_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<
-          SelectionSet<[Field<"playlists_aggregate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "playlists_aggregate",
-          "query",
-          new SelectionSet([
-            query_root.playlists_aggregate<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<[Field<"playlists_aggregate", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "playlists_aggregate",
+            "query",
+            new SelectionSet([
+              query_root.playlists_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlists_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlists_aggregate", result });
+      } else if (result.data) {
+        return result.data.playlists_aggregate;
+      } else {
+        throw new ExecutionError({ name: "playlists_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "playlists" using primary key columns
      */
 
-    playlists_by_pk: <T extends Array<Selection>>(
+    playlists_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: playlistsSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<
-          SelectionSet<[Field<"playlists_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "playlists_by_pk",
-          "query",
-          new SelectionSet([query_root.playlists_by_pk<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<[Field<"playlists_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "playlists_by_pk",
+            "query",
+            new SelectionSet([query_root.playlists_by_pk<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlists_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlists_by_pk", result });
+      } else if (result.data) {
+        return result.data.playlists_by_pk;
+      } else {
+        throw new ExecutionError({ name: "playlists_by_pk", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "tracks"
      */
 
-    tracks: <T extends Array<Selection>>(
+    tracks: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: tracks_select_column;
         limit?: number;
@@ -6105,23 +6211,36 @@ export class Hasura implements Client {
         where?: tracks_bool_exp;
       },
       select: (t: tracksSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<SelectionSet<[Field<"tracks", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "tracks",
-          "query",
-          new SelectionSet([query_root.tracks<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<SelectionSet<[Field<"tracks", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "tracks",
+            "query",
+            new SelectionSet([query_root.tracks<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "tracks", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "tracks", result });
+      } else if (result.data) {
+        return result.data.tracks;
+      } else {
+        throw new ExecutionError({ name: "tracks", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "tracks"
      */
 
-    tracks_aggregate: <T extends Array<Selection>>(
+    tracks_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: tracks_select_column;
         limit?: number;
@@ -6130,44 +6249,78 @@ export class Hasura implements Client {
         where?: tracks_bool_exp;
       },
       select: (t: tracks_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<
-          SelectionSet<[Field<"tracks_aggregate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "tracks_aggregate",
-          "query",
-          new SelectionSet([query_root.tracks_aggregate<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<[Field<"tracks_aggregate", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "tracks_aggregate",
+            "query",
+            new SelectionSet([
+              query_root.tracks_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "tracks_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "tracks_aggregate", result });
+      } else if (result.data) {
+        return result.data.tracks_aggregate;
+      } else {
+        throw new ExecutionError({ name: "tracks_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "tracks" using primary key columns
      */
 
-    tracks_by_pk: <T extends Array<Selection>>(
+    tracks_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: tracksSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<SelectionSet<[Field<"tracks_by_pk", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "tracks_by_pk",
-          "query",
-          new SelectionSet([query_root.tracks_by_pk<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<SelectionSet<[Field<"tracks_by_pk", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "tracks_by_pk",
+            "query",
+            new SelectionSet([query_root.tracks_by_pk<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "tracks_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "tracks_by_pk", result });
+      } else if (result.data) {
+        return result.data.tracks_by_pk;
+      } else {
+        throw new ExecutionError({ name: "tracks_by_pk", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "users"
      */
 
-    users: <T extends Array<Selection>>(
+    users: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: users_select_column;
         limit?: number;
@@ -6176,23 +6329,36 @@ export class Hasura implements Client {
         where?: users_bool_exp;
       },
       select: (t: usersSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<SelectionSet<[Field<"users", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "users",
-          "query",
-          new SelectionSet([query_root.users<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<SelectionSet<[Field<"users", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "users",
+            "query",
+            new SelectionSet([query_root.users<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "users", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "users", result });
+      } else if (result.data) {
+        return result.data.users;
+      } else {
+        throw new ExecutionError({ name: "users", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "users"
      */
 
-    users_aggregate: <T extends Array<Selection>>(
+    users_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: users_select_column;
         limit?: number;
@@ -6201,38 +6367,70 @@ export class Hasura implements Client {
         where?: users_bool_exp;
       },
       select: (t: users_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<
-          SelectionSet<[Field<"users_aggregate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "users_aggregate",
-          "query",
-          new SelectionSet([query_root.users_aggregate<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<
+            SelectionSet<[Field<"users_aggregate", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "users_aggregate",
+            "query",
+            new SelectionSet([query_root.users_aggregate<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "users_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "users_aggregate", result });
+      } else if (result.data) {
+        return result.data.users_aggregate;
+      } else {
+        throw new ExecutionError({ name: "users_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "users" using primary key columns
      */
 
-    users_by_pk: <T extends Array<Selection>>(
+    users_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: usersSelector) => T
-    ) =>
-      this.executor.execute<
-        Iquery_root,
-        Operation<SelectionSet<[Field<"users_by_pk", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "users_by_pk",
-          "query",
-          new SelectionSet([query_root.users_by_pk<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Iquery_root,
+          Operation<SelectionSet<[Field<"users_by_pk", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "users_by_pk",
+            "query",
+            new SelectionSet([query_root.users_by_pk<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "users_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "users_by_pk", result });
+      } else if (result.data) {
+        return result.data.users_by_pk;
+      } else {
+        throw new ExecutionError({ name: "users_by_pk", result });
+      }
+    },
   };
 
   public readonly mutate = {
@@ -6240,743 +6438,1255 @@ export class Hasura implements Client {
      * @description delete data from the table: "bookmarks"
      */
 
-    delete_bookmarks: <T extends Array<Selection>>(
+    delete_bookmarks: async <T extends Array<Selection>>(
       variables: { where?: bookmarks_bool_exp },
       select: (t: bookmarks_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"delete_bookmarks", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "delete_bookmarks",
-          "mutation",
-          new SelectionSet([
-            mutation_root.delete_bookmarks<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"delete_bookmarks", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "delete_bookmarks",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_bookmarks<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_bookmarks",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_bookmarks", result });
+      } else if (result.data) {
+        return result.data.delete_bookmarks;
+      } else {
+        throw new ExecutionError({ name: "delete_bookmarks", result });
+      }
+    },
 
     /**
      * @description delete single row from the table: "bookmarks"
      */
 
-    delete_bookmarks_by_pk: <T extends Array<Selection>>(
+    delete_bookmarks_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: bookmarksSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"delete_bookmarks_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "delete_bookmarks_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.delete_bookmarks_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<
+              [Field<"delete_bookmarks_by_pk", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "delete_bookmarks_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_bookmarks_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_bookmarks_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_bookmarks_by_pk", result });
+      } else if (result.data) {
+        return result.data.delete_bookmarks_by_pk;
+      } else {
+        throw new ExecutionError({ name: "delete_bookmarks_by_pk", result });
+      }
+    },
 
     /**
      * @description delete data from the table: "playlist_items"
      */
 
-    delete_playlist_items: <T extends Array<Selection>>(
+    delete_playlist_items: async <T extends Array<Selection>>(
       variables: { where?: playlist_items_bool_exp },
       select: (t: playlist_items_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"delete_playlist_items", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "delete_playlist_items",
-          "mutation",
-          new SelectionSet([
-            mutation_root.delete_playlist_items<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"delete_playlist_items", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "delete_playlist_items",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_playlist_items<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_playlist_items",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_playlist_items", result });
+      } else if (result.data) {
+        return result.data.delete_playlist_items;
+      } else {
+        throw new ExecutionError({ name: "delete_playlist_items", result });
+      }
+    },
 
     /**
      * @description delete single row from the table: "playlist_items"
      */
 
-    delete_playlist_items_by_pk: <T extends Array<Selection>>(
+    delete_playlist_items_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: playlist_itemsSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<
-            [Field<"delete_playlist_items_by_pk", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<
+              [Field<"delete_playlist_items_by_pk", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "delete_playlist_items_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.delete_playlist_items_by_pk<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "delete_playlist_items_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_playlist_items_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_playlist_items_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "delete_playlist_items_by_pk",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.delete_playlist_items_by_pk;
+      } else {
+        throw new ExecutionError({
+          name: "delete_playlist_items_by_pk",
+          result,
+        });
+      }
+    },
 
     /**
      * @description delete data from the table: "playlists"
      */
 
-    delete_playlists: <T extends Array<Selection>>(
+    delete_playlists: async <T extends Array<Selection>>(
       variables: { where?: playlists_bool_exp },
       select: (t: playlists_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"delete_playlists", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "delete_playlists",
-          "mutation",
-          new SelectionSet([
-            mutation_root.delete_playlists<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"delete_playlists", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "delete_playlists",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_playlists<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_playlists",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_playlists", result });
+      } else if (result.data) {
+        return result.data.delete_playlists;
+      } else {
+        throw new ExecutionError({ name: "delete_playlists", result });
+      }
+    },
 
     /**
      * @description delete single row from the table: "playlists"
      */
 
-    delete_playlists_by_pk: <T extends Array<Selection>>(
+    delete_playlists_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: playlistsSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"delete_playlists_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "delete_playlists_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.delete_playlists_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<
+              [Field<"delete_playlists_by_pk", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "delete_playlists_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_playlists_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_playlists_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_playlists_by_pk", result });
+      } else if (result.data) {
+        return result.data.delete_playlists_by_pk;
+      } else {
+        throw new ExecutionError({ name: "delete_playlists_by_pk", result });
+      }
+    },
 
     /**
      * @description delete data from the table: "tracks"
      */
 
-    delete_tracks: <T extends Array<Selection>>(
+    delete_tracks: async <T extends Array<Selection>>(
       variables: { where?: tracks_bool_exp },
       select: (t: tracks_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<SelectionSet<[Field<"delete_tracks", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "delete_tracks",
-          "mutation",
-          new SelectionSet([mutation_root.delete_tracks<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"delete_tracks", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "delete_tracks",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_tracks<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_tracks",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_tracks", result });
+      } else if (result.data) {
+        return result.data.delete_tracks;
+      } else {
+        throw new ExecutionError({ name: "delete_tracks", result });
+      }
+    },
 
     /**
      * @description delete single row from the table: "tracks"
      */
 
-    delete_tracks_by_pk: <T extends Array<Selection>>(
+    delete_tracks_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: tracksSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"delete_tracks_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "delete_tracks_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.delete_tracks_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"delete_tracks_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "delete_tracks_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_tracks_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_tracks_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_tracks_by_pk", result });
+      } else if (result.data) {
+        return result.data.delete_tracks_by_pk;
+      } else {
+        throw new ExecutionError({ name: "delete_tracks_by_pk", result });
+      }
+    },
 
     /**
      * @description delete data from the table: "users"
      */
 
-    delete_users: <T extends Array<Selection>>(
+    delete_users: async <T extends Array<Selection>>(
       variables: { where?: users_bool_exp },
       select: (t: users_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<SelectionSet<[Field<"delete_users", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "delete_users",
-          "mutation",
-          new SelectionSet([mutation_root.delete_users<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<SelectionSet<[Field<"delete_users", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "delete_users",
+            "mutation",
+            new SelectionSet([mutation_root.delete_users<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_users",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_users", result });
+      } else if (result.data) {
+        return result.data.delete_users;
+      } else {
+        throw new ExecutionError({ name: "delete_users", result });
+      }
+    },
 
     /**
      * @description delete single row from the table: "users"
      */
 
-    delete_users_by_pk: <T extends Array<Selection>>(
+    delete_users_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: usersSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"delete_users_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "delete_users_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.delete_users_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"delete_users_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "delete_users_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.delete_users_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "delete_users_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "delete_users_by_pk", result });
+      } else if (result.data) {
+        return result.data.delete_users_by_pk;
+      } else {
+        throw new ExecutionError({ name: "delete_users_by_pk", result });
+      }
+    },
 
     /**
      * @description insert data into the table: "bookmarks"
      */
 
-    insert_bookmarks: <T extends Array<Selection>>(
+    insert_bookmarks: async <T extends Array<Selection>>(
       variables: {
         objects?: bookmarks_insert_input;
         on_conflict?: bookmarks_on_conflict;
       },
       select: (t: bookmarks_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"insert_bookmarks", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "insert_bookmarks",
-          "mutation",
-          new SelectionSet([
-            mutation_root.insert_bookmarks<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"insert_bookmarks", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "insert_bookmarks",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_bookmarks<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_bookmarks",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_bookmarks", result });
+      } else if (result.data) {
+        return result.data.insert_bookmarks;
+      } else {
+        throw new ExecutionError({ name: "insert_bookmarks", result });
+      }
+    },
 
     /**
      * @description insert a single row into the table: "bookmarks"
      */
 
-    insert_bookmarks_one: <T extends Array<Selection>>(
+    insert_bookmarks_one: async <T extends Array<Selection>>(
       variables: {
         object?: bookmarks_insert_input;
         on_conflict?: bookmarks_on_conflict;
       },
       select: (t: bookmarksSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"insert_bookmarks_one", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "insert_bookmarks_one",
-          "mutation",
-          new SelectionSet([
-            mutation_root.insert_bookmarks_one<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"insert_bookmarks_one", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "insert_bookmarks_one",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_bookmarks_one<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_bookmarks_one",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_bookmarks_one", result });
+      } else if (result.data) {
+        return result.data.insert_bookmarks_one;
+      } else {
+        throw new ExecutionError({ name: "insert_bookmarks_one", result });
+      }
+    },
 
     /**
      * @description insert data into the table: "playlist_items"
      */
 
-    insert_playlist_items: <T extends Array<Selection>>(
+    insert_playlist_items: async <T extends Array<Selection>>(
       variables: {
         objects?: playlist_items_insert_input;
         on_conflict?: playlist_items_on_conflict;
       },
       select: (t: playlist_items_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"insert_playlist_items", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "insert_playlist_items",
-          "mutation",
-          new SelectionSet([
-            mutation_root.insert_playlist_items<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"insert_playlist_items", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "insert_playlist_items",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_playlist_items<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_playlist_items",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_playlist_items", result });
+      } else if (result.data) {
+        return result.data.insert_playlist_items;
+      } else {
+        throw new ExecutionError({ name: "insert_playlist_items", result });
+      }
+    },
 
     /**
      * @description insert a single row into the table: "playlist_items"
      */
 
-    insert_playlist_items_one: <T extends Array<Selection>>(
+    insert_playlist_items_one: async <T extends Array<Selection>>(
       variables: {
         object?: playlist_items_insert_input;
         on_conflict?: playlist_items_on_conflict;
       },
       select: (t: playlist_itemsSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<
-            [Field<"insert_playlist_items_one", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<
+              [Field<"insert_playlist_items_one", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "insert_playlist_items_one",
-          "mutation",
-          new SelectionSet([
-            mutation_root.insert_playlist_items_one<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "insert_playlist_items_one",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_playlist_items_one<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_playlist_items_one",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_playlist_items_one", result });
+      } else if (result.data) {
+        return result.data.insert_playlist_items_one;
+      } else {
+        throw new ExecutionError({ name: "insert_playlist_items_one", result });
+      }
+    },
 
     /**
      * @description insert data into the table: "playlists"
      */
 
-    insert_playlists: <T extends Array<Selection>>(
+    insert_playlists: async <T extends Array<Selection>>(
       variables: {
         objects?: playlists_insert_input;
         on_conflict?: playlists_on_conflict;
       },
       select: (t: playlists_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"insert_playlists", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "insert_playlists",
-          "mutation",
-          new SelectionSet([
-            mutation_root.insert_playlists<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"insert_playlists", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "insert_playlists",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_playlists<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_playlists",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_playlists", result });
+      } else if (result.data) {
+        return result.data.insert_playlists;
+      } else {
+        throw new ExecutionError({ name: "insert_playlists", result });
+      }
+    },
 
     /**
      * @description insert a single row into the table: "playlists"
      */
 
-    insert_playlists_one: <T extends Array<Selection>>(
+    insert_playlists_one: async <T extends Array<Selection>>(
       variables: {
         object?: playlists_insert_input;
         on_conflict?: playlists_on_conflict;
       },
       select: (t: playlistsSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"insert_playlists_one", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "insert_playlists_one",
-          "mutation",
-          new SelectionSet([
-            mutation_root.insert_playlists_one<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"insert_playlists_one", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "insert_playlists_one",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_playlists_one<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_playlists_one",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_playlists_one", result });
+      } else if (result.data) {
+        return result.data.insert_playlists_one;
+      } else {
+        throw new ExecutionError({ name: "insert_playlists_one", result });
+      }
+    },
 
     /**
      * @description insert data into the table: "tracks"
      */
 
-    insert_tracks: <T extends Array<Selection>>(
+    insert_tracks: async <T extends Array<Selection>>(
       variables: {
         objects?: tracks_insert_input;
         on_conflict?: tracks_on_conflict;
       },
       select: (t: tracks_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<SelectionSet<[Field<"insert_tracks", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "insert_tracks",
-          "mutation",
-          new SelectionSet([mutation_root.insert_tracks<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"insert_tracks", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "insert_tracks",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_tracks<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_tracks",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_tracks", result });
+      } else if (result.data) {
+        return result.data.insert_tracks;
+      } else {
+        throw new ExecutionError({ name: "insert_tracks", result });
+      }
+    },
 
     /**
      * @description insert a single row into the table: "tracks"
      */
 
-    insert_tracks_one: <T extends Array<Selection>>(
+    insert_tracks_one: async <T extends Array<Selection>>(
       variables: {
         object?: tracks_insert_input;
         on_conflict?: tracks_on_conflict;
       },
       select: (t: tracksSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"insert_tracks_one", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "insert_tracks_one",
-          "mutation",
-          new SelectionSet([
-            mutation_root.insert_tracks_one<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"insert_tracks_one", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "insert_tracks_one",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_tracks_one<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_tracks_one",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_tracks_one", result });
+      } else if (result.data) {
+        return result.data.insert_tracks_one;
+      } else {
+        throw new ExecutionError({ name: "insert_tracks_one", result });
+      }
+    },
 
     /**
      * @description insert data into the table: "users"
      */
 
-    insert_users: <T extends Array<Selection>>(
+    insert_users: async <T extends Array<Selection>>(
       variables: {
         objects?: users_insert_input;
         on_conflict?: users_on_conflict;
       },
       select: (t: users_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<SelectionSet<[Field<"insert_users", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "insert_users",
-          "mutation",
-          new SelectionSet([mutation_root.insert_users<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<SelectionSet<[Field<"insert_users", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "insert_users",
+            "mutation",
+            new SelectionSet([mutation_root.insert_users<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_users",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_users", result });
+      } else if (result.data) {
+        return result.data.insert_users;
+      } else {
+        throw new ExecutionError({ name: "insert_users", result });
+      }
+    },
 
     /**
      * @description insert a single row into the table: "users"
      */
 
-    insert_users_one: <T extends Array<Selection>>(
+    insert_users_one: async <T extends Array<Selection>>(
       variables: {
         object?: users_insert_input;
         on_conflict?: users_on_conflict;
       },
       select: (t: usersSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"insert_users_one", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "insert_users_one",
-          "mutation",
-          new SelectionSet([
-            mutation_root.insert_users_one<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"insert_users_one", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "insert_users_one",
+            "mutation",
+            new SelectionSet([
+              mutation_root.insert_users_one<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "insert_users_one",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "insert_users_one", result });
+      } else if (result.data) {
+        return result.data.insert_users_one;
+      } else {
+        throw new ExecutionError({ name: "insert_users_one", result });
+      }
+    },
 
     /**
      * @description update data of the table: "bookmarks"
      */
 
-    update_bookmarks: <T extends Array<Selection>>(
+    update_bookmarks: async <T extends Array<Selection>>(
       variables: {
         _inc?: bookmarks_inc_input;
         _set?: bookmarks_set_input;
         where?: bookmarks_bool_exp;
       },
       select: (t: bookmarks_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"update_bookmarks", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "update_bookmarks",
-          "mutation",
-          new SelectionSet([
-            mutation_root.update_bookmarks<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"update_bookmarks", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "update_bookmarks",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_bookmarks<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_bookmarks",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_bookmarks", result });
+      } else if (result.data) {
+        return result.data.update_bookmarks;
+      } else {
+        throw new ExecutionError({ name: "update_bookmarks", result });
+      }
+    },
 
     /**
      * @description update single row of the table: "bookmarks"
      */
 
-    update_bookmarks_by_pk: <T extends Array<Selection>>(
+    update_bookmarks_by_pk: async <T extends Array<Selection>>(
       variables: {
         _inc?: bookmarks_inc_input;
         _set?: bookmarks_set_input;
         pk_columns?: bookmarks_pk_columns_input;
       },
       select: (t: bookmarksSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"update_bookmarks_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "update_bookmarks_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.update_bookmarks_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<
+              [Field<"update_bookmarks_by_pk", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "update_bookmarks_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_bookmarks_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_bookmarks_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_bookmarks_by_pk", result });
+      } else if (result.data) {
+        return result.data.update_bookmarks_by_pk;
+      } else {
+        throw new ExecutionError({ name: "update_bookmarks_by_pk", result });
+      }
+    },
 
     /**
      * @description update data of the table: "playlist_items"
      */
 
-    update_playlist_items: <T extends Array<Selection>>(
+    update_playlist_items: async <T extends Array<Selection>>(
       variables: {
         _inc?: playlist_items_inc_input;
         _set?: playlist_items_set_input;
         where?: playlist_items_bool_exp;
       },
       select: (t: playlist_items_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"update_playlist_items", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "update_playlist_items",
-          "mutation",
-          new SelectionSet([
-            mutation_root.update_playlist_items<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"update_playlist_items", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "update_playlist_items",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_playlist_items<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_playlist_items",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_playlist_items", result });
+      } else if (result.data) {
+        return result.data.update_playlist_items;
+      } else {
+        throw new ExecutionError({ name: "update_playlist_items", result });
+      }
+    },
 
     /**
      * @description update single row of the table: "playlist_items"
      */
 
-    update_playlist_items_by_pk: <T extends Array<Selection>>(
+    update_playlist_items_by_pk: async <T extends Array<Selection>>(
       variables: {
         _inc?: playlist_items_inc_input;
         _set?: playlist_items_set_input;
         pk_columns?: playlist_items_pk_columns_input;
       },
       select: (t: playlist_itemsSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<
-            [Field<"update_playlist_items_by_pk", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<
+              [Field<"update_playlist_items_by_pk", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "update_playlist_items_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.update_playlist_items_by_pk<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "update_playlist_items_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_playlist_items_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_playlist_items_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "update_playlist_items_by_pk",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.update_playlist_items_by_pk;
+      } else {
+        throw new ExecutionError({
+          name: "update_playlist_items_by_pk",
+          result,
+        });
+      }
+    },
 
     /**
      * @description update data of the table: "playlists"
      */
 
-    update_playlists: <T extends Array<Selection>>(
+    update_playlists: async <T extends Array<Selection>>(
       variables: {
         _inc?: playlists_inc_input;
         _set?: playlists_set_input;
         where?: playlists_bool_exp;
       },
       select: (t: playlists_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"update_playlists", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "update_playlists",
-          "mutation",
-          new SelectionSet([
-            mutation_root.update_playlists<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"update_playlists", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "update_playlists",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_playlists<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_playlists",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_playlists", result });
+      } else if (result.data) {
+        return result.data.update_playlists;
+      } else {
+        throw new ExecutionError({ name: "update_playlists", result });
+      }
+    },
 
     /**
      * @description update single row of the table: "playlists"
      */
 
-    update_playlists_by_pk: <T extends Array<Selection>>(
+    update_playlists_by_pk: async <T extends Array<Selection>>(
       variables: {
         _inc?: playlists_inc_input;
         _set?: playlists_set_input;
         pk_columns?: playlists_pk_columns_input;
       },
       select: (t: playlistsSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"update_playlists_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "update_playlists_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.update_playlists_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<
+              [Field<"update_playlists_by_pk", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "update_playlists_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_playlists_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_playlists_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_playlists_by_pk", result });
+      } else if (result.data) {
+        return result.data.update_playlists_by_pk;
+      } else {
+        throw new ExecutionError({ name: "update_playlists_by_pk", result });
+      }
+    },
 
     /**
      * @description update data of the table: "tracks"
      */
 
-    update_tracks: <T extends Array<Selection>>(
+    update_tracks: async <T extends Array<Selection>>(
       variables: {
         _inc?: tracks_inc_input;
         _set?: tracks_set_input;
         where?: tracks_bool_exp;
       },
       select: (t: tracks_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<SelectionSet<[Field<"update_tracks", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "update_tracks",
-          "mutation",
-          new SelectionSet([mutation_root.update_tracks<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"update_tracks", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "update_tracks",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_tracks<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_tracks",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_tracks", result });
+      } else if (result.data) {
+        return result.data.update_tracks;
+      } else {
+        throw new ExecutionError({ name: "update_tracks", result });
+      }
+    },
 
     /**
      * @description update single row of the table: "tracks"
      */
 
-    update_tracks_by_pk: <T extends Array<Selection>>(
+    update_tracks_by_pk: async <T extends Array<Selection>>(
       variables: {
         _inc?: tracks_inc_input;
         _set?: tracks_set_input;
         pk_columns?: tracks_pk_columns_input;
       },
       select: (t: tracksSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"update_tracks_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "update_tracks_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.update_tracks_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"update_tracks_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "update_tracks_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_tracks_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_tracks_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_tracks_by_pk", result });
+      } else if (result.data) {
+        return result.data.update_tracks_by_pk;
+      } else {
+        throw new ExecutionError({ name: "update_tracks_by_pk", result });
+      }
+    },
 
     /**
      * @description update data of the table: "users"
      */
 
-    update_users: <T extends Array<Selection>>(
+    update_users: async <T extends Array<Selection>>(
       variables: {
         _inc?: users_inc_input;
         _set?: users_set_input;
         where?: users_bool_exp;
       },
       select: (t: users_mutation_responseSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<SelectionSet<[Field<"update_users", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "update_users",
-          "mutation",
-          new SelectionSet([mutation_root.update_users<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<SelectionSet<[Field<"update_users", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "update_users",
+            "mutation",
+            new SelectionSet([mutation_root.update_users<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_users",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_users", result });
+      } else if (result.data) {
+        return result.data.update_users;
+      } else {
+        throw new ExecutionError({ name: "update_users", result });
+      }
+    },
 
     /**
      * @description update single row of the table: "users"
      */
 
-    update_users_by_pk: <T extends Array<Selection>>(
+    update_users_by_pk: async <T extends Array<Selection>>(
       variables: {
         _inc?: users_inc_input;
         _set?: users_set_input;
         pk_columns?: users_pk_columns_input;
       },
       select: (t: usersSelector) => T
-    ) =>
-      this.executor.execute<
-        Imutation_root,
-        Operation<
-          SelectionSet<[Field<"update_users_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "update_users_by_pk",
-          "mutation",
-          new SelectionSet([
-            mutation_root.update_users_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Imutation_root,
+          Operation<
+            SelectionSet<[Field<"update_users_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "update_users_by_pk",
+            "mutation",
+            new SelectionSet([
+              mutation_root.update_users_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "update_users_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "update_users_by_pk", result });
+      } else if (result.data) {
+        return result.data.update_users_by_pk;
+      } else {
+        throw new ExecutionError({ name: "update_users_by_pk", result });
+      }
+    },
   };
 
   public readonly subscribe = {
@@ -6984,7 +7694,7 @@ export class Hasura implements Client {
      * @description fetch data from the table: "bookmarks"
      */
 
-    bookmarks: <T extends Array<Selection>>(
+    bookmarks: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: bookmarks_select_column;
         limit?: number;
@@ -6993,23 +7703,41 @@ export class Hasura implements Client {
         where?: bookmarks_bool_exp;
       },
       select: (t: bookmarksSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<SelectionSet<[Field<"bookmarks", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "bookmarks",
-          "subscription",
-          new SelectionSet([subscription_root.bookmarks<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<SelectionSet<[Field<"bookmarks", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "bookmarks",
+            "subscription",
+            new SelectionSet([
+              subscription_root.bookmarks<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "bookmarks",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "bookmarks", result });
+      } else if (result.data) {
+        return result.data.bookmarks;
+      } else {
+        throw new ExecutionError({ name: "bookmarks", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "bookmarks"
      */
 
-    bookmarks_aggregate: <T extends Array<Selection>>(
+    bookmarks_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: bookmarks_select_column;
         limit?: number;
@@ -7018,50 +7746,82 @@ export class Hasura implements Client {
         where?: bookmarks_bool_exp;
       },
       select: (t: bookmarks_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<
-          SelectionSet<[Field<"bookmarks_aggregate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "bookmarks_aggregate",
-          "subscription",
-          new SelectionSet([
-            subscription_root.bookmarks_aggregate<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<[Field<"bookmarks_aggregate", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "bookmarks_aggregate",
+            "subscription",
+            new SelectionSet([
+              subscription_root.bookmarks_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "bookmarks_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "bookmarks_aggregate", result });
+      } else if (result.data) {
+        return result.data.bookmarks_aggregate;
+      } else {
+        throw new ExecutionError({ name: "bookmarks_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "bookmarks" using primary key columns
      */
 
-    bookmarks_by_pk: <T extends Array<Selection>>(
+    bookmarks_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: bookmarksSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<
-          SelectionSet<[Field<"bookmarks_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "bookmarks_by_pk",
-          "subscription",
-          new SelectionSet([
-            subscription_root.bookmarks_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<[Field<"bookmarks_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "bookmarks_by_pk",
+            "subscription",
+            new SelectionSet([
+              subscription_root.bookmarks_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "bookmarks_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "bookmarks_by_pk", result });
+      } else if (result.data) {
+        return result.data.bookmarks_by_pk;
+      } else {
+        throw new ExecutionError({ name: "bookmarks_by_pk", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "playlist_items"
      */
 
-    playlist_items: <T extends Array<Selection>>(
+    playlist_items: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: playlist_items_select_column;
         limit?: number;
@@ -7070,25 +7830,43 @@ export class Hasura implements Client {
         where?: playlist_items_bool_exp;
       },
       select: (t: playlist_itemsSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<SelectionSet<[Field<"playlist_items", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "playlist_items",
-          "subscription",
-          new SelectionSet([
-            subscription_root.playlist_items<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<[Field<"playlist_items", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "playlist_items",
+            "subscription",
+            new SelectionSet([
+              subscription_root.playlist_items<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlist_items",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlist_items", result });
+      } else if (result.data) {
+        return result.data.playlist_items;
+      } else {
+        throw new ExecutionError({ name: "playlist_items", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "playlist_items"
      */
 
-    playlist_items_aggregate: <T extends Array<Selection>>(
+    playlist_items_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: playlist_items_select_column;
         limit?: number;
@@ -7097,52 +7875,84 @@ export class Hasura implements Client {
         where?: playlist_items_bool_exp;
       },
       select: (t: playlist_items_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<
-          SelectionSet<
-            [Field<"playlist_items_aggregate", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<
+              [Field<"playlist_items_aggregate", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "playlist_items_aggregate",
-          "subscription",
-          new SelectionSet([
-            subscription_root.playlist_items_aggregate<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "playlist_items_aggregate",
+            "subscription",
+            new SelectionSet([
+              subscription_root.playlist_items_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlist_items_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlist_items_aggregate", result });
+      } else if (result.data) {
+        return result.data.playlist_items_aggregate;
+      } else {
+        throw new ExecutionError({ name: "playlist_items_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "playlist_items" using primary key columns
      */
 
-    playlist_items_by_pk: <T extends Array<Selection>>(
+    playlist_items_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: playlist_itemsSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<
-          SelectionSet<[Field<"playlist_items_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "playlist_items_by_pk",
-          "subscription",
-          new SelectionSet([
-            subscription_root.playlist_items_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<[Field<"playlist_items_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "playlist_items_by_pk",
+            "subscription",
+            new SelectionSet([
+              subscription_root.playlist_items_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlist_items_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlist_items_by_pk", result });
+      } else if (result.data) {
+        return result.data.playlist_items_by_pk;
+      } else {
+        throw new ExecutionError({ name: "playlist_items_by_pk", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "playlists"
      */
 
-    playlists: <T extends Array<Selection>>(
+    playlists: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: playlists_select_column;
         limit?: number;
@@ -7151,23 +7961,41 @@ export class Hasura implements Client {
         where?: playlists_bool_exp;
       },
       select: (t: playlistsSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<SelectionSet<[Field<"playlists", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "playlists",
-          "subscription",
-          new SelectionSet([subscription_root.playlists<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<SelectionSet<[Field<"playlists", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "playlists",
+            "subscription",
+            new SelectionSet([
+              subscription_root.playlists<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlists",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlists", result });
+      } else if (result.data) {
+        return result.data.playlists;
+      } else {
+        throw new ExecutionError({ name: "playlists", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "playlists"
      */
 
-    playlists_aggregate: <T extends Array<Selection>>(
+    playlists_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: playlists_select_column;
         limit?: number;
@@ -7176,50 +8004,82 @@ export class Hasura implements Client {
         where?: playlists_bool_exp;
       },
       select: (t: playlists_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<
-          SelectionSet<[Field<"playlists_aggregate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "playlists_aggregate",
-          "subscription",
-          new SelectionSet([
-            subscription_root.playlists_aggregate<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<[Field<"playlists_aggregate", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "playlists_aggregate",
+            "subscription",
+            new SelectionSet([
+              subscription_root.playlists_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlists_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlists_aggregate", result });
+      } else if (result.data) {
+        return result.data.playlists_aggregate;
+      } else {
+        throw new ExecutionError({ name: "playlists_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "playlists" using primary key columns
      */
 
-    playlists_by_pk: <T extends Array<Selection>>(
+    playlists_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: playlistsSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<
-          SelectionSet<[Field<"playlists_by_pk", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "playlists_by_pk",
-          "subscription",
-          new SelectionSet([
-            subscription_root.playlists_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<[Field<"playlists_by_pk", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "playlists_by_pk",
+            "subscription",
+            new SelectionSet([
+              subscription_root.playlists_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "playlists_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "playlists_by_pk", result });
+      } else if (result.data) {
+        return result.data.playlists_by_pk;
+      } else {
+        throw new ExecutionError({ name: "playlists_by_pk", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "tracks"
      */
 
-    tracks: <T extends Array<Selection>>(
+    tracks: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: tracks_select_column;
         limit?: number;
@@ -7228,23 +8088,36 @@ export class Hasura implements Client {
         where?: tracks_bool_exp;
       },
       select: (t: tracksSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<SelectionSet<[Field<"tracks", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "tracks",
-          "subscription",
-          new SelectionSet([subscription_root.tracks<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<SelectionSet<[Field<"tracks", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "tracks",
+            "subscription",
+            new SelectionSet([subscription_root.tracks<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "tracks", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "tracks", result });
+      } else if (result.data) {
+        return result.data.tracks;
+      } else {
+        throw new ExecutionError({ name: "tracks", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "tracks"
      */
 
-    tracks_aggregate: <T extends Array<Selection>>(
+    tracks_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: tracks_select_column;
         limit?: number;
@@ -7253,48 +8126,80 @@ export class Hasura implements Client {
         where?: tracks_bool_exp;
       },
       select: (t: tracks_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<
-          SelectionSet<[Field<"tracks_aggregate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "tracks_aggregate",
-          "subscription",
-          new SelectionSet([
-            subscription_root.tracks_aggregate<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<[Field<"tracks_aggregate", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "tracks_aggregate",
+            "subscription",
+            new SelectionSet([
+              subscription_root.tracks_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "tracks_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "tracks_aggregate", result });
+      } else if (result.data) {
+        return result.data.tracks_aggregate;
+      } else {
+        throw new ExecutionError({ name: "tracks_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "tracks" using primary key columns
      */
 
-    tracks_by_pk: <T extends Array<Selection>>(
+    tracks_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: tracksSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<SelectionSet<[Field<"tracks_by_pk", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "tracks_by_pk",
-          "subscription",
-          new SelectionSet([
-            subscription_root.tracks_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<SelectionSet<[Field<"tracks_by_pk", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "tracks_by_pk",
+            "subscription",
+            new SelectionSet([
+              subscription_root.tracks_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "tracks_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "tracks_by_pk", result });
+      } else if (result.data) {
+        return result.data.tracks_by_pk;
+      } else {
+        throw new ExecutionError({ name: "tracks_by_pk", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "users"
      */
 
-    users: <T extends Array<Selection>>(
+    users: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: users_select_column;
         limit?: number;
@@ -7303,23 +8208,36 @@ export class Hasura implements Client {
         where?: users_bool_exp;
       },
       select: (t: usersSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<SelectionSet<[Field<"users", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "users",
-          "subscription",
-          new SelectionSet([subscription_root.users<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<SelectionSet<[Field<"users", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "users",
+            "subscription",
+            new SelectionSet([subscription_root.users<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "users", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "users", result });
+      } else if (result.data) {
+        return result.data.users;
+      } else {
+        throw new ExecutionError({ name: "users", result });
+      }
+    },
 
     /**
      * @description fetch aggregated fields from the table: "users"
      */
 
-    users_aggregate: <T extends Array<Selection>>(
+    users_aggregate: async <T extends Array<Selection>>(
       variables: {
         distinct_on?: users_select_column;
         limit?: number;
@@ -7328,41 +8246,73 @@ export class Hasura implements Client {
         where?: users_bool_exp;
       },
       select: (t: users_aggregateSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<
-          SelectionSet<[Field<"users_aggregate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "users_aggregate",
-          "subscription",
-          new SelectionSet([
-            subscription_root.users_aggregate<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<
+            SelectionSet<[Field<"users_aggregate", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "users_aggregate",
+            "subscription",
+            new SelectionSet([
+              subscription_root.users_aggregate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "users_aggregate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "users_aggregate", result });
+      } else if (result.data) {
+        return result.data.users_aggregate;
+      } else {
+        throw new ExecutionError({ name: "users_aggregate", result });
+      }
+    },
 
     /**
      * @description fetch data from the table: "users" using primary key columns
      */
 
-    users_by_pk: <T extends Array<Selection>>(
+    users_by_pk: async <T extends Array<Selection>>(
       variables: { id?: number },
       select: (t: usersSelector) => T
-    ) =>
-      this.executor.execute<
-        Isubscription_root,
-        Operation<SelectionSet<[Field<"users_by_pk", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "users_by_pk",
-          "subscription",
-          new SelectionSet([
-            subscription_root.users_by_pk<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          Isubscription_root,
+          Operation<SelectionSet<[Field<"users_by_pk", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "users_by_pk",
+            "subscription",
+            new SelectionSet([
+              subscription_root.users_by_pk<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "users_by_pk",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "users_by_pk", result });
+      } else if (result.data) {
+        return result.data.users_by_pk;
+      } else {
+        throw new ExecutionError({ name: "users_by_pk", result });
+      }
+    },
   };
 }

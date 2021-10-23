@@ -10,11 +10,332 @@ import {
   Executor,
   Client,
   TypeConditionError,
+  ExecutionError,
 } from "../../src";
 
 export const VERSION = "unversioned";
 
 export const SCHEMA_SHA = "6b2a2be";
+
+const _ENUM_VALUES = {
+  CREATED_AT: true,
+  FAILURE: true,
+  NOTICE: true,
+  WARNING: true,
+  ACTION_REQUIRED: true,
+  CANCELLED: true,
+  NEUTRAL: true,
+  SKIPPED: true,
+  STALE: true,
+  STARTUP_FAILURE: true,
+  SUCCESS: true,
+  TIMED_OUT: true,
+  ALL: true,
+  LATEST: true,
+  COMPLETED: true,
+  IN_PROGRESS: true,
+  QUEUED: true,
+  REQUESTED: true,
+  DIRECT: true,
+  OUTSIDE: true,
+  COLLABORATOR: true,
+  CONTRIBUTOR: true,
+  FIRST_TIMER: true,
+  FIRST_TIME_CONTRIBUTOR: true,
+  MANNEQUIN: true,
+  MEMBER: true,
+  NONE: true,
+  OWNER: true,
+  ARCHIVED: true,
+  DENIED: true,
+  INSUFFICIENT_ACCESS: true,
+  LOCKED: true,
+  LOGIN_REQUIRED: true,
+  MAINTENANCE: true,
+  VERIFIED_EMAIL_REQUIRED: true,
+  COMMIT_COUNT: true,
+  OCCURRED_AT: true,
+  ADMIN: true,
+  READ: true,
+  WRITE: true,
+  ABANDONED: true,
+  ACTIVE: true,
+  DESTROYED: true,
+  ERROR: true,
+  INACTIVE: true,
+  PENDING: true,
+  WAITING: true,
+  LEFT: true,
+  RIGHT: true,
+  BILLING_MANAGER: true,
+  NO_POLICY: true,
+  DISABLED: true,
+  ENABLED: true,
+  LOGIN: true,
+  PRIVATE: true,
+  PUBLIC: true,
+  CUSTOMER_NAME: true,
+  HOST_NAME: true,
+  EMAIL: true,
+  REMOTE_CREATED_AT: true,
+  CLOUD: true,
+  SERVER: true,
+  DISMISSED: true,
+  UNVIEWED: true,
+  VIEWED: true,
+  COMMUNITY_BRIDGE: true,
+  CUSTOM: true,
+  GITHUB: true,
+  ISSUEHUNT: true,
+  KO_FI: true,
+  LIBERAPAY: true,
+  OPEN_COLLECTIVE: true,
+  OTECHIE: true,
+  PATREON: true,
+  TIDELIFT: true,
+  PUSHED_AT: true,
+  UPDATED_AT: true,
+  SECRET: true,
+  BAD_CERT: true,
+  BAD_EMAIL: true,
+  EXPIRED_KEY: true,
+  GPGVERIFY_ERROR: true,
+  GPGVERIFY_UNAVAILABLE: true,
+  INVALID: true,
+  MALFORMED_SIG: true,
+  NOT_SIGNING_KEY: true,
+  NO_USER: true,
+  OCSP_ERROR: true,
+  OCSP_PENDING: true,
+  OCSP_REVOKED: true,
+  UNKNOWN_KEY: true,
+  UNKNOWN_SIG_TYPE: true,
+  UNSIGNED: true,
+  UNVERIFIED_EMAIL: true,
+  VALID: true,
+  CONFIGURED: true,
+  ENFORCED: true,
+  UNCONFIGURED: true,
+  ALLOW_LIST_VALUE: true,
+  COMMENTS: true,
+  CLOSED: true,
+  OPEN: true,
+  ADDED_TO_PROJECT_EVENT: true,
+  ASSIGNED_EVENT: true,
+  CLOSED_EVENT: true,
+  COMMENT_DELETED_EVENT: true,
+  CONNECTED_EVENT: true,
+  CONVERTED_NOTE_TO_ISSUE_EVENT: true,
+  CROSS_REFERENCED_EVENT: true,
+  DEMILESTONED_EVENT: true,
+  DISCONNECTED_EVENT: true,
+  ISSUE_COMMENT: true,
+  LABELED_EVENT: true,
+  LOCKED_EVENT: true,
+  MARKED_AS_DUPLICATE_EVENT: true,
+  MENTIONED_EVENT: true,
+  MILESTONED_EVENT: true,
+  MOVED_COLUMNS_IN_PROJECT_EVENT: true,
+  PINNED_EVENT: true,
+  REFERENCED_EVENT: true,
+  REMOVED_FROM_PROJECT_EVENT: true,
+  RENAMED_TITLE_EVENT: true,
+  REOPENED_EVENT: true,
+  SUBSCRIBED_EVENT: true,
+  TRANSFERRED_EVENT: true,
+  UNASSIGNED_EVENT: true,
+  UNLABELED_EVENT: true,
+  UNLOCKED_EVENT: true,
+  UNMARKED_AS_DUPLICATE_EVENT: true,
+  UNPINNED_EVENT: true,
+  UNSUBSCRIBED_EVENT: true,
+  USER_BLOCKED_EVENT: true,
+  NAME: true,
+  SIZE: true,
+  OFF_TOPIC: true,
+  RESOLVED: true,
+  SPAM: true,
+  TOO_HEATED: true,
+  CONFLICTING: true,
+  MERGEABLE: true,
+  UNKNOWN: true,
+  DUE_DATE: true,
+  NUMBER: true,
+  PENDING_DELETION: true,
+  SUSPENDED: true,
+  ACCESS: true,
+  AUTHENTICATION: true,
+  CREATE: true,
+  MODIFY: true,
+  REMOVE: true,
+  RESTORE: true,
+  TRANSFER: true,
+  ASC: true,
+  DESC: true,
+  BUSINESS: true,
+  BUSINESS_PLUS: true,
+  FREE: true,
+  TIERED_PER_SEAT: true,
+  UNLIMITED: true,
+  SAML_EXTERNAL_IDENTITY_MISSING: true,
+  SAML_SSO_ENFORCEMENT_REQUIRES_EXTERNAL_IDENTITY: true,
+  TWO_FACTOR_REQUIREMENT_NON_COMPLIANCE: true,
+  DIRECT_MEMBER: true,
+  OUTSIDE_COLLABORATOR: true,
+  UNAFFILIATED: true,
+  TWO_FACTOR_ACCOUNT_RECOVERY: true,
+  USER_ACCOUNT_DELETED: true,
+  INTERNAL: true,
+  PRIVATE_INTERNAL: true,
+  PUBLIC_INTERNAL: true,
+  PUBLIC_PRIVATE: true,
+  REINSTATE: true,
+  USER: true,
+  DEBIAN: true,
+  DOCKER: true,
+  MAVEN: true,
+  NPM: true,
+  NUGET: true,
+  PYPI: true,
+  RUBYGEMS: true,
+  GIST: true,
+  ISSUE: true,
+  ORGANIZATION: true,
+  PROJECT: true,
+  PULL_REQUEST: true,
+  REPOSITORY: true,
+  TEAM: true,
+  NOT_ARCHIVED: true,
+  CONTENT_ONLY: true,
+  NOTE_ONLY: true,
+  REDACTED: true,
+  DONE: true,
+  TODO: true,
+  AUTOMATED_KANBAN_V2: true,
+  AUTOMATED_REVIEWS_KANBAN: true,
+  BASIC_KANBAN: true,
+  BUG_TRIAGE: true,
+  MERGE: true,
+  REBASE: true,
+  SQUASH: true,
+  SUBMITTED: true,
+  APPROVED: true,
+  CHANGES_REQUESTED: true,
+  REVIEW_REQUIRED: true,
+  APPROVE: true,
+  COMMENT: true,
+  DISMISS: true,
+  REQUEST_CHANGES: true,
+  COMMENTED: true,
+  MERGED: true,
+  AUTOMATIC_BASE_CHANGE_FAILED_EVENT: true,
+  AUTOMATIC_BASE_CHANGE_SUCCEEDED_EVENT: true,
+  BASE_REF_CHANGED_EVENT: true,
+  BASE_REF_DELETED_EVENT: true,
+  BASE_REF_FORCE_PUSHED_EVENT: true,
+  CONVERT_TO_DRAFT_EVENT: true,
+  DEPLOYED_EVENT: true,
+  DEPLOYMENT_ENVIRONMENT_CHANGED_EVENT: true,
+  HEAD_REF_DELETED_EVENT: true,
+  HEAD_REF_FORCE_PUSHED_EVENT: true,
+  HEAD_REF_RESTORED_EVENT: true,
+  MERGED_EVENT: true,
+  PULL_REQUEST_COMMIT: true,
+  PULL_REQUEST_COMMIT_COMMENT_THREAD: true,
+  PULL_REQUEST_REVIEW: true,
+  PULL_REQUEST_REVIEW_THREAD: true,
+  PULL_REQUEST_REVISION_MARKER: true,
+  READY_FOR_REVIEW_EVENT: true,
+  REVIEW_DISMISSED_EVENT: true,
+  REVIEW_REQUESTED_EVENT: true,
+  REVIEW_REQUEST_REMOVED_EVENT: true,
+  CONFUSED: true,
+  EYES: true,
+  HEART: true,
+  HOORAY: true,
+  LAUGH: true,
+  ROCKET: true,
+  THUMBS_DOWN: true,
+  THUMBS_UP: true,
+  ALPHABETICAL: true,
+  TAG_COMMIT_DATE: true,
+  ABUSE: true,
+  DUPLICATE: true,
+  OUTDATED: true,
+  ORGANIZATION_MEMBER: true,
+  COMMIT: true,
+  COLLABORATORS_ONLY: true,
+  CONTRIBUTORS_ONLY: true,
+  EXISTING_USERS: true,
+  NO_LIMIT: true,
+  ONE_DAY: true,
+  ONE_MONTH: true,
+  ONE_WEEK: true,
+  SIX_MONTHS: true,
+  THREE_DAYS: true,
+  INVITEE_LOGIN: true,
+  BILLING: true,
+  MIGRATING: true,
+  MOVING: true,
+  RENAME: true,
+  STARGAZERS: true,
+  MAINTAIN: true,
+  TRIAGE: true,
+  SHA1: true,
+  SHA256: true,
+  SHA384: true,
+  SHA512: true,
+  RSA_SHA1: true,
+  RSA_SHA256: true,
+  RSA_SHA384: true,
+  RSA_SHA512: true,
+  COMPOSER: true,
+  PIP: true,
+  CVE: true,
+  GHSA: true,
+  PUBLISHED_AT: true,
+  CRITICAL: true,
+  HIGH: true,
+  LOW: true,
+  MODERATE: true,
+  MONTHLY_PRICE_IN_CENTS: true,
+  STARRED_AT: true,
+  EXPECTED: true,
+  IGNORED: true,
+  SUBSCRIBED: true,
+  UNSUBSCRIBED: true,
+  MAINTAINER: true,
+  CHILD_TEAM: true,
+  IMMEDIATE: true,
+  VISIBLE: true,
+  PERMISSION: true,
+  NOT_RELEVANT: true,
+  PERSONAL_PREFERENCE: true,
+  TOO_GENERAL: true,
+  TOO_SPECIFIC: true,
+  PERMANENT: true,
+  SCALAR: true,
+  OBJECT: true,
+  INTERFACE: true,
+  UNION: true,
+  ENUM: true,
+  INPUT_OBJECT: true,
+  LIST: true,
+  NON_NULL: true,
+  QUERY: true,
+  MUTATION: true,
+  SUBSCRIPTION: true,
+  FIELD: true,
+  FRAGMENT_DEFINITION: true,
+  FRAGMENT_SPREAD: true,
+  INLINE_FRAGMENT: true,
+  VARIABLE_DEFINITION: true,
+  SCHEMA: true,
+  FIELD_DEFINITION: true,
+  ARGUMENT_DEFINITION: true,
+  ENUM_VALUE: true,
+  INPUT_FIELD_DEFINITION: true,
+} as const;
 
 export enum AuditLogOrderField {
   CREATED_AT = "CREATED_AT",
@@ -7553,10 +7874,10 @@ export const Assignable: AssignableSelector = {
     new Field(
       "assignees",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -9640,10 +9961,10 @@ export const BranchProtectionRule: BranchProtectionRuleSelector = {
     new Field(
       "branchProtectionRuleConflicts",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(BranchProtectionRuleConflictConnection))
     ),
@@ -9679,11 +10000,11 @@ export const BranchProtectionRule: BranchProtectionRuleSelector = {
     new Field(
       "matchingRefs",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(RefConnection))
     ),
@@ -9701,10 +10022,10 @@ export const BranchProtectionRule: BranchProtectionRuleSelector = {
     new Field(
       "pushAllowances",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(PushAllowanceConnection))
     ),
@@ -9778,10 +10099,10 @@ export const BranchProtectionRule: BranchProtectionRuleSelector = {
     new Field(
       "reviewDismissalAllowances",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReviewDismissalAllowanceConnection))
     ),
@@ -10708,10 +11029,10 @@ export const CheckRun: CheckRunSelector = {
     new Field(
       "annotations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CheckAnnotationConnection))
     ),
@@ -11125,11 +11446,11 @@ export const CheckSuite: CheckSuiteSelector = {
     new Field(
       "checkRuns",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("filterBy", variables.filterBy),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("filterBy", variables.filterBy, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CheckRunConnection))
     ),
@@ -11165,15 +11486,15 @@ export const CheckSuite: CheckSuiteSelector = {
     new Field(
       "matchingPullRequests",
       [
-        new Argument("after", variables.after),
-        new Argument("baseRefName", variables.baseRefName),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("headRefName", variables.headRefName),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, PullRequestState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("baseRefName", variables.baseRefName, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("headRefName", variables.headRefName, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestConnection))
     ),
@@ -12089,10 +12410,10 @@ export const Comment: CommentSelector = {
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -12776,11 +13097,11 @@ export const Commit: CommitSelector = {
     new Field(
       "associatedPullRequests",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestConnection))
     ),
@@ -12811,10 +13132,10 @@ message trailer. The git author will always be first.
     new Field(
       "authors",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(GitActorConnection))
     ),
@@ -12826,7 +13147,7 @@ message trailer. The git author will always be first.
   blame: (variables, select) =>
     new Field(
       "blame",
-      [new Argument("path", variables.path)],
+      [new Argument("path", variables.path, _ENUM_VALUES)],
       new SelectionSet(select(Blame))
     ),
 
@@ -12843,11 +13164,11 @@ message trailer. The git author will always be first.
     new Field(
       "checkSuites",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("filterBy", variables.filterBy),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("filterBy", variables.filterBy, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CheckSuiteConnection))
     ),
@@ -12860,10 +13181,10 @@ message trailer. The git author will always be first.
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CommitCommentConnection))
     ),
@@ -12912,12 +13233,12 @@ message trailer. The git author will always be first.
     new Field(
       "deployments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("environments", variables.environments),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("environments", variables.environments, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(DeploymentConnection))
     ),
@@ -12929,7 +13250,7 @@ message trailer. The git author will always be first.
   file: (variables, select) =>
     new Field(
       "file",
-      [new Argument("path", variables.path)],
+      [new Argument("path", variables.path, _ENUM_VALUES)],
       new SelectionSet(select(TreeEntry))
     ),
 
@@ -12941,14 +13262,14 @@ message trailer. The git author will always be first.
     new Field(
       "history",
       [
-        new Argument("after", variables.after),
-        new Argument("author", variables.author),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("path", variables.path),
-        new Argument("since", variables.since),
-        new Argument("until", variables.until),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("author", variables.author, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("path", variables.path, _ENUM_VALUES),
+        new Argument("since", variables.since, _ENUM_VALUES),
+        new Argument("until", variables.until, _ENUM_VALUES),
       ],
       new SelectionSet(select(CommitHistoryConnection))
     ),
@@ -13004,10 +13325,10 @@ message trailer. The git author will always be first.
     new Field(
       "parents",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CommitConnection))
     ),
@@ -13070,10 +13391,10 @@ message trailer. The git author will always be first.
     new Field(
       "submodules",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(SubmoduleConnection))
     ),
@@ -13495,12 +13816,12 @@ export const CommitComment: CommitCommentSelector = {
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -13539,10 +13860,10 @@ export const CommitComment: CommitCommentSelector = {
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -13788,10 +14109,10 @@ export const CommitCommentThread: CommitCommentThreadSelector = {
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CommitCommentConnection))
     ),
@@ -13975,11 +14296,11 @@ export const CommitContributionsByRepository: CommitContributionsByRepositorySel
     new Field(
       "contributions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(CreatedCommitContributionConnection))
     ),
@@ -15145,7 +15466,13 @@ export const ContributionsCollection: ContributionsCollectionSelector = {
   commitContributionsByRepository: (variables, select) =>
     new Field(
       "commitContributionsByRepository",
-      [new Argument("maxRepositories", variables.maxRepositories)],
+      [
+        new Argument(
+          "maxRepositories",
+          variables.maxRepositories,
+          _ENUM_VALUES
+        ),
+      ],
       new SelectionSet(select(CommitContributionsByRepository))
     ),
 
@@ -15255,13 +15582,13 @@ true if the user enabled private contribution counts.
     new Field(
       "issueContributions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("excludeFirst", variables.excludeFirst),
-        new Argument("excludePopular", variables.excludePopular),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("excludeFirst", variables.excludeFirst, _ENUM_VALUES),
+        new Argument("excludePopular", variables.excludePopular, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(CreatedIssueContributionConnection))
     ),
@@ -15274,9 +15601,13 @@ true if the user enabled private contribution counts.
     new Field(
       "issueContributionsByRepository",
       [
-        new Argument("excludeFirst", variables.excludeFirst),
-        new Argument("excludePopular", variables.excludePopular),
-        new Argument("maxRepositories", variables.maxRepositories),
+        new Argument("excludeFirst", variables.excludeFirst, _ENUM_VALUES),
+        new Argument("excludePopular", variables.excludePopular, _ENUM_VALUES),
+        new Argument(
+          "maxRepositories",
+          variables.maxRepositories,
+          _ENUM_VALUES
+        ),
       ],
       new SelectionSet(select(IssueContributionsByRepository))
     ),
@@ -15356,13 +15687,13 @@ specified time frame.
     new Field(
       "pullRequestContributions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("excludeFirst", variables.excludeFirst),
-        new Argument("excludePopular", variables.excludePopular),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("excludeFirst", variables.excludeFirst, _ENUM_VALUES),
+        new Argument("excludePopular", variables.excludePopular, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(CreatedPullRequestContributionConnection))
     ),
@@ -15375,9 +15706,13 @@ specified time frame.
     new Field(
       "pullRequestContributionsByRepository",
       [
-        new Argument("excludeFirst", variables.excludeFirst),
-        new Argument("excludePopular", variables.excludePopular),
-        new Argument("maxRepositories", variables.maxRepositories),
+        new Argument("excludeFirst", variables.excludeFirst, _ENUM_VALUES),
+        new Argument("excludePopular", variables.excludePopular, _ENUM_VALUES),
+        new Argument(
+          "maxRepositories",
+          variables.maxRepositories,
+          _ENUM_VALUES
+        ),
       ],
       new SelectionSet(select(PullRequestContributionsByRepository))
     ),
@@ -15390,11 +15725,11 @@ specified time frame.
     new Field(
       "pullRequestReviewContributions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(CreatedPullRequestReviewContributionConnection))
     ),
@@ -15406,7 +15741,13 @@ specified time frame.
   pullRequestReviewContributionsByRepository: (variables, select) =>
     new Field(
       "pullRequestReviewContributionsByRepository",
-      [new Argument("maxRepositories", variables.maxRepositories)],
+      [
+        new Argument(
+          "maxRepositories",
+          variables.maxRepositories,
+          _ENUM_VALUES
+        ),
+      ],
       new SelectionSet(select(PullRequestReviewContributionsByRepository))
     ),
 
@@ -15418,12 +15759,12 @@ specified time frame.
     new Field(
       "repositoryContributions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("excludeFirst", variables.excludeFirst),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("excludeFirst", variables.excludeFirst, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(CreatedRepositoryContributionConnection))
     ),
@@ -18861,10 +19202,10 @@ export const Deployment: DeploymentSelector = {
     new Field(
       "statuses",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(DeploymentStatusConnection))
     ),
@@ -19755,23 +20096,19 @@ export const Enterprise: EnterpriseSelector = {
     new Field(
       "members",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("deployment", variables.deployment, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
         new Argument(
-          "deployment",
-          variables.deployment,
-          EnterpriseUserDeployment
+          "organizationLogins",
+          variables.organizationLogins,
+          _ENUM_VALUES
         ),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("organizationLogins", variables.organizationLogins),
-        new Argument("query", variables.query),
-        new Argument(
-          "role",
-          variables.role,
-          EnterpriseUserAccountMembershipRole
-        ),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("role", variables.role, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseMemberConnection))
     ),
@@ -19789,12 +20126,12 @@ export const Enterprise: EnterpriseSelector = {
     new Field(
       "organizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -19833,10 +20170,10 @@ export const Enterprise: EnterpriseSelector = {
     new Field(
       "userAccounts",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseUserAccountConnection))
     ),
@@ -20658,10 +20995,10 @@ export const EnterpriseIdentityProvider: EnterpriseIdentityProviderSelector = {
     new Field(
       "externalIdentities",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ExternalIdentityConnection))
     ),
@@ -21143,11 +21480,11 @@ export const EnterpriseOutsideCollaboratorEdge: EnterpriseOutsideCollaboratorEdg
     new Field(
       "repositories",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseRepositoryInfoConnection))
     ),
@@ -22007,13 +22344,13 @@ export const EnterpriseOwnerInfo: EnterpriseOwnerInfoSelector = {
     new Field(
       "admins",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
-        new Argument("role", variables.role, EnterpriseAdministratorRole),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("role", variables.role, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseAdministratorConnection))
     ),
@@ -22026,10 +22363,10 @@ export const EnterpriseOwnerInfo: EnterpriseOwnerInfoSelector = {
     new Field(
       "affiliatedUsersWithTwoFactorDisabled",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -22054,12 +22391,12 @@ export const EnterpriseOwnerInfo: EnterpriseOwnerInfoSelector = {
     new Field(
       "allowPrivateRepositoryForkingSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22078,16 +22415,12 @@ export const EnterpriseOwnerInfo: EnterpriseOwnerInfoSelector = {
     new Field(
       "defaultRepositoryPermissionSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument(
-          "value",
-          variables.value,
-          DefaultRepositoryPermissionField
-        ),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22100,12 +22433,12 @@ export const EnterpriseOwnerInfo: EnterpriseOwnerInfoSelector = {
     new Field(
       "enterpriseServerInstallations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("connectedOnly", variables.connectedOnly),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("connectedOnly", variables.connectedOnly, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseServerInstallationConnection))
     ),
@@ -22123,11 +22456,11 @@ export const EnterpriseOwnerInfo: EnterpriseOwnerInfoSelector = {
     new Field(
       "ipAllowListEntries",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(IpAllowListEntryConnection))
     ),
@@ -22162,12 +22495,12 @@ repository can change repository visibility.
     new Field(
       "membersCanChangeRepositoryVisibilitySettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22204,16 +22537,12 @@ repository can change repository visibility.
     new Field(
       "membersCanCreateRepositoriesSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument(
-          "value",
-          variables.value,
-          OrganizationMembersCanCreateRepositoriesSettingValue
-        ),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22232,12 +22561,12 @@ repository can change repository visibility.
     new Field(
       "membersCanDeleteIssuesSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22256,12 +22585,12 @@ repository can change repository visibility.
     new Field(
       "membersCanDeleteRepositoriesSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22280,12 +22609,12 @@ repository can change repository visibility.
     new Field(
       "membersCanInviteCollaboratorsSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22310,12 +22639,12 @@ repository can change repository visibility.
     new Field(
       "membersCanUpdateProtectedBranchesSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22334,12 +22663,12 @@ repository can change repository visibility.
     new Field(
       "membersCanViewDependencyInsightsSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22357,12 +22686,12 @@ repository can change repository visibility.
     new Field(
       "organizationProjectsSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22375,14 +22704,14 @@ repository can change repository visibility.
     new Field(
       "outsideCollaborators",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("login", variables.login),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
-        new Argument("visibility", variables.visibility, RepositoryVisibility),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("login", variables.login, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("visibility", variables.visibility, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseOutsideCollaboratorConnection))
     ),
@@ -22395,13 +22724,13 @@ repository can change repository visibility.
     new Field(
       "pendingAdminInvitations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
-        new Argument("role", variables.role, EnterpriseAdministratorRole),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("role", variables.role, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseAdministratorInvitationConnection))
     ),
@@ -22414,12 +22743,12 @@ repository can change repository visibility.
     new Field(
       "pendingCollaboratorInvitations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryInvitationConnection))
     ),
@@ -22433,12 +22762,12 @@ repository can change repository visibility.
     new Field(
       "pendingCollaborators",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterprisePendingCollaboratorConnection))
     ),
@@ -22451,11 +22780,11 @@ repository can change repository visibility.
     new Field(
       "pendingMemberInvitations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterprisePendingMemberInvitationConnection))
     ),
@@ -22473,12 +22802,12 @@ repository can change repository visibility.
     new Field(
       "repositoryProjectsSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22502,16 +22831,12 @@ repository can change repository visibility.
     new Field(
       "samlIdentityProviderSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument(
-          "value",
-          variables.value,
-          IdentityProviderConfigurationState
-        ),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22529,12 +22854,12 @@ repository can change repository visibility.
     new Field(
       "teamDiscussionsSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22552,12 +22877,12 @@ repository can change repository visibility.
     new Field(
       "twoFactorRequiredSettingOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("value", variables.value),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("value", variables.value, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -22730,11 +23055,11 @@ export const EnterprisePendingCollaboratorEdge: EnterprisePendingCollaboratorEdg
     new Field(
       "repositories",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseRepositoryInfoConnection))
     ),
@@ -23226,11 +23551,11 @@ export const EnterpriseServerInstallation: EnterpriseServerInstallationSelector 
     new Field(
       "userAccounts",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseServerUserAccountConnection))
     ),
@@ -23243,11 +23568,11 @@ export const EnterpriseServerInstallation: EnterpriseServerInstallationSelector 
     new Field(
       "userAccountsUploads",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseServerUserAccountsUploadConnection))
     ),
@@ -23500,11 +23825,11 @@ export const EnterpriseServerUserAccount: EnterpriseServerUserAccountSelector = 
     new Field(
       "emails",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseServerUserAccountEmailConnection))
     ),
@@ -24291,17 +24616,13 @@ export const EnterpriseUserAccount: EnterpriseUserAccountSelector = {
     new Field(
       "organizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
-        new Argument(
-          "role",
-          variables.role,
-          EnterpriseUserAccountMembershipRole
-        ),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("role", variables.role, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseOrganizationMembershipConnection))
     ),
@@ -25338,10 +25659,10 @@ export const Gist: GistSelector = {
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(GistCommentConnection))
     ),
@@ -25364,8 +25685,8 @@ export const Gist: GistSelector = {
     new Field(
       "files",
       [
-        new Argument("limit", variables.limit),
-        new Argument("oid", variables.oid),
+        new Argument("limit", variables.limit, _ENUM_VALUES),
+        new Argument("oid", variables.oid, _ENUM_VALUES),
       ],
       new SelectionSet(select(GistFile))
     ),
@@ -25378,11 +25699,11 @@ export const Gist: GistSelector = {
     new Field(
       "forks",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(GistConnection))
     ),
@@ -25438,11 +25759,11 @@ export const Gist: GistSelector = {
     new Field(
       "stargazers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(StargazerConnection))
     ),
@@ -25741,10 +26062,10 @@ export const GistComment: GistCommentSelector = {
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -28058,10 +28379,10 @@ export const Issue: IssueSelector = {
     new Field(
       "assignees",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -28121,11 +28442,11 @@ export const Issue: IssueSelector = {
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueCommentConnection))
     ),
@@ -28162,7 +28483,8 @@ export const Issue: IssueSelector = {
       [
         new Argument(
           "includeNotificationContexts",
-          variables.includeNotificationContexts
+          variables.includeNotificationContexts,
+          _ENUM_VALUES
         ),
       ],
       new SelectionSet(select(Hovercard))
@@ -28188,11 +28510,11 @@ export const Issue: IssueSelector = {
     new Field(
       "labels",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(LabelConnection))
     ),
@@ -28231,10 +28553,10 @@ export const Issue: IssueSelector = {
     new Field(
       "participants",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -28247,15 +28569,11 @@ export const Issue: IssueSelector = {
     new Field(
       "projectCards",
       [
-        new Argument("after", variables.after),
-        new Argument(
-          "archivedStates",
-          variables.archivedStates,
-          ProjectCardArchivedState
-        ),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("archivedStates", variables.archivedStates, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectCardConnection))
     ),
@@ -28284,12 +28602,12 @@ export const Issue: IssueSelector = {
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -28324,11 +28642,11 @@ export const Issue: IssueSelector = {
     new Field(
       "timeline",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("since", variables.since),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("since", variables.since, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueTimelineConnection))
     ),
@@ -28341,17 +28659,13 @@ export const Issue: IssueSelector = {
     new Field(
       "timelineItems",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument(
-          "itemTypes",
-          variables.itemTypes,
-          IssueTimelineItemsItemType
-        ),
-        new Argument("last", variables.last),
-        new Argument("since", variables.since),
-        new Argument("skip", variables.skip),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("itemTypes", variables.itemTypes, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("since", variables.since, _ENUM_VALUES),
+        new Argument("skip", variables.skip, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueTimelineItemsConnection))
     ),
@@ -28379,10 +28693,10 @@ export const Issue: IssueSelector = {
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -28788,12 +29102,12 @@ pull request.
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -28832,10 +29146,10 @@ pull request.
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -29129,11 +29443,11 @@ export const IssueContributionsByRepository: IssueContributionsByRepositorySelec
     new Field(
       "contributions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(CreatedIssueContributionConnection))
     ),
@@ -29802,14 +30116,14 @@ export const Label: LabelSelector = {
     new Field(
       "issues",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("filterBy", variables.filterBy),
-        new Argument("first", variables.first),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, IssueState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("filterBy", variables.filterBy, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueConnection))
     ),
@@ -29827,15 +30141,15 @@ export const Label: LabelSelector = {
     new Field(
       "pullRequests",
       [
-        new Argument("after", variables.after),
-        new Argument("baseRefName", variables.baseRefName),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("headRefName", variables.headRefName),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, PullRequestState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("baseRefName", variables.baseRefName, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("headRefName", variables.headRefName, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestConnection))
     ),
@@ -30039,11 +30353,11 @@ export const Labelable: LabelableSelector = {
     new Field(
       "labels",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(LabelConnection))
     ),
@@ -32191,11 +32505,11 @@ export const MemberStatusable: MemberStatusableSelector = {
     new Field(
       "memberStatuses",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserStatusConnection))
     ),
@@ -33571,14 +33885,14 @@ export const Milestone: MilestoneSelector = {
     new Field(
       "issues",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("filterBy", variables.filterBy),
-        new Argument("first", variables.first),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, IssueState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("filterBy", variables.filterBy, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueConnection))
     ),
@@ -33601,15 +33915,15 @@ export const Milestone: MilestoneSelector = {
     new Field(
       "pullRequests",
       [
-        new Argument("after", variables.after),
-        new Argument("baseRefName", variables.baseRefName),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("headRefName", variables.headRefName),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, PullRequestState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("baseRefName", variables.baseRefName, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("headRefName", variables.headRefName, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestConnection))
     ),
@@ -36140,7 +36454,7 @@ export const Mutation: MutationSelector = {
   acceptEnterpriseAdministratorInvitation: (variables, select) =>
     new Field(
       "acceptEnterpriseAdministratorInvitation",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AcceptEnterpriseAdministratorInvitationPayload))
     ),
 
@@ -36151,7 +36465,7 @@ export const Mutation: MutationSelector = {
   acceptTopicSuggestion: (variables, select) =>
     new Field(
       "acceptTopicSuggestion",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AcceptTopicSuggestionPayload))
     ),
 
@@ -36162,7 +36476,7 @@ export const Mutation: MutationSelector = {
   addAssigneesToAssignable: (variables, select) =>
     new Field(
       "addAssigneesToAssignable",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddAssigneesToAssignablePayload))
     ),
 
@@ -36173,7 +36487,7 @@ export const Mutation: MutationSelector = {
   addComment: (variables, select) =>
     new Field(
       "addComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddCommentPayload))
     ),
 
@@ -36184,7 +36498,7 @@ export const Mutation: MutationSelector = {
   addLabelsToLabelable: (variables, select) =>
     new Field(
       "addLabelsToLabelable",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddLabelsToLabelablePayload))
     ),
 
@@ -36195,7 +36509,7 @@ export const Mutation: MutationSelector = {
   addProjectCard: (variables, select) =>
     new Field(
       "addProjectCard",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddProjectCardPayload))
     ),
 
@@ -36206,7 +36520,7 @@ export const Mutation: MutationSelector = {
   addProjectColumn: (variables, select) =>
     new Field(
       "addProjectColumn",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddProjectColumnPayload))
     ),
 
@@ -36217,7 +36531,7 @@ export const Mutation: MutationSelector = {
   addPullRequestReview: (variables, select) =>
     new Field(
       "addPullRequestReview",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddPullRequestReviewPayload))
     ),
 
@@ -36228,7 +36542,7 @@ export const Mutation: MutationSelector = {
   addPullRequestReviewComment: (variables, select) =>
     new Field(
       "addPullRequestReviewComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddPullRequestReviewCommentPayload))
     ),
 
@@ -36239,7 +36553,7 @@ export const Mutation: MutationSelector = {
   addPullRequestReviewThread: (variables, select) =>
     new Field(
       "addPullRequestReviewThread",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddPullRequestReviewThreadPayload))
     ),
 
@@ -36250,7 +36564,7 @@ export const Mutation: MutationSelector = {
   addReaction: (variables, select) =>
     new Field(
       "addReaction",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddReactionPayload))
     ),
 
@@ -36261,7 +36575,7 @@ export const Mutation: MutationSelector = {
   addStar: (variables, select) =>
     new Field(
       "addStar",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(AddStarPayload))
     ),
 
@@ -36272,7 +36586,7 @@ export const Mutation: MutationSelector = {
   archiveRepository: (variables, select) =>
     new Field(
       "archiveRepository",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(ArchiveRepositoryPayload))
     ),
 
@@ -36283,7 +36597,7 @@ export const Mutation: MutationSelector = {
   cancelEnterpriseAdminInvitation: (variables, select) =>
     new Field(
       "cancelEnterpriseAdminInvitation",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CancelEnterpriseAdminInvitationPayload))
     ),
 
@@ -36294,7 +36608,7 @@ export const Mutation: MutationSelector = {
   changeUserStatus: (variables, select) =>
     new Field(
       "changeUserStatus",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(ChangeUserStatusPayload))
     ),
 
@@ -36305,7 +36619,7 @@ export const Mutation: MutationSelector = {
   clearLabelsFromLabelable: (variables, select) =>
     new Field(
       "clearLabelsFromLabelable",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(ClearLabelsFromLabelablePayload))
     ),
 
@@ -36316,7 +36630,7 @@ export const Mutation: MutationSelector = {
   cloneProject: (variables, select) =>
     new Field(
       "cloneProject",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CloneProjectPayload))
     ),
 
@@ -36327,7 +36641,7 @@ export const Mutation: MutationSelector = {
   cloneTemplateRepository: (variables, select) =>
     new Field(
       "cloneTemplateRepository",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CloneTemplateRepositoryPayload))
     ),
 
@@ -36338,7 +36652,7 @@ export const Mutation: MutationSelector = {
   closeIssue: (variables, select) =>
     new Field(
       "closeIssue",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CloseIssuePayload))
     ),
 
@@ -36349,7 +36663,7 @@ export const Mutation: MutationSelector = {
   closePullRequest: (variables, select) =>
     new Field(
       "closePullRequest",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(ClosePullRequestPayload))
     ),
 
@@ -36360,7 +36674,7 @@ export const Mutation: MutationSelector = {
   convertProjectCardNoteToIssue: (variables, select) =>
     new Field(
       "convertProjectCardNoteToIssue",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(ConvertProjectCardNoteToIssuePayload))
     ),
 
@@ -36371,7 +36685,7 @@ export const Mutation: MutationSelector = {
   createBranchProtectionRule: (variables, select) =>
     new Field(
       "createBranchProtectionRule",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateBranchProtectionRulePayload))
     ),
 
@@ -36382,7 +36696,7 @@ export const Mutation: MutationSelector = {
   createCheckRun: (variables, select) =>
     new Field(
       "createCheckRun",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateCheckRunPayload))
     ),
 
@@ -36393,7 +36707,7 @@ export const Mutation: MutationSelector = {
   createCheckSuite: (variables, select) =>
     new Field(
       "createCheckSuite",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateCheckSuitePayload))
     ),
 
@@ -36404,7 +36718,7 @@ export const Mutation: MutationSelector = {
   createEnterpriseOrganization: (variables, select) =>
     new Field(
       "createEnterpriseOrganization",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateEnterpriseOrganizationPayload))
     ),
 
@@ -36415,7 +36729,7 @@ export const Mutation: MutationSelector = {
   createIpAllowListEntry: (variables, select) =>
     new Field(
       "createIpAllowListEntry",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateIpAllowListEntryPayload))
     ),
 
@@ -36426,7 +36740,7 @@ export const Mutation: MutationSelector = {
   createIssue: (variables, select) =>
     new Field(
       "createIssue",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateIssuePayload))
     ),
 
@@ -36437,7 +36751,7 @@ export const Mutation: MutationSelector = {
   createProject: (variables, select) =>
     new Field(
       "createProject",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateProjectPayload))
     ),
 
@@ -36448,7 +36762,7 @@ export const Mutation: MutationSelector = {
   createPullRequest: (variables, select) =>
     new Field(
       "createPullRequest",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreatePullRequestPayload))
     ),
 
@@ -36459,7 +36773,7 @@ export const Mutation: MutationSelector = {
   createRef: (variables, select) =>
     new Field(
       "createRef",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateRefPayload))
     ),
 
@@ -36470,7 +36784,7 @@ export const Mutation: MutationSelector = {
   createRepository: (variables, select) =>
     new Field(
       "createRepository",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateRepositoryPayload))
     ),
 
@@ -36481,7 +36795,7 @@ export const Mutation: MutationSelector = {
   createTeamDiscussion: (variables, select) =>
     new Field(
       "createTeamDiscussion",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateTeamDiscussionPayload))
     ),
 
@@ -36492,7 +36806,7 @@ export const Mutation: MutationSelector = {
   createTeamDiscussionComment: (variables, select) =>
     new Field(
       "createTeamDiscussionComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(CreateTeamDiscussionCommentPayload))
     ),
 
@@ -36503,7 +36817,7 @@ export const Mutation: MutationSelector = {
   declineTopicSuggestion: (variables, select) =>
     new Field(
       "declineTopicSuggestion",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeclineTopicSuggestionPayload))
     ),
 
@@ -36514,7 +36828,7 @@ export const Mutation: MutationSelector = {
   deleteBranchProtectionRule: (variables, select) =>
     new Field(
       "deleteBranchProtectionRule",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteBranchProtectionRulePayload))
     ),
 
@@ -36525,7 +36839,7 @@ export const Mutation: MutationSelector = {
   deleteDeployment: (variables, select) =>
     new Field(
       "deleteDeployment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteDeploymentPayload))
     ),
 
@@ -36536,7 +36850,7 @@ export const Mutation: MutationSelector = {
   deleteIpAllowListEntry: (variables, select) =>
     new Field(
       "deleteIpAllowListEntry",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteIpAllowListEntryPayload))
     ),
 
@@ -36547,7 +36861,7 @@ export const Mutation: MutationSelector = {
   deleteIssue: (variables, select) =>
     new Field(
       "deleteIssue",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteIssuePayload))
     ),
 
@@ -36558,7 +36872,7 @@ export const Mutation: MutationSelector = {
   deleteIssueComment: (variables, select) =>
     new Field(
       "deleteIssueComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteIssueCommentPayload))
     ),
 
@@ -36569,7 +36883,7 @@ export const Mutation: MutationSelector = {
   deleteProject: (variables, select) =>
     new Field(
       "deleteProject",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteProjectPayload))
     ),
 
@@ -36580,7 +36894,7 @@ export const Mutation: MutationSelector = {
   deleteProjectCard: (variables, select) =>
     new Field(
       "deleteProjectCard",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteProjectCardPayload))
     ),
 
@@ -36591,7 +36905,7 @@ export const Mutation: MutationSelector = {
   deleteProjectColumn: (variables, select) =>
     new Field(
       "deleteProjectColumn",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteProjectColumnPayload))
     ),
 
@@ -36602,7 +36916,7 @@ export const Mutation: MutationSelector = {
   deletePullRequestReview: (variables, select) =>
     new Field(
       "deletePullRequestReview",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeletePullRequestReviewPayload))
     ),
 
@@ -36613,7 +36927,7 @@ export const Mutation: MutationSelector = {
   deletePullRequestReviewComment: (variables, select) =>
     new Field(
       "deletePullRequestReviewComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeletePullRequestReviewCommentPayload))
     ),
 
@@ -36624,7 +36938,7 @@ export const Mutation: MutationSelector = {
   deleteRef: (variables, select) =>
     new Field(
       "deleteRef",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteRefPayload))
     ),
 
@@ -36635,7 +36949,7 @@ export const Mutation: MutationSelector = {
   deleteTeamDiscussion: (variables, select) =>
     new Field(
       "deleteTeamDiscussion",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteTeamDiscussionPayload))
     ),
 
@@ -36646,7 +36960,7 @@ export const Mutation: MutationSelector = {
   deleteTeamDiscussionComment: (variables, select) =>
     new Field(
       "deleteTeamDiscussionComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DeleteTeamDiscussionCommentPayload))
     ),
 
@@ -36657,7 +36971,7 @@ export const Mutation: MutationSelector = {
   dismissPullRequestReview: (variables, select) =>
     new Field(
       "dismissPullRequestReview",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(DismissPullRequestReviewPayload))
     ),
 
@@ -36668,7 +36982,7 @@ export const Mutation: MutationSelector = {
   followUser: (variables, select) =>
     new Field(
       "followUser",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(FollowUserPayload))
     ),
 
@@ -36679,7 +36993,7 @@ export const Mutation: MutationSelector = {
   inviteEnterpriseAdmin: (variables, select) =>
     new Field(
       "inviteEnterpriseAdmin",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(InviteEnterpriseAdminPayload))
     ),
 
@@ -36690,7 +37004,7 @@ export const Mutation: MutationSelector = {
   linkRepositoryToProject: (variables, select) =>
     new Field(
       "linkRepositoryToProject",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(LinkRepositoryToProjectPayload))
     ),
 
@@ -36701,7 +37015,7 @@ export const Mutation: MutationSelector = {
   lockLockable: (variables, select) =>
     new Field(
       "lockLockable",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(LockLockablePayload))
     ),
 
@@ -36712,7 +37026,7 @@ export const Mutation: MutationSelector = {
   markFileAsViewed: (variables, select) =>
     new Field(
       "markFileAsViewed",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(MarkFileAsViewedPayload))
     ),
 
@@ -36723,7 +37037,7 @@ export const Mutation: MutationSelector = {
   markPullRequestReadyForReview: (variables, select) =>
     new Field(
       "markPullRequestReadyForReview",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(MarkPullRequestReadyForReviewPayload))
     ),
 
@@ -36734,7 +37048,7 @@ export const Mutation: MutationSelector = {
   mergeBranch: (variables, select) =>
     new Field(
       "mergeBranch",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(MergeBranchPayload))
     ),
 
@@ -36745,7 +37059,7 @@ export const Mutation: MutationSelector = {
   mergePullRequest: (variables, select) =>
     new Field(
       "mergePullRequest",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(MergePullRequestPayload))
     ),
 
@@ -36756,7 +37070,7 @@ export const Mutation: MutationSelector = {
   minimizeComment: (variables, select) =>
     new Field(
       "minimizeComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(MinimizeCommentPayload))
     ),
 
@@ -36767,7 +37081,7 @@ export const Mutation: MutationSelector = {
   moveProjectCard: (variables, select) =>
     new Field(
       "moveProjectCard",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(MoveProjectCardPayload))
     ),
 
@@ -36778,7 +37092,7 @@ export const Mutation: MutationSelector = {
   moveProjectColumn: (variables, select) =>
     new Field(
       "moveProjectColumn",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(MoveProjectColumnPayload))
     ),
 
@@ -36789,7 +37103,7 @@ export const Mutation: MutationSelector = {
   regenerateEnterpriseIdentityProviderRecoveryCodes: (variables, select) =>
     new Field(
       "regenerateEnterpriseIdentityProviderRecoveryCodes",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(RegenerateEnterpriseIdentityProviderRecoveryCodesPayload)
       )
@@ -36802,7 +37116,7 @@ export const Mutation: MutationSelector = {
   removeAssigneesFromAssignable: (variables, select) =>
     new Field(
       "removeAssigneesFromAssignable",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RemoveAssigneesFromAssignablePayload))
     ),
 
@@ -36813,7 +37127,7 @@ export const Mutation: MutationSelector = {
   removeEnterpriseAdmin: (variables, select) =>
     new Field(
       "removeEnterpriseAdmin",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RemoveEnterpriseAdminPayload))
     ),
 
@@ -36824,7 +37138,7 @@ export const Mutation: MutationSelector = {
   removeEnterpriseIdentityProvider: (variables, select) =>
     new Field(
       "removeEnterpriseIdentityProvider",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RemoveEnterpriseIdentityProviderPayload))
     ),
 
@@ -36835,7 +37149,7 @@ export const Mutation: MutationSelector = {
   removeEnterpriseOrganization: (variables, select) =>
     new Field(
       "removeEnterpriseOrganization",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RemoveEnterpriseOrganizationPayload))
     ),
 
@@ -36846,7 +37160,7 @@ export const Mutation: MutationSelector = {
   removeLabelsFromLabelable: (variables, select) =>
     new Field(
       "removeLabelsFromLabelable",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RemoveLabelsFromLabelablePayload))
     ),
 
@@ -36857,7 +37171,7 @@ export const Mutation: MutationSelector = {
   removeOutsideCollaborator: (variables, select) =>
     new Field(
       "removeOutsideCollaborator",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RemoveOutsideCollaboratorPayload))
     ),
 
@@ -36868,7 +37182,7 @@ export const Mutation: MutationSelector = {
   removeReaction: (variables, select) =>
     new Field(
       "removeReaction",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RemoveReactionPayload))
     ),
 
@@ -36879,7 +37193,7 @@ export const Mutation: MutationSelector = {
   removeStar: (variables, select) =>
     new Field(
       "removeStar",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RemoveStarPayload))
     ),
 
@@ -36890,7 +37204,7 @@ export const Mutation: MutationSelector = {
   reopenIssue: (variables, select) =>
     new Field(
       "reopenIssue",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(ReopenIssuePayload))
     ),
 
@@ -36901,7 +37215,7 @@ export const Mutation: MutationSelector = {
   reopenPullRequest: (variables, select) =>
     new Field(
       "reopenPullRequest",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(ReopenPullRequestPayload))
     ),
 
@@ -36912,7 +37226,7 @@ export const Mutation: MutationSelector = {
   requestReviews: (variables, select) =>
     new Field(
       "requestReviews",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RequestReviewsPayload))
     ),
 
@@ -36923,7 +37237,7 @@ export const Mutation: MutationSelector = {
   rerequestCheckSuite: (variables, select) =>
     new Field(
       "rerequestCheckSuite",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(RerequestCheckSuitePayload))
     ),
 
@@ -36934,7 +37248,7 @@ export const Mutation: MutationSelector = {
   resolveReviewThread: (variables, select) =>
     new Field(
       "resolveReviewThread",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(ResolveReviewThreadPayload))
     ),
 
@@ -36945,7 +37259,7 @@ export const Mutation: MutationSelector = {
   setEnterpriseIdentityProvider: (variables, select) =>
     new Field(
       "setEnterpriseIdentityProvider",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(SetEnterpriseIdentityProviderPayload))
     ),
 
@@ -36956,7 +37270,7 @@ export const Mutation: MutationSelector = {
   setOrganizationInteractionLimit: (variables, select) =>
     new Field(
       "setOrganizationInteractionLimit",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(SetOrganizationInteractionLimitPayload))
     ),
 
@@ -36967,7 +37281,7 @@ export const Mutation: MutationSelector = {
   setRepositoryInteractionLimit: (variables, select) =>
     new Field(
       "setRepositoryInteractionLimit",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(SetRepositoryInteractionLimitPayload))
     ),
 
@@ -36978,7 +37292,7 @@ export const Mutation: MutationSelector = {
   setUserInteractionLimit: (variables, select) =>
     new Field(
       "setUserInteractionLimit",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(SetUserInteractionLimitPayload))
     ),
 
@@ -36989,7 +37303,7 @@ export const Mutation: MutationSelector = {
   submitPullRequestReview: (variables, select) =>
     new Field(
       "submitPullRequestReview",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(SubmitPullRequestReviewPayload))
     ),
 
@@ -37000,7 +37314,7 @@ export const Mutation: MutationSelector = {
   transferIssue: (variables, select) =>
     new Field(
       "transferIssue",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(TransferIssuePayload))
     ),
 
@@ -37011,7 +37325,7 @@ export const Mutation: MutationSelector = {
   unarchiveRepository: (variables, select) =>
     new Field(
       "unarchiveRepository",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UnarchiveRepositoryPayload))
     ),
 
@@ -37022,7 +37336,7 @@ export const Mutation: MutationSelector = {
   unfollowUser: (variables, select) =>
     new Field(
       "unfollowUser",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UnfollowUserPayload))
     ),
 
@@ -37033,7 +37347,7 @@ export const Mutation: MutationSelector = {
   unlinkRepositoryFromProject: (variables, select) =>
     new Field(
       "unlinkRepositoryFromProject",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UnlinkRepositoryFromProjectPayload))
     ),
 
@@ -37044,7 +37358,7 @@ export const Mutation: MutationSelector = {
   unlockLockable: (variables, select) =>
     new Field(
       "unlockLockable",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UnlockLockablePayload))
     ),
 
@@ -37055,7 +37369,7 @@ export const Mutation: MutationSelector = {
   unmarkFileAsViewed: (variables, select) =>
     new Field(
       "unmarkFileAsViewed",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UnmarkFileAsViewedPayload))
     ),
 
@@ -37066,7 +37380,7 @@ export const Mutation: MutationSelector = {
   unmarkIssueAsDuplicate: (variables, select) =>
     new Field(
       "unmarkIssueAsDuplicate",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UnmarkIssueAsDuplicatePayload))
     ),
 
@@ -37077,7 +37391,7 @@ export const Mutation: MutationSelector = {
   unminimizeComment: (variables, select) =>
     new Field(
       "unminimizeComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UnminimizeCommentPayload))
     ),
 
@@ -37088,7 +37402,7 @@ export const Mutation: MutationSelector = {
   unresolveReviewThread: (variables, select) =>
     new Field(
       "unresolveReviewThread",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UnresolveReviewThreadPayload))
     ),
 
@@ -37099,7 +37413,7 @@ export const Mutation: MutationSelector = {
   updateBranchProtectionRule: (variables, select) =>
     new Field(
       "updateBranchProtectionRule",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateBranchProtectionRulePayload))
     ),
 
@@ -37110,7 +37424,7 @@ export const Mutation: MutationSelector = {
   updateCheckRun: (variables, select) =>
     new Field(
       "updateCheckRun",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateCheckRunPayload))
     ),
 
@@ -37121,7 +37435,7 @@ export const Mutation: MutationSelector = {
   updateCheckSuitePreferences: (variables, select) =>
     new Field(
       "updateCheckSuitePreferences",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateCheckSuitePreferencesPayload))
     ),
 
@@ -37132,7 +37446,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseAdministratorRole: (variables, select) =>
     new Field(
       "updateEnterpriseAdministratorRole",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateEnterpriseAdministratorRolePayload))
     ),
 
@@ -37143,7 +37457,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseAllowPrivateRepositoryForkingSetting: (variables, select) =>
     new Field(
       "updateEnterpriseAllowPrivateRepositoryForkingSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseAllowPrivateRepositoryForkingSettingPayload)
       )
@@ -37156,7 +37470,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseDefaultRepositoryPermissionSetting: (variables, select) =>
     new Field(
       "updateEnterpriseDefaultRepositoryPermissionSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseDefaultRepositoryPermissionSettingPayload)
       )
@@ -37172,7 +37486,7 @@ export const Mutation: MutationSelector = {
   ) =>
     new Field(
       "updateEnterpriseMembersCanChangeRepositoryVisibilitySetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(
           UpdateEnterpriseMembersCanChangeRepositoryVisibilitySettingPayload
@@ -37187,7 +37501,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseMembersCanCreateRepositoriesSetting: (variables, select) =>
     new Field(
       "updateEnterpriseMembersCanCreateRepositoriesSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseMembersCanCreateRepositoriesSettingPayload)
       )
@@ -37200,7 +37514,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseMembersCanDeleteIssuesSetting: (variables, select) =>
     new Field(
       "updateEnterpriseMembersCanDeleteIssuesSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseMembersCanDeleteIssuesSettingPayload)
       )
@@ -37213,7 +37527,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseMembersCanDeleteRepositoriesSetting: (variables, select) =>
     new Field(
       "updateEnterpriseMembersCanDeleteRepositoriesSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseMembersCanDeleteRepositoriesSettingPayload)
       )
@@ -37226,7 +37540,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseMembersCanInviteCollaboratorsSetting: (variables, select) =>
     new Field(
       "updateEnterpriseMembersCanInviteCollaboratorsSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseMembersCanInviteCollaboratorsSettingPayload)
       )
@@ -37239,7 +37553,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseMembersCanMakePurchasesSetting: (variables, select) =>
     new Field(
       "updateEnterpriseMembersCanMakePurchasesSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseMembersCanMakePurchasesSettingPayload)
       )
@@ -37255,7 +37569,7 @@ export const Mutation: MutationSelector = {
   ) =>
     new Field(
       "updateEnterpriseMembersCanUpdateProtectedBranchesSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseMembersCanUpdateProtectedBranchesSettingPayload)
       )
@@ -37271,7 +37585,7 @@ export const Mutation: MutationSelector = {
   ) =>
     new Field(
       "updateEnterpriseMembersCanViewDependencyInsightsSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseMembersCanViewDependencyInsightsSettingPayload)
       )
@@ -37284,7 +37598,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseOrganizationProjectsSetting: (variables, select) =>
     new Field(
       "updateEnterpriseOrganizationProjectsSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseOrganizationProjectsSettingPayload)
       )
@@ -37297,7 +37611,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseProfile: (variables, select) =>
     new Field(
       "updateEnterpriseProfile",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateEnterpriseProfilePayload))
     ),
 
@@ -37308,7 +37622,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseRepositoryProjectsSetting: (variables, select) =>
     new Field(
       "updateEnterpriseRepositoryProjectsSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateEnterpriseRepositoryProjectsSettingPayload))
     ),
 
@@ -37319,7 +37633,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseTeamDiscussionsSetting: (variables, select) =>
     new Field(
       "updateEnterpriseTeamDiscussionsSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateEnterpriseTeamDiscussionsSettingPayload))
     ),
 
@@ -37330,7 +37644,7 @@ export const Mutation: MutationSelector = {
   updateEnterpriseTwoFactorAuthenticationRequiredSetting: (variables, select) =>
     new Field(
       "updateEnterpriseTwoFactorAuthenticationRequiredSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(
         select(UpdateEnterpriseTwoFactorAuthenticationRequiredSettingPayload)
       )
@@ -37343,7 +37657,7 @@ export const Mutation: MutationSelector = {
   updateIpAllowListEnabledSetting: (variables, select) =>
     new Field(
       "updateIpAllowListEnabledSetting",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateIpAllowListEnabledSettingPayload))
     ),
 
@@ -37354,7 +37668,7 @@ export const Mutation: MutationSelector = {
   updateIpAllowListEntry: (variables, select) =>
     new Field(
       "updateIpAllowListEntry",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateIpAllowListEntryPayload))
     ),
 
@@ -37365,7 +37679,7 @@ export const Mutation: MutationSelector = {
   updateIssue: (variables, select) =>
     new Field(
       "updateIssue",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateIssuePayload))
     ),
 
@@ -37376,7 +37690,7 @@ export const Mutation: MutationSelector = {
   updateIssueComment: (variables, select) =>
     new Field(
       "updateIssueComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateIssueCommentPayload))
     ),
 
@@ -37387,7 +37701,7 @@ export const Mutation: MutationSelector = {
   updateProject: (variables, select) =>
     new Field(
       "updateProject",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateProjectPayload))
     ),
 
@@ -37398,7 +37712,7 @@ export const Mutation: MutationSelector = {
   updateProjectCard: (variables, select) =>
     new Field(
       "updateProjectCard",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateProjectCardPayload))
     ),
 
@@ -37409,7 +37723,7 @@ export const Mutation: MutationSelector = {
   updateProjectColumn: (variables, select) =>
     new Field(
       "updateProjectColumn",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateProjectColumnPayload))
     ),
 
@@ -37420,7 +37734,7 @@ export const Mutation: MutationSelector = {
   updatePullRequest: (variables, select) =>
     new Field(
       "updatePullRequest",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdatePullRequestPayload))
     ),
 
@@ -37431,7 +37745,7 @@ export const Mutation: MutationSelector = {
   updatePullRequestReview: (variables, select) =>
     new Field(
       "updatePullRequestReview",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdatePullRequestReviewPayload))
     ),
 
@@ -37442,7 +37756,7 @@ export const Mutation: MutationSelector = {
   updatePullRequestReviewComment: (variables, select) =>
     new Field(
       "updatePullRequestReviewComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdatePullRequestReviewCommentPayload))
     ),
 
@@ -37453,7 +37767,7 @@ export const Mutation: MutationSelector = {
   updateRef: (variables, select) =>
     new Field(
       "updateRef",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateRefPayload))
     ),
 
@@ -37464,7 +37778,7 @@ export const Mutation: MutationSelector = {
   updateRepository: (variables, select) =>
     new Field(
       "updateRepository",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateRepositoryPayload))
     ),
 
@@ -37475,7 +37789,7 @@ export const Mutation: MutationSelector = {
   updateSubscription: (variables, select) =>
     new Field(
       "updateSubscription",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateSubscriptionPayload))
     ),
 
@@ -37486,7 +37800,7 @@ export const Mutation: MutationSelector = {
   updateTeamDiscussion: (variables, select) =>
     new Field(
       "updateTeamDiscussion",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateTeamDiscussionPayload))
     ),
 
@@ -37497,7 +37811,7 @@ export const Mutation: MutationSelector = {
   updateTeamDiscussionComment: (variables, select) =>
     new Field(
       "updateTeamDiscussionComment",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateTeamDiscussionCommentPayload))
     ),
 
@@ -37508,7 +37822,7 @@ export const Mutation: MutationSelector = {
   updateTopics: (variables, select) =>
     new Field(
       "updateTopics",
-      [new Argument("input", variables.input)],
+      [new Argument("input", variables.input, _ENUM_VALUES)],
       new SelectionSet(select(UpdateTopicsPayload))
     ),
 };
@@ -47699,12 +48013,12 @@ export const Organization: OrganizationSelector = {
     new Field(
       "auditLog",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationAuditEntryConnection))
     ),
@@ -47769,11 +48083,11 @@ export const Organization: OrganizationSelector = {
     new Field(
       "ipAllowListEntries",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(IpAllowListEntryConnection))
     ),
@@ -47818,11 +48132,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "memberStatuses",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserStatusConnection))
     ),
@@ -47835,10 +48149,10 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "membersWithRole",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationMemberConnection))
     ),
@@ -47871,14 +48185,14 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "packages",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("names", variables.names),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("packageType", variables.packageType, PackageType),
-        new Argument("repositoryId", variables.repositoryId),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("names", variables.names, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("packageType", variables.packageType, _ENUM_VALUES),
+        new Argument("repositoryId", variables.repositoryId, _ENUM_VALUES),
       ],
       new SelectionSet(select(PackageConnection))
     ),
@@ -47891,10 +48205,10 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "pendingMembers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -47907,11 +48221,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "pinnableItems",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("types", variables.types, PinnableItemType),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("types", variables.types, _ENUM_VALUES),
       ],
       new SelectionSet(select(PinnableItemConnection))
     ),
@@ -47924,11 +48238,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "pinnedItems",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("types", variables.types, PinnableItemType),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("types", variables.types, _ENUM_VALUES),
       ],
       new SelectionSet(select(PinnableItemConnection))
     ),
@@ -47945,7 +48259,7 @@ either curated or that have been selected automatically based on popularity.
   project: (variables, select) =>
     new Field(
       "project",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(Project))
     ),
 
@@ -47957,13 +48271,13 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "projects",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("search", variables.search),
-        new Argument("states", variables.states, ProjectState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("search", variables.search, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectConnection))
     ),
@@ -47986,24 +48300,20 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "repositories",
       [
-        new Argument(
-          "affiliations",
-          variables.affiliations,
-          RepositoryAffiliation
-        ),
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("isFork", variables.isFork),
-        new Argument("isLocked", variables.isLocked),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("affiliations", variables.affiliations, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("isFork", variables.isFork, _ENUM_VALUES),
+        new Argument("isLocked", variables.isLocked, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
         new Argument(
           "ownerAffiliations",
           variables.ownerAffiliations,
-          RepositoryAffiliation
+          _ENUM_VALUES
         ),
-        new Argument("privacy", variables.privacy, RepositoryPrivacy),
+        new Argument("privacy", variables.privacy, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryConnection))
     ),
@@ -48015,7 +48325,7 @@ either curated or that have been selected automatically based on popularity.
   repository: (variables, select) =>
     new Field(
       "repository",
-      [new Argument("name", variables.name)],
+      [new Argument("name", variables.name, _ENUM_VALUES)],
       new SelectionSet(select(Repository))
     ),
 
@@ -48061,12 +48371,12 @@ collaborators to enable two-factor authentication.
     new Field(
       "sponsorshipsAsMaintainer",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("includePrivate", variables.includePrivate),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("includePrivate", variables.includePrivate, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SponsorshipConnection))
     ),
@@ -48079,11 +48389,11 @@ collaborators to enable two-factor authentication.
     new Field(
       "sponsorshipsAsSponsor",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SponsorshipConnection))
     ),
@@ -48095,7 +48405,7 @@ collaborators to enable two-factor authentication.
   team: (variables, select) =>
     new Field(
       "team",
-      [new Argument("slug", variables.slug)],
+      [new Argument("slug", variables.slug, _ENUM_VALUES)],
       new SelectionSet(select(Team))
     ),
 
@@ -48107,17 +48417,17 @@ collaborators to enable two-factor authentication.
     new Field(
       "teams",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("ldapMapped", variables.ldapMapped),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("privacy", variables.privacy, TeamPrivacy),
-        new Argument("query", variables.query),
-        new Argument("role", variables.role, TeamRole),
-        new Argument("rootTeamsOnly", variables.rootTeamsOnly),
-        new Argument("userLogins", variables.userLogins),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("ldapMapped", variables.ldapMapped, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("privacy", variables.privacy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("role", variables.role, _ENUM_VALUES),
+        new Argument("rootTeamsOnly", variables.rootTeamsOnly, _ENUM_VALUES),
+        new Argument("userLogins", variables.userLogins, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamConnection))
     ),
@@ -49293,10 +49603,10 @@ export const OrganizationIdentityProvider: OrganizationIdentityProviderSelector 
     new Field(
       "externalIdentities",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ExternalIdentityConnection))
     ),
@@ -49820,10 +50130,10 @@ export const OrganizationTeamsHovercardContext: OrganizationTeamsHovercardContex
     new Field(
       "relevantTeams",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamConnection))
     ),
@@ -49922,10 +50232,10 @@ export const OrganizationsHovercardContext: OrganizationsHovercardContextSelecto
     new Field(
       "relevantOrganizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -50088,7 +50398,7 @@ export const Package: PackageSelector = {
   version: (variables, select) =>
     new Field(
       "version",
-      [new Argument("version", variables.version)],
+      [new Argument("version", variables.version, _ENUM_VALUES)],
       new SelectionSet(select(PackageVersion))
     ),
 
@@ -50100,11 +50410,11 @@ export const Package: PackageSelector = {
     new Field(
       "versions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(PackageVersionConnection))
     ),
@@ -50556,14 +50866,14 @@ export const PackageOwner: PackageOwnerSelector = {
     new Field(
       "packages",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("names", variables.names),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("packageType", variables.packageType, PackageType),
-        new Argument("repositoryId", variables.repositoryId),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("names", variables.names, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("packageType", variables.packageType, _ENUM_VALUES),
+        new Argument("repositoryId", variables.repositoryId, _ENUM_VALUES),
       ],
       new SelectionSet(select(PackageConnection))
     ),
@@ -50793,11 +51103,11 @@ export const PackageVersion: PackageVersionSelector = {
     new Field(
       "files",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(PackageFileConnection))
     ),
@@ -52035,10 +52345,10 @@ repositories will be returned.
     new Field(
       "items",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(PinnableItemConnection))
     ),
@@ -52238,11 +52548,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "pinnableItems",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("types", variables.types, PinnableItemType),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("types", variables.types, _ENUM_VALUES),
       ],
       new SelectionSet(select(PinnableItemConnection))
     ),
@@ -52255,11 +52565,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "pinnedItems",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("types", variables.types, PinnableItemType),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("types", variables.types, _ENUM_VALUES),
       ],
       new SelectionSet(select(PinnableItemConnection))
     ),
@@ -52519,10 +52829,10 @@ export const Project: ProjectSelector = {
     new Field(
       "columns",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectColumnConnection))
     ),
@@ -52574,15 +52884,11 @@ export const Project: ProjectSelector = {
     new Field(
       "pendingCards",
       [
-        new Argument("after", variables.after),
-        new Argument(
-          "archivedStates",
-          variables.archivedStates,
-          ProjectCardArchivedState
-        ),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("archivedStates", variables.archivedStates, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectCardConnection))
     ),
@@ -53061,15 +53367,11 @@ export const ProjectColumn: ProjectColumnSelector = {
     new Field(
       "cards",
       [
-        new Argument("after", variables.after),
-        new Argument(
-          "archivedStates",
-          variables.archivedStates,
-          ProjectCardArchivedState
-        ),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("archivedStates", variables.archivedStates, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectCardConnection))
     ),
@@ -53470,7 +53772,7 @@ export const ProjectOwner: ProjectOwnerSelector = {
   project: (variables, select) =>
     new Field(
       "project",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(Project))
     ),
 
@@ -53482,13 +53784,13 @@ export const ProjectOwner: ProjectOwnerSelector = {
     new Field(
       "projects",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("search", variables.search),
-        new Argument("states", variables.states, ProjectState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("search", variables.search, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectConnection))
     ),
@@ -54800,10 +55102,10 @@ export const PullRequest: PullRequestSelector = {
     new Field(
       "assignees",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -54896,11 +55198,11 @@ export const PullRequest: PullRequestSelector = {
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueCommentConnection))
     ),
@@ -54913,10 +55215,10 @@ export const PullRequest: PullRequestSelector = {
     new Field(
       "commits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestCommitConnection))
     ),
@@ -54956,10 +55258,10 @@ export const PullRequest: PullRequestSelector = {
     new Field(
       "files",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestChangedFileConnection))
     ),
@@ -55013,7 +55315,8 @@ export const PullRequest: PullRequestSelector = {
       [
         new Argument(
           "includeNotificationContexts",
-          variables.includeNotificationContexts
+          variables.includeNotificationContexts,
+          _ENUM_VALUES
         ),
       ],
       new SelectionSet(select(Hovercard))
@@ -55049,11 +55352,11 @@ export const PullRequest: PullRequestSelector = {
     new Field(
       "labels",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(LabelConnection))
     ),
@@ -55071,11 +55374,11 @@ export const PullRequest: PullRequestSelector = {
     new Field(
       "latestOpinionatedReviews",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("writersOnly", variables.writersOnly),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("writersOnly", variables.writersOnly, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestReviewConnection))
     ),
@@ -55088,10 +55391,10 @@ export const PullRequest: PullRequestSelector = {
     new Field(
       "latestReviews",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestReviewConnection))
     ),
@@ -55163,10 +55466,10 @@ export const PullRequest: PullRequestSelector = {
     new Field(
       "participants",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -55198,15 +55501,11 @@ merged, or if the test merge commit is still being generated. See the
     new Field(
       "projectCards",
       [
-        new Argument("after", variables.after),
-        new Argument(
-          "archivedStates",
-          variables.archivedStates,
-          ProjectCardArchivedState
-        ),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("archivedStates", variables.archivedStates, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectCardConnection))
     ),
@@ -55235,12 +55534,12 @@ merged, or if the test merge commit is still being generated. See the
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -55284,10 +55583,10 @@ merged, or if the test merge commit is still being generated. See the
     new Field(
       "reviewRequests",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReviewRequestConnection))
     ),
@@ -55300,10 +55599,10 @@ merged, or if the test merge commit is still being generated. See the
     new Field(
       "reviewThreads",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestReviewThreadConnection))
     ),
@@ -55316,12 +55615,12 @@ merged, or if the test merge commit is still being generated. See the
     new Field(
       "reviews",
       [
-        new Argument("after", variables.after),
-        new Argument("author", variables.author),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("states", variables.states, PullRequestReviewState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("author", variables.author, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestReviewConnection))
     ),
@@ -55351,11 +55650,11 @@ merged, or if the test merge commit is still being generated. See the
     new Field(
       "timeline",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("since", variables.since),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("since", variables.since, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestTimelineConnection))
     ),
@@ -55368,17 +55667,13 @@ merged, or if the test merge commit is still being generated. See the
     new Field(
       "timelineItems",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument(
-          "itemTypes",
-          variables.itemTypes,
-          PullRequestTimelineItemsItemType
-        ),
-        new Argument("last", variables.last),
-        new Argument("since", variables.since),
-        new Argument("skip", variables.skip),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("itemTypes", variables.itemTypes, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("since", variables.since, _ENUM_VALUES),
+        new Argument("skip", variables.skip, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestTimelineItemsConnection))
     ),
@@ -55406,10 +55701,10 @@ merged, or if the test merge commit is still being generated. See the
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -55826,10 +56121,10 @@ export const PullRequestCommitCommentThread: PullRequestCommitCommentThreadSelec
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CommitCommentConnection))
     ),
@@ -56142,11 +56437,11 @@ export const PullRequestContributionsByRepository: PullRequestContributionsByRep
     new Field(
       "contributions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(CreatedPullRequestContributionConnection))
     ),
@@ -56552,10 +56847,10 @@ export const PullRequestReview: PullRequestReviewSelector = {
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestReviewCommentConnection))
     ),
@@ -56609,10 +56904,10 @@ export const PullRequestReview: PullRequestReviewSelector = {
     new Field(
       "onBehalfOf",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamConnection))
     ),
@@ -56652,12 +56947,12 @@ export const PullRequestReview: PullRequestReviewSelector = {
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -56706,10 +57001,10 @@ export const PullRequestReview: PullRequestReviewSelector = {
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -57236,12 +57531,12 @@ export const PullRequestReviewComment: PullRequestReviewCommentSelector = {
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -57296,10 +57591,10 @@ export const PullRequestReviewComment: PullRequestReviewCommentSelector = {
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -57601,11 +57896,11 @@ export const PullRequestReviewContributionsByRepository: PullRequestReviewContri
     new Field(
       "contributions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(CreatedPullRequestReviewContributionConnection))
     ),
@@ -57837,11 +58132,11 @@ export const PullRequestReviewThread: PullRequestReviewThreadSelector = {
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("skip", variables.skip),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("skip", variables.skip, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestReviewCommentConnection))
     ),
@@ -59219,7 +59514,7 @@ export const Query: QuerySelector = {
   codeOfConduct: (variables, select) =>
     new Field(
       "codeOfConduct",
-      [new Argument("key", variables.key)],
+      [new Argument("key", variables.key, _ENUM_VALUES)],
       new SelectionSet(select(CodeOfConduct))
     ),
 
@@ -59242,8 +59537,12 @@ export const Query: QuerySelector = {
     new Field(
       "enterprise",
       [
-        new Argument("invitationToken", variables.invitationToken),
-        new Argument("slug", variables.slug),
+        new Argument(
+          "invitationToken",
+          variables.invitationToken,
+          _ENUM_VALUES
+        ),
+        new Argument("slug", variables.slug, _ENUM_VALUES),
       ],
       new SelectionSet(select(Enterprise))
     ),
@@ -59256,9 +59555,9 @@ export const Query: QuerySelector = {
     new Field(
       "enterpriseAdministratorInvitation",
       [
-        new Argument("enterpriseSlug", variables.enterpriseSlug),
-        new Argument("role", variables.role, EnterpriseAdministratorRole),
-        new Argument("userLogin", variables.userLogin),
+        new Argument("enterpriseSlug", variables.enterpriseSlug, _ENUM_VALUES),
+        new Argument("role", variables.role, _ENUM_VALUES),
+        new Argument("userLogin", variables.userLogin, _ENUM_VALUES),
       ],
       new SelectionSet(select(EnterpriseAdministratorInvitation))
     ),
@@ -59270,7 +59569,13 @@ export const Query: QuerySelector = {
   enterpriseAdministratorInvitationByToken: (variables, select) =>
     new Field(
       "enterpriseAdministratorInvitationByToken",
-      [new Argument("invitationToken", variables.invitationToken)],
+      [
+        new Argument(
+          "invitationToken",
+          variables.invitationToken,
+          _ENUM_VALUES
+        ),
+      ],
       new SelectionSet(select(EnterpriseAdministratorInvitation))
     ),
 
@@ -59281,7 +59586,7 @@ export const Query: QuerySelector = {
   license: (variables, select) =>
     new Field(
       "license",
-      [new Argument("key", variables.key)],
+      [new Argument("key", variables.key, _ENUM_VALUES)],
       new SelectionSet(select(License))
     ),
 
@@ -59304,9 +59609,17 @@ export const Query: QuerySelector = {
     new Field(
       "marketplaceCategories",
       [
-        new Argument("excludeEmpty", variables.excludeEmpty),
-        new Argument("excludeSubcategories", variables.excludeSubcategories),
-        new Argument("includeCategories", variables.includeCategories),
+        new Argument("excludeEmpty", variables.excludeEmpty, _ENUM_VALUES),
+        new Argument(
+          "excludeSubcategories",
+          variables.excludeSubcategories,
+          _ENUM_VALUES
+        ),
+        new Argument(
+          "includeCategories",
+          variables.includeCategories,
+          _ENUM_VALUES
+        ),
       ],
       new SelectionSet(select(MarketplaceCategory))
     ),
@@ -59319,8 +59632,12 @@ export const Query: QuerySelector = {
     new Field(
       "marketplaceCategory",
       [
-        new Argument("slug", variables.slug),
-        new Argument("useTopicAliases", variables.useTopicAliases),
+        new Argument("slug", variables.slug, _ENUM_VALUES),
+        new Argument(
+          "useTopicAliases",
+          variables.useTopicAliases,
+          _ENUM_VALUES
+        ),
       ],
       new SelectionSet(select(MarketplaceCategory))
     ),
@@ -59332,7 +59649,7 @@ export const Query: QuerySelector = {
   marketplaceListing: (variables, select) =>
     new Field(
       "marketplaceListing",
-      [new Argument("slug", variables.slug)],
+      [new Argument("slug", variables.slug, _ENUM_VALUES)],
       new SelectionSet(select(MarketplaceListing))
     ),
 
@@ -59344,19 +59661,31 @@ export const Query: QuerySelector = {
     new Field(
       "marketplaceListings",
       [
-        new Argument("adminId", variables.adminId),
-        new Argument("after", variables.after),
-        new Argument("allStates", variables.allStates),
-        new Argument("before", variables.before),
-        new Argument("categorySlug", variables.categorySlug),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("organizationId", variables.organizationId),
-        new Argument("primaryCategoryOnly", variables.primaryCategoryOnly),
-        new Argument("slugs", variables.slugs),
-        new Argument("useTopicAliases", variables.useTopicAliases),
-        new Argument("viewerCanAdmin", variables.viewerCanAdmin),
-        new Argument("withFreeTrialsOnly", variables.withFreeTrialsOnly),
+        new Argument("adminId", variables.adminId, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("allStates", variables.allStates, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("categorySlug", variables.categorySlug, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("organizationId", variables.organizationId, _ENUM_VALUES),
+        new Argument(
+          "primaryCategoryOnly",
+          variables.primaryCategoryOnly,
+          _ENUM_VALUES
+        ),
+        new Argument("slugs", variables.slugs, _ENUM_VALUES),
+        new Argument(
+          "useTopicAliases",
+          variables.useTopicAliases,
+          _ENUM_VALUES
+        ),
+        new Argument("viewerCanAdmin", variables.viewerCanAdmin, _ENUM_VALUES),
+        new Argument(
+          "withFreeTrialsOnly",
+          variables.withFreeTrialsOnly,
+          _ENUM_VALUES
+        ),
       ],
       new SelectionSet(select(MarketplaceListingConnection))
     ),
@@ -59379,7 +59708,7 @@ export const Query: QuerySelector = {
   node: (variables, select) =>
     new Field(
       "node",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(Node))
     ),
 
@@ -59390,7 +59719,7 @@ export const Query: QuerySelector = {
   nodes: (variables, select) =>
     new Field(
       "nodes",
-      [new Argument("ids", variables.ids)],
+      [new Argument("ids", variables.ids, _ENUM_VALUES)],
       new SelectionSet(select(Node))
     ),
 
@@ -59401,7 +59730,7 @@ export const Query: QuerySelector = {
   organization: (variables, select) =>
     new Field(
       "organization",
-      [new Argument("login", variables.login)],
+      [new Argument("login", variables.login, _ENUM_VALUES)],
       new SelectionSet(select(Organization))
     ),
 
@@ -59412,7 +59741,7 @@ export const Query: QuerySelector = {
   rateLimit: (variables, select) =>
     new Field(
       "rateLimit",
-      [new Argument("dryRun", variables.dryRun)],
+      [new Argument("dryRun", variables.dryRun, _ENUM_VALUES)],
       new SelectionSet(select(RateLimit))
     ),
 
@@ -59431,8 +59760,8 @@ export const Query: QuerySelector = {
     new Field(
       "repository",
       [
-        new Argument("name", variables.name),
-        new Argument("owner", variables.owner),
+        new Argument("name", variables.name, _ENUM_VALUES),
+        new Argument("owner", variables.owner, _ENUM_VALUES),
       ],
       new SelectionSet(select(Repository))
     ),
@@ -59444,7 +59773,7 @@ export const Query: QuerySelector = {
   repositoryOwner: (variables, select) =>
     new Field(
       "repositoryOwner",
-      [new Argument("login", variables.login)],
+      [new Argument("login", variables.login, _ENUM_VALUES)],
       new SelectionSet(select(RepositoryOwner))
     ),
 
@@ -59455,7 +59784,7 @@ export const Query: QuerySelector = {
   resource: (variables, select) =>
     new Field(
       "resource",
-      [new Argument("url", variables.url)],
+      [new Argument("url", variables.url, _ENUM_VALUES)],
       new SelectionSet(select(UniformResourceLocatable))
     ),
 
@@ -59467,12 +59796,12 @@ export const Query: QuerySelector = {
     new Field(
       "search",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("query", variables.query),
-        new Argument("type", variables.type, SearchType),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("type", variables.type, _ENUM_VALUES),
       ],
       new SelectionSet(select(SearchResultItemConnection))
     ),
@@ -59485,14 +59814,14 @@ export const Query: QuerySelector = {
     new Field(
       "securityAdvisories",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("identifier", variables.identifier),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("publishedSince", variables.publishedSince),
-        new Argument("updatedSince", variables.updatedSince),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("identifier", variables.identifier, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("publishedSince", variables.publishedSince, _ENUM_VALUES),
+        new Argument("updatedSince", variables.updatedSince, _ENUM_VALUES),
       ],
       new SelectionSet(select(SecurityAdvisoryConnection))
     ),
@@ -59504,7 +59833,7 @@ export const Query: QuerySelector = {
   securityAdvisory: (variables, select) =>
     new Field(
       "securityAdvisory",
-      [new Argument("ghsaId", variables.ghsaId)],
+      [new Argument("ghsaId", variables.ghsaId, _ENUM_VALUES)],
       new SelectionSet(select(SecurityAdvisory))
     ),
 
@@ -59516,22 +59845,14 @@ export const Query: QuerySelector = {
     new Field(
       "securityVulnerabilities",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument(
-          "ecosystem",
-          variables.ecosystem,
-          SecurityAdvisoryEcosystem
-        ),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("package", variables.package),
-        new Argument(
-          "severities",
-          variables.severities,
-          SecurityAdvisorySeverity
-        ),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("ecosystem", variables.ecosystem, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("package", variables.package, _ENUM_VALUES),
+        new Argument("severities", variables.severities, _ENUM_VALUES),
       ],
       new SelectionSet(select(SecurityVulnerabilityConnection))
     ),
@@ -59544,7 +59865,7 @@ export const Query: QuerySelector = {
   sponsorsListing: (variables, select) =>
     new Field(
       "sponsorsListing",
-      [new Argument("slug", variables.slug)],
+      [new Argument("slug", variables.slug, _ENUM_VALUES)],
       new SelectionSet(select(SponsorsListing))
     ),
 
@@ -59555,7 +59876,7 @@ export const Query: QuerySelector = {
   topic: (variables, select) =>
     new Field(
       "topic",
-      [new Argument("name", variables.name)],
+      [new Argument("name", variables.name, _ENUM_VALUES)],
       new SelectionSet(select(Topic))
     ),
 
@@ -59566,7 +59887,7 @@ export const Query: QuerySelector = {
   user: (variables, select) =>
     new Field(
       "user",
-      [new Argument("login", variables.login)],
+      [new Argument("login", variables.login, _ENUM_VALUES)],
       new SelectionSet(select(User))
     ),
 
@@ -59786,12 +60107,12 @@ export const Reactable: ReactableSelector = {
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -60311,10 +60632,10 @@ export const ReactionGroup: ReactionGroupSelector = {
     new Field(
       "users",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactingUserConnection))
     ),
@@ -60525,15 +60846,15 @@ export const Ref: RefSelector = {
     new Field(
       "associatedPullRequests",
       [
-        new Argument("after", variables.after),
-        new Argument("baseRefName", variables.baseRefName),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("headRefName", variables.headRefName),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, PullRequestState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("baseRefName", variables.baseRefName, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("headRefName", variables.headRefName, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestConnection))
     ),
@@ -61193,11 +61514,11 @@ export const Release: ReleaseSelector = {
     new Field(
       "releaseAssets",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("name", variables.name),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("name", variables.name, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReleaseAssetConnection))
     ),
@@ -69333,11 +69654,11 @@ export const Repository: RepositorySelector = {
     new Field(
       "assignableUsers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -69350,10 +69671,10 @@ export const Repository: RepositorySelector = {
     new Field(
       "branchProtectionRules",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(BranchProtectionRuleConnection))
     ),
@@ -69377,16 +69698,12 @@ export const Repository: RepositorySelector = {
     new Field(
       "collaborators",
       [
-        new Argument(
-          "affiliation",
-          variables.affiliation,
-          CollaboratorAffiliation
-        ),
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("query", variables.query),
+        new Argument("affiliation", variables.affiliation, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryCollaboratorConnection))
     ),
@@ -69399,10 +69716,10 @@ export const Repository: RepositorySelector = {
     new Field(
       "commitComments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CommitCommentConnection))
     ),
@@ -69452,10 +69769,10 @@ export const Repository: RepositorySelector = {
     new Field(
       "deployKeys",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(DeployKeyConnection))
     ),
@@ -69468,12 +69785,12 @@ export const Repository: RepositorySelector = {
     new Field(
       "deployments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("environments", variables.environments),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("environments", variables.environments, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(DeploymentConnection))
     ),
@@ -69506,23 +69823,19 @@ export const Repository: RepositorySelector = {
     new Field(
       "forks",
       [
-        new Argument(
-          "affiliations",
-          variables.affiliations,
-          RepositoryAffiliation
-        ),
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("isLocked", variables.isLocked),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("affiliations", variables.affiliations, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("isLocked", variables.isLocked, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
         new Argument(
           "ownerAffiliations",
           variables.ownerAffiliations,
-          RepositoryAffiliation
+          _ENUM_VALUES
         ),
-        new Argument("privacy", variables.privacy, RepositoryPrivacy),
+        new Argument("privacy", variables.privacy, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryConnection))
     ),
@@ -69638,7 +69951,7 @@ export const Repository: RepositorySelector = {
   issue: (variables, select) =>
     new Field(
       "issue",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(Issue))
     ),
 
@@ -69649,7 +69962,7 @@ export const Repository: RepositorySelector = {
   issueOrPullRequest: (variables, select) =>
     new Field(
       "issueOrPullRequest",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(IssueOrPullRequest))
     ),
 
@@ -69672,14 +69985,14 @@ export const Repository: RepositorySelector = {
     new Field(
       "issues",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("filterBy", variables.filterBy),
-        new Argument("first", variables.first),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, IssueState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("filterBy", variables.filterBy, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueConnection))
     ),
@@ -69691,7 +70004,7 @@ export const Repository: RepositorySelector = {
   label: (variables, select) =>
     new Field(
       "label",
-      [new Argument("name", variables.name)],
+      [new Argument("name", variables.name, _ENUM_VALUES)],
       new SelectionSet(select(Label))
     ),
 
@@ -69703,12 +70016,12 @@ export const Repository: RepositorySelector = {
     new Field(
       "labels",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(LabelConnection))
     ),
@@ -69721,11 +70034,11 @@ export const Repository: RepositorySelector = {
     new Field(
       "languages",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(LanguageConnection))
     ),
@@ -69754,11 +70067,11 @@ export const Repository: RepositorySelector = {
     new Field(
       "mentionableUsers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -69775,7 +70088,7 @@ export const Repository: RepositorySelector = {
   milestone: (variables, select) =>
     new Field(
       "milestone",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(Milestone))
     ),
 
@@ -69787,13 +70100,13 @@ export const Repository: RepositorySelector = {
     new Field(
       "milestones",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
-        new Argument("states", variables.states, MilestoneState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(MilestoneConnection))
     ),
@@ -69821,8 +70134,8 @@ export const Repository: RepositorySelector = {
     new Field(
       "object",
       [
-        new Argument("expression", variables.expression),
-        new Argument("oid", variables.oid),
+        new Argument("expression", variables.expression, _ENUM_VALUES),
+        new Argument("oid", variables.oid, _ENUM_VALUES),
       ],
       new SelectionSet(select(GitObject))
     ),
@@ -69851,14 +70164,14 @@ export const Repository: RepositorySelector = {
     new Field(
       "packages",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("names", variables.names),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("packageType", variables.packageType, PackageType),
-        new Argument("repositoryId", variables.repositoryId),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("names", variables.names, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("packageType", variables.packageType, _ENUM_VALUES),
+        new Argument("repositoryId", variables.repositoryId, _ENUM_VALUES),
       ],
       new SelectionSet(select(PackageConnection))
     ),
@@ -69892,7 +70205,7 @@ export const Repository: RepositorySelector = {
   project: (variables, select) =>
     new Field(
       "project",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(Project))
     ),
 
@@ -69904,13 +70217,13 @@ export const Repository: RepositorySelector = {
     new Field(
       "projects",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("search", variables.search),
-        new Argument("states", variables.states, ProjectState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("search", variables.search, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectConnection))
     ),
@@ -69932,7 +70245,7 @@ export const Repository: RepositorySelector = {
   pullRequest: (variables, select) =>
     new Field(
       "pullRequest",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(PullRequest))
     ),
 
@@ -69944,15 +70257,15 @@ export const Repository: RepositorySelector = {
     new Field(
       "pullRequests",
       [
-        new Argument("after", variables.after),
-        new Argument("baseRefName", variables.baseRefName),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("headRefName", variables.headRefName),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, PullRequestState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("baseRefName", variables.baseRefName, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("headRefName", variables.headRefName, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestConnection))
     ),
@@ -69974,7 +70287,7 @@ export const Repository: RepositorySelector = {
   ref: (variables, select) =>
     new Field(
       "ref",
-      [new Argument("qualifiedName", variables.qualifiedName)],
+      [new Argument("qualifiedName", variables.qualifiedName, _ENUM_VALUES)],
       new SelectionSet(select(Ref))
     ),
 
@@ -69986,14 +70299,14 @@ export const Repository: RepositorySelector = {
     new Field(
       "refs",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("direction", variables.direction, OrderDirection),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
-        new Argument("refPrefix", variables.refPrefix),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("direction", variables.direction, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("refPrefix", variables.refPrefix, _ENUM_VALUES),
       ],
       new SelectionSet(select(RefConnection))
     ),
@@ -70005,7 +70318,7 @@ export const Repository: RepositorySelector = {
   release: (variables, select) =>
     new Field(
       "release",
-      [new Argument("tagName", variables.tagName)],
+      [new Argument("tagName", variables.tagName, _ENUM_VALUES)],
       new SelectionSet(select(Release))
     ),
 
@@ -70017,11 +70330,11 @@ export const Repository: RepositorySelector = {
     new Field(
       "releases",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReleaseConnection))
     ),
@@ -70034,10 +70347,10 @@ export const Repository: RepositorySelector = {
     new Field(
       "repositoryTopics",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryTopicConnection))
     ),
@@ -70080,11 +70393,11 @@ export const Repository: RepositorySelector = {
     new Field(
       "stargazers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(StargazerConnection))
     ),
@@ -70098,10 +70411,10 @@ export const Repository: RepositorySelector = {
     new Field(
       "submodules",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(SubmoduleConnection))
     ),
@@ -70195,10 +70508,10 @@ export const Repository: RepositorySelector = {
     new Field(
       "vulnerabilityAlerts",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryVulnerabilityAlertConnection))
     ),
@@ -70211,10 +70524,10 @@ export const Repository: RepositorySelector = {
     new Field(
       "watchers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserConnection))
     ),
@@ -71856,24 +72169,20 @@ export const RepositoryOwner: RepositoryOwnerSelector = {
     new Field(
       "repositories",
       [
-        new Argument(
-          "affiliations",
-          variables.affiliations,
-          RepositoryAffiliation
-        ),
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("isFork", variables.isFork),
-        new Argument("isLocked", variables.isLocked),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("affiliations", variables.affiliations, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("isFork", variables.isFork, _ENUM_VALUES),
+        new Argument("isLocked", variables.isLocked, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
         new Argument(
           "ownerAffiliations",
           variables.ownerAffiliations,
-          RepositoryAffiliation
+          _ENUM_VALUES
         ),
-        new Argument("privacy", variables.privacy, RepositoryPrivacy),
+        new Argument("privacy", variables.privacy, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryConnection))
     ),
@@ -71885,7 +72194,7 @@ export const RepositoryOwner: RepositoryOwnerSelector = {
   repository: (variables, select) =>
     new Field(
       "repository",
-      [new Argument("name", variables.name)],
+      [new Argument("name", variables.name, _ENUM_VALUES)],
       new SelectionSet(select(Repository))
     ),
 
@@ -74638,22 +74947,14 @@ export const SecurityAdvisory: SecurityAdvisorySelector = {
     new Field(
       "vulnerabilities",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument(
-          "ecosystem",
-          variables.ecosystem,
-          SecurityAdvisoryEcosystem
-        ),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("package", variables.package),
-        new Argument(
-          "severities",
-          variables.severities,
-          SecurityAdvisorySeverity
-        ),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("ecosystem", variables.ecosystem, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("package", variables.package, _ENUM_VALUES),
+        new Argument("severities", variables.severities, _ENUM_VALUES),
       ],
       new SelectionSet(select(SecurityVulnerabilityConnection))
     ),
@@ -75575,12 +75876,12 @@ export const Sponsorable: SponsorableSelector = {
     new Field(
       "sponsorshipsAsMaintainer",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("includePrivate", variables.includePrivate),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("includePrivate", variables.includePrivate, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SponsorshipConnection))
     ),
@@ -75593,11 +75894,11 @@ export const Sponsorable: SponsorableSelector = {
     new Field(
       "sponsorshipsAsSponsor",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SponsorshipConnection))
     ),
@@ -75763,11 +76064,11 @@ export const SponsorsListing: SponsorsListingSelector = {
     new Field(
       "tiers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SponsorsTierConnection))
     ),
@@ -75965,12 +76266,12 @@ export const SponsorsTierAdminInfo: SponsorsTierAdminInfoSelector = {
     new Field(
       "sponsorships",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("includePrivate", variables.includePrivate),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("includePrivate", variables.includePrivate, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SponsorshipConnection))
     ),
@@ -76582,11 +76883,11 @@ export const Starrable: StarrableSelector = {
     new Field(
       "stargazers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(StargazerConnection))
     ),
@@ -76858,10 +77159,10 @@ export const Status: StatusSelector = {
     new Field(
       "combinedContexts",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(StatusCheckRollupContextConnection))
     ),
@@ -76880,7 +77181,7 @@ export const Status: StatusSelector = {
   context: (variables, select) =>
     new Field(
       "context",
-      [new Argument("name", variables.name)],
+      [new Argument("name", variables.name, _ENUM_VALUES)],
       new SelectionSet(select(StatusContext))
     ),
 
@@ -76977,10 +77278,10 @@ export const StatusCheckRollup: StatusCheckRollupSelector = {
     new Field(
       "contexts",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(StatusCheckRollupContextConnection))
     ),
@@ -78300,10 +78601,10 @@ export const Team: TeamSelector = {
     new Field(
       "ancestors",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamConnection))
     ),
@@ -78321,13 +78622,13 @@ export const Team: TeamSelector = {
     new Field(
       "childTeams",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("immediateOnly", variables.immediateOnly),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("userLogins", variables.userLogins),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("immediateOnly", variables.immediateOnly, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("userLogins", variables.userLogins, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamConnection))
     ),
@@ -78359,7 +78660,7 @@ export const Team: TeamSelector = {
   discussion: (variables, select) =>
     new Field(
       "discussion",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(TeamDiscussion))
     ),
 
@@ -78371,12 +78672,12 @@ export const Team: TeamSelector = {
     new Field(
       "discussions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("isPinned", variables.isPinned),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("isPinned", variables.isPinned, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamDiscussionConnection))
     ),
@@ -78410,10 +78711,10 @@ export const Team: TeamSelector = {
     new Field(
       "invitations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationInvitationConnection))
     ),
@@ -78426,11 +78727,11 @@ export const Team: TeamSelector = {
     new Field(
       "memberStatuses",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserStatusConnection))
     ),
@@ -78443,14 +78744,14 @@ export const Team: TeamSelector = {
     new Field(
       "members",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("membership", variables.membership, TeamMembershipType),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
-        new Argument("role", variables.role, TeamMemberRole),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("membership", variables.membership, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
+        new Argument("role", variables.role, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamMemberConnection))
     ),
@@ -78511,12 +78812,12 @@ export const Team: TeamSelector = {
     new Field(
       "repositories",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("query", variables.query),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("query", variables.query, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamRepositoryConnection))
     ),
@@ -80214,12 +80515,12 @@ export const TeamDiscussion: TeamDiscussionSelector = {
     new Field(
       "comments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("fromComment", variables.fromComment),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("fromComment", variables.fromComment, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(TeamDiscussionCommentConnection))
     ),
@@ -80307,12 +80608,12 @@ export const TeamDiscussion: TeamDiscussionSelector = {
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -80352,10 +80653,10 @@ export const TeamDiscussion: TeamDiscussionSelector = {
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -80738,12 +81039,12 @@ export const TeamDiscussionComment: TeamDiscussionCommentSelector = {
     new Field(
       "reactions",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("content", variables.content, ReactionContent),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("content", variables.content, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(ReactionConnection))
     ),
@@ -80771,10 +81072,10 @@ export const TeamDiscussionComment: TeamDiscussionCommentSelector = {
     new Field(
       "userContentEdits",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(UserContentEditConnection))
     ),
@@ -82227,7 +82528,7 @@ first. Returns up to 10 Topics.
   relatedTopics: (variables, select) =>
     new Field(
       "relatedTopics",
-      [new Argument("first", variables.first)],
+      [new Argument("first", variables.first, _ENUM_VALUES)],
       new SelectionSet(select(Topic))
     ),
 
@@ -82244,11 +82545,11 @@ first. Returns up to 10 Topics.
     new Field(
       "stargazers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(StargazerConnection))
     ),
@@ -87045,10 +87346,10 @@ export const User: UserSelector = {
     new Field(
       "commitComments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(CommitCommentConnection))
     ),
@@ -87071,9 +87372,9 @@ export const User: UserSelector = {
     new Field(
       "contributionsCollection",
       [
-        new Argument("from", variables.from),
-        new Argument("organizationID", variables.organizationID),
-        new Argument("to", variables.to),
+        new Argument("from", variables.from, _ENUM_VALUES),
+        new Argument("organizationID", variables.organizationID, _ENUM_VALUES),
+        new Argument("to", variables.to, _ENUM_VALUES),
       ],
       new SelectionSet(select(ContributionsCollection))
     ),
@@ -87101,10 +87402,10 @@ export const User: UserSelector = {
     new Field(
       "followers",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(FollowerConnection))
     ),
@@ -87117,10 +87418,10 @@ export const User: UserSelector = {
     new Field(
       "following",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(FollowingConnection))
     ),
@@ -87132,7 +87433,7 @@ export const User: UserSelector = {
   gist: (variables, select) =>
     new Field(
       "gist",
-      [new Argument("name", variables.name)],
+      [new Argument("name", variables.name, _ENUM_VALUES)],
       new SelectionSet(select(Gist))
     ),
 
@@ -87144,10 +87445,10 @@ export const User: UserSelector = {
     new Field(
       "gistComments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(GistCommentConnection))
     ),
@@ -87160,12 +87461,12 @@ export const User: UserSelector = {
     new Field(
       "gists",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("privacy", variables.privacy, GistPrivacy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("privacy", variables.privacy, _ENUM_VALUES),
       ],
       new SelectionSet(select(GistConnection))
     ),
@@ -87182,7 +87483,13 @@ export const User: UserSelector = {
   hovercard: (variables, select) =>
     new Field(
       "hovercard",
-      [new Argument("primarySubjectId", variables.primarySubjectId)],
+      [
+        new Argument(
+          "primarySubjectId",
+          variables.primarySubjectId,
+          _ENUM_VALUES
+        ),
+      ],
       new SelectionSet(select(Hovercard))
     ),
 
@@ -87247,11 +87554,11 @@ export const User: UserSelector = {
     new Field(
       "issueComments",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueCommentConnection))
     ),
@@ -87264,14 +87571,14 @@ export const User: UserSelector = {
     new Field(
       "issues",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("filterBy", variables.filterBy),
-        new Argument("first", variables.first),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, IssueState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("filterBy", variables.filterBy, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(IssueConnection))
     ),
@@ -87310,7 +87617,7 @@ either curated or that have been selected automatically based on popularity.
   organization: (variables, select) =>
     new Field(
       "organization",
-      [new Argument("login", variables.login)],
+      [new Argument("login", variables.login, _ENUM_VALUES)],
       new SelectionSet(select(Organization))
     ),
 
@@ -87328,10 +87635,10 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "organizations",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(OrganizationConnection))
     ),
@@ -87344,14 +87651,14 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "packages",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("names", variables.names),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("packageType", variables.packageType, PackageType),
-        new Argument("repositoryId", variables.repositoryId),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("names", variables.names, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("packageType", variables.packageType, _ENUM_VALUES),
+        new Argument("repositoryId", variables.repositoryId, _ENUM_VALUES),
       ],
       new SelectionSet(select(PackageConnection))
     ),
@@ -87364,11 +87671,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "pinnableItems",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("types", variables.types, PinnableItemType),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("types", variables.types, _ENUM_VALUES),
       ],
       new SelectionSet(select(PinnableItemConnection))
     ),
@@ -87381,11 +87688,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "pinnedItems",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("types", variables.types, PinnableItemType),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("types", variables.types, _ENUM_VALUES),
       ],
       new SelectionSet(select(PinnableItemConnection))
     ),
@@ -87402,7 +87709,7 @@ either curated or that have been selected automatically based on popularity.
   project: (variables, select) =>
     new Field(
       "project",
-      [new Argument("number", variables.number)],
+      [new Argument("number", variables.number, _ENUM_VALUES)],
       new SelectionSet(select(Project))
     ),
 
@@ -87414,13 +87721,13 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "projects",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("search", variables.search),
-        new Argument("states", variables.states, ProjectState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("search", variables.search, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(ProjectConnection))
     ),
@@ -87443,10 +87750,10 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "publicKeys",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
       ],
       new SelectionSet(select(PublicKeyConnection))
     ),
@@ -87459,15 +87766,15 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "pullRequests",
       [
-        new Argument("after", variables.after),
-        new Argument("baseRefName", variables.baseRefName),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("headRefName", variables.headRefName),
-        new Argument("labels", variables.labels),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("states", variables.states, PullRequestState),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("baseRefName", variables.baseRefName, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("headRefName", variables.headRefName, _ENUM_VALUES),
+        new Argument("labels", variables.labels, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("states", variables.states, _ENUM_VALUES),
       ],
       new SelectionSet(select(PullRequestConnection))
     ),
@@ -87480,24 +87787,20 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "repositories",
       [
-        new Argument(
-          "affiliations",
-          variables.affiliations,
-          RepositoryAffiliation
-        ),
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("isFork", variables.isFork),
-        new Argument("isLocked", variables.isLocked),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("affiliations", variables.affiliations, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("isFork", variables.isFork, _ENUM_VALUES),
+        new Argument("isLocked", variables.isLocked, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
         new Argument(
           "ownerAffiliations",
           variables.ownerAffiliations,
-          RepositoryAffiliation
+          _ENUM_VALUES
         ),
-        new Argument("privacy", variables.privacy, RepositoryPrivacy),
+        new Argument("privacy", variables.privacy, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryConnection))
     ),
@@ -87510,22 +87813,23 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "repositoriesContributedTo",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
         new Argument(
           "contributionTypes",
           variables.contributionTypes,
-          RepositoryContributionType
+          _ENUM_VALUES
         ),
-        new Argument("first", variables.first),
+        new Argument("first", variables.first, _ENUM_VALUES),
         new Argument(
           "includeUserRepositories",
-          variables.includeUserRepositories
+          variables.includeUserRepositories,
+          _ENUM_VALUES
         ),
-        new Argument("isLocked", variables.isLocked),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("privacy", variables.privacy, RepositoryPrivacy),
+        new Argument("isLocked", variables.isLocked, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("privacy", variables.privacy, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryConnection))
     ),
@@ -87537,7 +87841,7 @@ either curated or that have been selected automatically based on popularity.
   repository: (variables, select) =>
     new Field(
       "repository",
-      [new Argument("name", variables.name)],
+      [new Argument("name", variables.name, _ENUM_VALUES)],
       new SelectionSet(select(Repository))
     ),
 
@@ -87554,11 +87858,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "savedReplies",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SavedReplyConnection))
     ),
@@ -87582,12 +87886,12 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "sponsorshipsAsMaintainer",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("includePrivate", variables.includePrivate),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("includePrivate", variables.includePrivate, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SponsorshipConnection))
     ),
@@ -87600,11 +87904,11 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "sponsorshipsAsSponsor",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
       ],
       new SelectionSet(select(SponsorshipConnection))
     ),
@@ -87617,12 +87921,12 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "starredRepositories",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("ownedByViewer", variables.ownedByViewer),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("ownedByViewer", variables.ownedByViewer, _ENUM_VALUES),
       ],
       new SelectionSet(select(StarredRepositoryConnection))
     ),
@@ -87646,12 +87950,12 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "topRepositories",
       [
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
-        new Argument("since", variables.since),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
+        new Argument("since", variables.since, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryConnection))
     ),
@@ -87709,23 +88013,19 @@ either curated or that have been selected automatically based on popularity.
     new Field(
       "watching",
       [
-        new Argument(
-          "affiliations",
-          variables.affiliations,
-          RepositoryAffiliation
-        ),
-        new Argument("after", variables.after),
-        new Argument("before", variables.before),
-        new Argument("first", variables.first),
-        new Argument("isLocked", variables.isLocked),
-        new Argument("last", variables.last),
-        new Argument("orderBy", variables.orderBy),
+        new Argument("affiliations", variables.affiliations, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
+        new Argument("before", variables.before, _ENUM_VALUES),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("isLocked", variables.isLocked, _ENUM_VALUES),
+        new Argument("last", variables.last, _ENUM_VALUES),
+        new Argument("orderBy", variables.orderBy, _ENUM_VALUES),
         new Argument(
           "ownerAffiliations",
           variables.ownerAffiliations,
-          RepositoryAffiliation
+          _ENUM_VALUES
         ),
-        new Argument("privacy", variables.privacy, RepositoryPrivacy),
+        new Argument("privacy", variables.privacy, _ENUM_VALUES),
       ],
       new SelectionSet(select(RepositoryConnection))
     ),
@@ -88560,7 +88860,7 @@ export const mutation = <T extends Array<Selection>>(
 ): Operation<SelectionSet<T>> =>
   new Operation(name, "mutation", new SelectionSet(select(Mutation)));
 
-export class GitHub implements Client {
+export class Github implements Client {
   public static readonly VERSION = VERSION;
   public static readonly SCHEMA_SHA = SCHEMA_SHA;
 
@@ -88571,228 +88871,404 @@ export class GitHub implements Client {
      * @description Look up a code of conduct by its key
      */
 
-    codeOfConduct: <T extends Array<Selection>>(
+    codeOfConduct: async <T extends Array<Selection>>(
       variables: { key?: string },
       select: (t: CodeOfConductSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"codeOfConduct", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "codeOfConduct",
-          "query",
-          new SelectionSet([Query.codeOfConduct<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"codeOfConduct", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "codeOfConduct",
+            "query",
+            new SelectionSet([Query.codeOfConduct<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "codeOfConduct",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "codeOfConduct", result });
+      } else if (result.data) {
+        return result.data.codeOfConduct;
+      } else {
+        throw new ExecutionError({ name: "codeOfConduct", result });
+      }
+    },
 
     /**
      * @description Look up a code of conduct by its key
      */
 
-    codesOfConduct: <T extends Array<Selection>>(
+    codesOfConduct: async <T extends Array<Selection>>(
       select: (t: CodeOfConductSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"codesOfConduct", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "codesOfConduct",
-          "query",
-          new SelectionSet([Query.codesOfConduct<T>(select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"codesOfConduct", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "codesOfConduct",
+            "query",
+            new SelectionSet([Query.codesOfConduct<T>(select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "codesOfConduct",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "codesOfConduct", result });
+      } else if (result.data) {
+        return result.data.codesOfConduct;
+      } else {
+        throw new ExecutionError({ name: "codesOfConduct", result });
+      }
+    },
 
     /**
      * @description Look up an enterprise by URL slug.
      */
 
-    enterprise: <T extends Array<Selection>>(
+    enterprise: async <T extends Array<Selection>>(
       variables: { invitationToken?: string; slug?: string },
       select: (t: EnterpriseSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"enterprise", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "enterprise",
-          "query",
-          new SelectionSet([Query.enterprise<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"enterprise", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "enterprise",
+            "query",
+            new SelectionSet([Query.enterprise<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "enterprise",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "enterprise", result });
+      } else if (result.data) {
+        return result.data.enterprise;
+      } else {
+        throw new ExecutionError({ name: "enterprise", result });
+      }
+    },
 
     /**
      * @description Look up a pending enterprise administrator invitation by invitee, enterprise and role.
      */
 
-    enterpriseAdministratorInvitation: <T extends Array<Selection>>(
+    enterpriseAdministratorInvitation: async <T extends Array<Selection>>(
       variables: {
         enterpriseSlug?: string;
         role?: EnterpriseAdministratorRole;
         userLogin?: string;
       },
       select: (t: EnterpriseAdministratorInvitationSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<
-            [Field<"enterpriseAdministratorInvitation", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<
+              [Field<"enterpriseAdministratorInvitation", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "enterpriseAdministratorInvitation",
-          "query",
-          new SelectionSet([
-            Query.enterpriseAdministratorInvitation<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "enterpriseAdministratorInvitation",
+            "query",
+            new SelectionSet([
+              Query.enterpriseAdministratorInvitation<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "enterpriseAdministratorInvitation",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "enterpriseAdministratorInvitation",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.enterpriseAdministratorInvitation;
+      } else {
+        throw new ExecutionError({
+          name: "enterpriseAdministratorInvitation",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Look up a pending enterprise administrator invitation by invitation token.
      */
 
-    enterpriseAdministratorInvitationByToken: <T extends Array<Selection>>(
+    enterpriseAdministratorInvitationByToken: async <
+      T extends Array<Selection>
+    >(
       variables: { invitationToken?: string },
       select: (t: EnterpriseAdministratorInvitationSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "enterpriseAdministratorInvitationByToken",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "enterpriseAdministratorInvitationByToken",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "enterpriseAdministratorInvitationByToken",
-          "query",
-          new SelectionSet([
-            Query.enterpriseAdministratorInvitationByToken<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "enterpriseAdministratorInvitationByToken",
+            "query",
+            new SelectionSet([
+              Query.enterpriseAdministratorInvitationByToken<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "enterpriseAdministratorInvitationByToken",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "enterpriseAdministratorInvitationByToken",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.enterpriseAdministratorInvitationByToken;
+      } else {
+        throw new ExecutionError({
+          name: "enterpriseAdministratorInvitationByToken",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Look up an open source license by its key
      */
 
-    license: <T extends Array<Selection>>(
+    license: async <T extends Array<Selection>>(
       variables: { key?: string },
       select: (t: LicenseSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"license", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "license",
-          "query",
-          new SelectionSet([Query.license<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"license", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "license",
+            "query",
+            new SelectionSet([Query.license<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "license", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "license", result });
+      } else if (result.data) {
+        return result.data.license;
+      } else {
+        throw new ExecutionError({ name: "license", result });
+      }
+    },
 
     /**
      * @description Return a list of known open source licenses
      */
 
-    licenses: <T extends Array<Selection>>(select: (t: LicenseSelector) => T) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"licenses", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "licenses",
-          "query",
-          new SelectionSet([Query.licenses<T>(select)])
+    licenses: async <T extends Array<Selection>>(
+      select: (t: LicenseSelector) => T
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"licenses", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "licenses",
+            "query",
+            new SelectionSet([Query.licenses<T>(select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "licenses", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "licenses", result });
+      } else if (result.data) {
+        return result.data.licenses;
+      } else {
+        throw new ExecutionError({ name: "licenses", result });
+      }
+    },
 
     /**
      * @description Get alphabetically sorted list of Marketplace categories
      */
 
-    marketplaceCategories: <T extends Array<Selection>>(
+    marketplaceCategories: async <T extends Array<Selection>>(
       variables: {
         excludeEmpty?: boolean;
         excludeSubcategories?: boolean;
         includeCategories?: string;
       },
       select: (t: MarketplaceCategorySelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"marketplaceCategories", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "marketplaceCategories",
-          "query",
-          new SelectionSet([Query.marketplaceCategories<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"marketplaceCategories", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "marketplaceCategories",
+            "query",
+            new SelectionSet([
+              Query.marketplaceCategories<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "marketplaceCategories",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "marketplaceCategories", result });
+      } else if (result.data) {
+        return result.data.marketplaceCategories;
+      } else {
+        throw new ExecutionError({ name: "marketplaceCategories", result });
+      }
+    },
 
     /**
      * @description Look up a Marketplace category by its slug.
      */
 
-    marketplaceCategory: <T extends Array<Selection>>(
+    marketplaceCategory: async <T extends Array<Selection>>(
       variables: { slug?: string; useTopicAliases?: boolean },
       select: (t: MarketplaceCategorySelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"marketplaceCategory", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "marketplaceCategory",
-          "query",
-          new SelectionSet([Query.marketplaceCategory<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"marketplaceCategory", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "marketplaceCategory",
+            "query",
+            new SelectionSet([Query.marketplaceCategory<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "marketplaceCategory",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "marketplaceCategory", result });
+      } else if (result.data) {
+        return result.data.marketplaceCategory;
+      } else {
+        throw new ExecutionError({ name: "marketplaceCategory", result });
+      }
+    },
 
     /**
      * @description Look up a single Marketplace listing
      */
 
-    marketplaceListing: <T extends Array<Selection>>(
+    marketplaceListing: async <T extends Array<Selection>>(
       variables: { slug?: string },
       select: (t: MarketplaceListingSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"marketplaceListing", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "marketplaceListing",
-          "query",
-          new SelectionSet([Query.marketplaceListing<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"marketplaceListing", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "marketplaceListing",
+            "query",
+            new SelectionSet([Query.marketplaceListing<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "marketplaceListing",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "marketplaceListing", result });
+      } else if (result.data) {
+        return result.data.marketplaceListing;
+      } else {
+        throw new ExecutionError({ name: "marketplaceListing", result });
+      }
+    },
 
     /**
      * @description Look up Marketplace listings
      */
 
-    marketplaceListings: <T extends Array<Selection>>(
+    marketplaceListings: async <T extends Array<Selection>>(
       variables: {
         adminId?: string;
         after?: string;
@@ -88809,194 +89285,341 @@ export class GitHub implements Client {
         withFreeTrialsOnly?: boolean;
       },
       select: (t: MarketplaceListingConnectionSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"marketplaceListings", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "marketplaceListings",
-          "query",
-          new SelectionSet([Query.marketplaceListings<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"marketplaceListings", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "marketplaceListings",
+            "query",
+            new SelectionSet([Query.marketplaceListings<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "marketplaceListings",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "marketplaceListings", result });
+      } else if (result.data) {
+        return result.data.marketplaceListings;
+      } else {
+        throw new ExecutionError({ name: "marketplaceListings", result });
+      }
+    },
 
     /**
      * @description Return information about the GitHub instance
      */
 
-    meta: <T extends Array<Selection>>(
+    meta: async <T extends Array<Selection>>(
       select: (t: GitHubMetadataSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"meta", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "meta",
-          "query",
-          new SelectionSet([Query.meta<T>(select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"meta", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "meta",
+            "query",
+            new SelectionSet([Query.meta<T>(select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "meta", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "meta", result });
+      } else if (result.data) {
+        return result.data.meta;
+      } else {
+        throw new ExecutionError({ name: "meta", result });
+      }
+    },
 
     /**
      * @description Fetches an object given its ID.
      */
 
-    node: <T extends Array<Selection>>(
+    node: async <T extends Array<Selection>>(
       variables: { id?: string },
       select: (t: NodeSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"node", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "node",
-          "query",
-          new SelectionSet([Query.node<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"node", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "node",
+            "query",
+            new SelectionSet([Query.node<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "node", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "node", result });
+      } else if (result.data) {
+        return result.data.node;
+      } else {
+        throw new ExecutionError({ name: "node", result });
+      }
+    },
 
     /**
      * @description Lookup nodes by a list of IDs.
      */
 
-    nodes: <T extends Array<Selection>>(
+    nodes: async <T extends Array<Selection>>(
       variables: { ids?: string },
       select: (t: NodeSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"nodes", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "nodes",
-          "query",
-          new SelectionSet([Query.nodes<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"nodes", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "nodes",
+            "query",
+            new SelectionSet([Query.nodes<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "nodes", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "nodes", result });
+      } else if (result.data) {
+        return result.data.nodes;
+      } else {
+        throw new ExecutionError({ name: "nodes", result });
+      }
+    },
 
     /**
      * @description Lookup a organization by login.
      */
 
-    organization: <T extends Array<Selection>>(
+    organization: async <T extends Array<Selection>>(
       variables: { login?: string },
       select: (t: OrganizationSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"organization", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "organization",
-          "query",
-          new SelectionSet([Query.organization<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"organization", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "organization",
+            "query",
+            new SelectionSet([Query.organization<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "organization",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "organization", result });
+      } else if (result.data) {
+        return result.data.organization;
+      } else {
+        throw new ExecutionError({ name: "organization", result });
+      }
+    },
 
     /**
      * @description The client's rate limit information.
      */
 
-    rateLimit: <T extends Array<Selection>>(
+    rateLimit: async <T extends Array<Selection>>(
       variables: { dryRun?: boolean },
       select: (t: RateLimitSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"rateLimit", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "rateLimit",
-          "query",
-          new SelectionSet([Query.rateLimit<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"rateLimit", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "rateLimit",
+            "query",
+            new SelectionSet([Query.rateLimit<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "rateLimit",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "rateLimit", result });
+      } else if (result.data) {
+        return result.data.rateLimit;
+      } else {
+        throw new ExecutionError({ name: "rateLimit", result });
+      }
+    },
 
     /**
      * @description Hack to workaround https://github.com/facebook/relay/issues/112 re-exposing the root query object
      */
 
-    relay: <T extends Array<Selection>>(select: (t: QuerySelector) => T) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"relay", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "relay",
-          "query",
-          new SelectionSet([Query.relay<T>(select)])
+    relay: async <T extends Array<Selection>>(
+      select: (t: QuerySelector) => T
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"relay", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "relay",
+            "query",
+            new SelectionSet([Query.relay<T>(select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "relay", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "relay", result });
+      } else if (result.data) {
+        return result.data.relay;
+      } else {
+        throw new ExecutionError({ name: "relay", result });
+      }
+    },
 
     /**
      * @description Lookup a given repository by the owner and repository name.
      */
 
-    repository: <T extends Array<Selection>>(
+    repository: async <T extends Array<Selection>>(
       variables: { name?: string; owner?: string },
       select: (t: RepositorySelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"repository", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "repository",
-          "query",
-          new SelectionSet([Query.repository<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"repository", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "repository",
+            "query",
+            new SelectionSet([Query.repository<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "repository",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "repository", result });
+      } else if (result.data) {
+        return result.data.repository;
+      } else {
+        throw new ExecutionError({ name: "repository", result });
+      }
+    },
 
     /**
      * @description Lookup a repository owner (ie. either a User or an Organization) by login.
      */
 
-    repositoryOwner: <T extends Array<Selection>>(
+    repositoryOwner: async <T extends Array<Selection>>(
       variables: { login?: string },
       select: (t: RepositoryOwnerSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"repositoryOwner", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "repositoryOwner",
-          "query",
-          new SelectionSet([Query.repositoryOwner<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"repositoryOwner", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "repositoryOwner",
+            "query",
+            new SelectionSet([Query.repositoryOwner<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "repositoryOwner",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "repositoryOwner", result });
+      } else if (result.data) {
+        return result.data.repositoryOwner;
+      } else {
+        throw new ExecutionError({ name: "repositoryOwner", result });
+      }
+    },
 
     /**
      * @description Lookup resource by a URL.
      */
 
-    resource: <T extends Array<Selection>>(
+    resource: async <T extends Array<Selection>>(
       variables: { url?: unknown },
       select: (t: UniformResourceLocatableSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"resource", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "resource",
-          "query",
-          new SelectionSet([Query.resource<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"resource", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "resource",
+            "query",
+            new SelectionSet([Query.resource<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "resource", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "resource", result });
+      } else if (result.data) {
+        return result.data.resource;
+      } else {
+        throw new ExecutionError({ name: "resource", result });
+      }
+    },
 
     /**
      * @description Perform a search across resources.
      */
 
-    search: <T extends Array<Selection>>(
+    search: async <T extends Array<Selection>>(
       variables: {
         after?: string;
         before?: string;
@@ -89006,23 +89629,36 @@ export class GitHub implements Client {
         type?: SearchType;
       },
       select: (t: SearchResultItemConnectionSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"search", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "search",
-          "query",
-          new SelectionSet([Query.search<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"search", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "search",
+            "query",
+            new SelectionSet([Query.search<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "search", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "search", result });
+      } else if (result.data) {
+        return result.data.search;
+      } else {
+        throw new ExecutionError({ name: "search", result });
+      }
+    },
 
     /**
      * @description GitHub Security Advisories
      */
 
-    securityAdvisories: <T extends Array<Selection>>(
+    securityAdvisories: async <T extends Array<Selection>>(
       variables: {
         after?: string;
         before?: string;
@@ -89034,46 +89670,78 @@ export class GitHub implements Client {
         updatedSince?: unknown;
       },
       select: (t: SecurityAdvisoryConnectionSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"securityAdvisories", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "securityAdvisories",
-          "query",
-          new SelectionSet([Query.securityAdvisories<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"securityAdvisories", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "securityAdvisories",
+            "query",
+            new SelectionSet([Query.securityAdvisories<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "securityAdvisories",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "securityAdvisories", result });
+      } else if (result.data) {
+        return result.data.securityAdvisories;
+      } else {
+        throw new ExecutionError({ name: "securityAdvisories", result });
+      }
+    },
 
     /**
      * @description Fetch a Security Advisory by its GHSA ID
      */
 
-    securityAdvisory: <T extends Array<Selection>>(
+    securityAdvisory: async <T extends Array<Selection>>(
       variables: { ghsaId?: string },
       select: (t: SecurityAdvisorySelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"securityAdvisory", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "securityAdvisory",
-          "query",
-          new SelectionSet([Query.securityAdvisory<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"securityAdvisory", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "securityAdvisory",
+            "query",
+            new SelectionSet([Query.securityAdvisory<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "securityAdvisory",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "securityAdvisory", result });
+      } else if (result.data) {
+        return result.data.securityAdvisory;
+      } else {
+        throw new ExecutionError({ name: "securityAdvisory", result });
+      }
+    },
 
     /**
      * @description Software Vulnerabilities documented by GitHub Security Advisories
      */
 
-    securityVulnerabilities: <T extends Array<Selection>>(
+    securityVulnerabilities: async <T extends Array<Selection>>(
       variables: {
         after?: string;
         before?: string;
@@ -89085,97 +89753,172 @@ export class GitHub implements Client {
         severities?: SecurityAdvisorySeverity;
       },
       select: (t: SecurityVulnerabilityConnectionSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"securityVulnerabilities", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "securityVulnerabilities",
-          "query",
-          new SelectionSet([
-            Query.securityVulnerabilities<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<
+              [Field<"securityVulnerabilities", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "securityVulnerabilities",
+            "query",
+            new SelectionSet([
+              Query.securityVulnerabilities<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "securityVulnerabilities",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "securityVulnerabilities", result });
+      } else if (result.data) {
+        return result.data.securityVulnerabilities;
+      } else {
+        throw new ExecutionError({ name: "securityVulnerabilities", result });
+      }
+    },
 
     /**
      * @description Look up a single Sponsors Listing
      * @deprecated `Query.sponsorsListing` will be removed. Use `Sponsorable.sponsorsListing` instead. Removal on 2020-04-01 UTC.
      */
 
-    sponsorsListing: <T extends Array<Selection>>(
+    sponsorsListing: async <T extends Array<Selection>>(
       variables: { slug?: string },
       select: (t: SponsorsListingSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<
-          SelectionSet<[Field<"sponsorsListing", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "sponsorsListing",
-          "query",
-          new SelectionSet([Query.sponsorsListing<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<
+            SelectionSet<[Field<"sponsorsListing", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "sponsorsListing",
+            "query",
+            new SelectionSet([Query.sponsorsListing<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "sponsorsListing",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "sponsorsListing", result });
+      } else if (result.data) {
+        return result.data.sponsorsListing;
+      } else {
+        throw new ExecutionError({ name: "sponsorsListing", result });
+      }
+    },
 
     /**
      * @description Look up a topic by name.
      */
 
-    topic: <T extends Array<Selection>>(
+    topic: async <T extends Array<Selection>>(
       variables: { name?: string },
       select: (t: TopicSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"topic", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "topic",
-          "query",
-          new SelectionSet([Query.topic<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"topic", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "topic",
+            "query",
+            new SelectionSet([Query.topic<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "topic", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "topic", result });
+      } else if (result.data) {
+        return result.data.topic;
+      } else {
+        throw new ExecutionError({ name: "topic", result });
+      }
+    },
 
     /**
      * @description Lookup a user by login.
      */
 
-    user: <T extends Array<Selection>>(
+    user: async <T extends Array<Selection>>(
       variables: { login?: string },
       select: (t: UserSelector) => T
-    ) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"user", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "user",
-          "query",
-          new SelectionSet([Query.user<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"user", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "user",
+            "query",
+            new SelectionSet([Query.user<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "user", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "user", result });
+      } else if (result.data) {
+        return result.data.user;
+      } else {
+        throw new ExecutionError({ name: "user", result });
+      }
+    },
 
     /**
      * @description The currently authenticated user.
      */
 
-    viewer: <T extends Array<Selection>>(select: (t: UserSelector) => T) =>
-      this.executor.execute<
-        IQuery,
-        Operation<SelectionSet<[Field<"viewer", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "viewer",
-          "query",
-          new SelectionSet([Query.viewer<T>(select)])
+    viewer: async <T extends Array<Selection>>(
+      select: (t: UserSelector) => T
+    ) => {
+      const result = await this.executor
+        .execute<
+          IQuery,
+          Operation<SelectionSet<[Field<"viewer", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "viewer",
+            "query",
+            new SelectionSet([Query.viewer<T>(select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "viewer", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "viewer", result });
+      } else if (result.data) {
+        return result.data.viewer;
+      } else {
+        throw new ExecutionError({ name: "viewer", result });
+      }
+    },
   };
 
   public readonly mutate = {
@@ -89183,1307 +89926,2344 @@ export class GitHub implements Client {
      * @description Accepts a pending invitation for a user to become an administrator of an enterprise.
      */
 
-    acceptEnterpriseAdministratorInvitation: <T extends Array<Selection>>(
+    acceptEnterpriseAdministratorInvitation: async <T extends Array<Selection>>(
       variables: { input?: AcceptEnterpriseAdministratorInvitationInput },
       select: (t: AcceptEnterpriseAdministratorInvitationPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "acceptEnterpriseAdministratorInvitation",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "acceptEnterpriseAdministratorInvitation",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "acceptEnterpriseAdministratorInvitation",
-          "mutation",
-          new SelectionSet([
-            Mutation.acceptEnterpriseAdministratorInvitation<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "acceptEnterpriseAdministratorInvitation",
+            "mutation",
+            new SelectionSet([
+              Mutation.acceptEnterpriseAdministratorInvitation<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "acceptEnterpriseAdministratorInvitation",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "acceptEnterpriseAdministratorInvitation",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.acceptEnterpriseAdministratorInvitation;
+      } else {
+        throw new ExecutionError({
+          name: "acceptEnterpriseAdministratorInvitation",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Applies a suggested topic to the repository.
      */
 
-    acceptTopicSuggestion: <T extends Array<Selection>>(
+    acceptTopicSuggestion: async <T extends Array<Selection>>(
       variables: { input?: AcceptTopicSuggestionInput },
       select: (t: AcceptTopicSuggestionPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"acceptTopicSuggestion", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "acceptTopicSuggestion",
-          "mutation",
-          new SelectionSet([
-            Mutation.acceptTopicSuggestion<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"acceptTopicSuggestion", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "acceptTopicSuggestion",
+            "mutation",
+            new SelectionSet([
+              Mutation.acceptTopicSuggestion<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "acceptTopicSuggestion",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "acceptTopicSuggestion", result });
+      } else if (result.data) {
+        return result.data.acceptTopicSuggestion;
+      } else {
+        throw new ExecutionError({ name: "acceptTopicSuggestion", result });
+      }
+    },
 
     /**
      * @description Adds assignees to an assignable object.
      */
 
-    addAssigneesToAssignable: <T extends Array<Selection>>(
+    addAssigneesToAssignable: async <T extends Array<Selection>>(
       variables: { input?: AddAssigneesToAssignableInput },
       select: (t: AddAssigneesToAssignablePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"addAssigneesToAssignable", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"addAssigneesToAssignable", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "addAssigneesToAssignable",
-          "mutation",
-          new SelectionSet([
-            Mutation.addAssigneesToAssignable<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "addAssigneesToAssignable",
+            "mutation",
+            new SelectionSet([
+              Mutation.addAssigneesToAssignable<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addAssigneesToAssignable",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "addAssigneesToAssignable", result });
+      } else if (result.data) {
+        return result.data.addAssigneesToAssignable;
+      } else {
+        throw new ExecutionError({ name: "addAssigneesToAssignable", result });
+      }
+    },
 
     /**
      * @description Adds a comment to an Issue or Pull Request.
      */
 
-    addComment: <T extends Array<Selection>>(
+    addComment: async <T extends Array<Selection>>(
       variables: { input?: AddCommentInput },
       select: (t: AddCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"addComment", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "addComment",
-          "mutation",
-          new SelectionSet([Mutation.addComment<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"addComment", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "addComment",
+            "mutation",
+            new SelectionSet([Mutation.addComment<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "addComment", result });
+      } else if (result.data) {
+        return result.data.addComment;
+      } else {
+        throw new ExecutionError({ name: "addComment", result });
+      }
+    },
 
     /**
      * @description Adds labels to a labelable object.
      */
 
-    addLabelsToLabelable: <T extends Array<Selection>>(
+    addLabelsToLabelable: async <T extends Array<Selection>>(
       variables: { input?: AddLabelsToLabelableInput },
       select: (t: AddLabelsToLabelablePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"addLabelsToLabelable", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "addLabelsToLabelable",
-          "mutation",
-          new SelectionSet([
-            Mutation.addLabelsToLabelable<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"addLabelsToLabelable", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "addLabelsToLabelable",
+            "mutation",
+            new SelectionSet([
+              Mutation.addLabelsToLabelable<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addLabelsToLabelable",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "addLabelsToLabelable", result });
+      } else if (result.data) {
+        return result.data.addLabelsToLabelable;
+      } else {
+        throw new ExecutionError({ name: "addLabelsToLabelable", result });
+      }
+    },
 
     /**
      * @description Adds a card to a ProjectColumn. Either `contentId` or `note` must be provided but **not** both.
      */
 
-    addProjectCard: <T extends Array<Selection>>(
+    addProjectCard: async <T extends Array<Selection>>(
       variables: { input?: AddProjectCardInput },
       select: (t: AddProjectCardPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"addProjectCard", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "addProjectCard",
-          "mutation",
-          new SelectionSet([Mutation.addProjectCard<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"addProjectCard", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "addProjectCard",
+            "mutation",
+            new SelectionSet([Mutation.addProjectCard<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addProjectCard",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "addProjectCard", result });
+      } else if (result.data) {
+        return result.data.addProjectCard;
+      } else {
+        throw new ExecutionError({ name: "addProjectCard", result });
+      }
+    },
 
     /**
      * @description Adds a column to a Project.
      */
 
-    addProjectColumn: <T extends Array<Selection>>(
+    addProjectColumn: async <T extends Array<Selection>>(
       variables: { input?: AddProjectColumnInput },
       select: (t: AddProjectColumnPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"addProjectColumn", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "addProjectColumn",
-          "mutation",
-          new SelectionSet([Mutation.addProjectColumn<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"addProjectColumn", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "addProjectColumn",
+            "mutation",
+            new SelectionSet([Mutation.addProjectColumn<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addProjectColumn",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "addProjectColumn", result });
+      } else if (result.data) {
+        return result.data.addProjectColumn;
+      } else {
+        throw new ExecutionError({ name: "addProjectColumn", result });
+      }
+    },
 
     /**
      * @description Adds a review to a Pull Request.
      */
 
-    addPullRequestReview: <T extends Array<Selection>>(
+    addPullRequestReview: async <T extends Array<Selection>>(
       variables: { input?: AddPullRequestReviewInput },
       select: (t: AddPullRequestReviewPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"addPullRequestReview", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "addPullRequestReview",
-          "mutation",
-          new SelectionSet([
-            Mutation.addPullRequestReview<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"addPullRequestReview", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "addPullRequestReview",
+            "mutation",
+            new SelectionSet([
+              Mutation.addPullRequestReview<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addPullRequestReview",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "addPullRequestReview", result });
+      } else if (result.data) {
+        return result.data.addPullRequestReview;
+      } else {
+        throw new ExecutionError({ name: "addPullRequestReview", result });
+      }
+    },
 
     /**
      * @description Adds a comment to a review.
      */
 
-    addPullRequestReviewComment: <T extends Array<Selection>>(
+    addPullRequestReviewComment: async <T extends Array<Selection>>(
       variables: { input?: AddPullRequestReviewCommentInput },
       select: (t: AddPullRequestReviewCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"addPullRequestReviewComment", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"addPullRequestReviewComment", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "addPullRequestReviewComment",
-          "mutation",
-          new SelectionSet([
-            Mutation.addPullRequestReviewComment<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "addPullRequestReviewComment",
+            "mutation",
+            new SelectionSet([
+              Mutation.addPullRequestReviewComment<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addPullRequestReviewComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "addPullRequestReviewComment",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.addPullRequestReviewComment;
+      } else {
+        throw new ExecutionError({
+          name: "addPullRequestReviewComment",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Adds a new thread to a pending Pull Request Review.
      */
 
-    addPullRequestReviewThread: <T extends Array<Selection>>(
+    addPullRequestReviewThread: async <T extends Array<Selection>>(
       variables: { input?: AddPullRequestReviewThreadInput },
       select: (t: AddPullRequestReviewThreadPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"addPullRequestReviewThread", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"addPullRequestReviewThread", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "addPullRequestReviewThread",
-          "mutation",
-          new SelectionSet([
-            Mutation.addPullRequestReviewThread<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "addPullRequestReviewThread",
+            "mutation",
+            new SelectionSet([
+              Mutation.addPullRequestReviewThread<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addPullRequestReviewThread",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "addPullRequestReviewThread",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.addPullRequestReviewThread;
+      } else {
+        throw new ExecutionError({
+          name: "addPullRequestReviewThread",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Adds a reaction to a subject.
      */
 
-    addReaction: <T extends Array<Selection>>(
+    addReaction: async <T extends Array<Selection>>(
       variables: { input?: AddReactionInput },
       select: (t: AddReactionPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"addReaction", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "addReaction",
-          "mutation",
-          new SelectionSet([Mutation.addReaction<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"addReaction", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "addReaction",
+            "mutation",
+            new SelectionSet([Mutation.addReaction<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "addReaction",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "addReaction", result });
+      } else if (result.data) {
+        return result.data.addReaction;
+      } else {
+        throw new ExecutionError({ name: "addReaction", result });
+      }
+    },
 
     /**
      * @description Adds a star to a Starrable.
      */
 
-    addStar: <T extends Array<Selection>>(
+    addStar: async <T extends Array<Selection>>(
       variables: { input?: AddStarInput },
       select: (t: AddStarPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"addStar", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "addStar",
-          "mutation",
-          new SelectionSet([Mutation.addStar<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"addStar", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "addStar",
+            "mutation",
+            new SelectionSet([Mutation.addStar<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({ name: "addStar", transportError: error });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "addStar", result });
+      } else if (result.data) {
+        return result.data.addStar;
+      } else {
+        throw new ExecutionError({ name: "addStar", result });
+      }
+    },
 
     /**
      * @description Marks a repository as archived.
      */
 
-    archiveRepository: <T extends Array<Selection>>(
+    archiveRepository: async <T extends Array<Selection>>(
       variables: { input?: ArchiveRepositoryInput },
       select: (t: ArchiveRepositoryPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"archiveRepository", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "archiveRepository",
-          "mutation",
-          new SelectionSet([Mutation.archiveRepository<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"archiveRepository", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "archiveRepository",
+            "mutation",
+            new SelectionSet([Mutation.archiveRepository<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "archiveRepository",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "archiveRepository", result });
+      } else if (result.data) {
+        return result.data.archiveRepository;
+      } else {
+        throw new ExecutionError({ name: "archiveRepository", result });
+      }
+    },
 
     /**
      * @description Cancels a pending invitation for an administrator to join an enterprise.
      */
 
-    cancelEnterpriseAdminInvitation: <T extends Array<Selection>>(
+    cancelEnterpriseAdminInvitation: async <T extends Array<Selection>>(
       variables: { input?: CancelEnterpriseAdminInvitationInput },
       select: (t: CancelEnterpriseAdminInvitationPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"cancelEnterpriseAdminInvitation", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"cancelEnterpriseAdminInvitation", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "cancelEnterpriseAdminInvitation",
-          "mutation",
-          new SelectionSet([
-            Mutation.cancelEnterpriseAdminInvitation<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "cancelEnterpriseAdminInvitation",
+            "mutation",
+            new SelectionSet([
+              Mutation.cancelEnterpriseAdminInvitation<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "cancelEnterpriseAdminInvitation",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "cancelEnterpriseAdminInvitation",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.cancelEnterpriseAdminInvitation;
+      } else {
+        throw new ExecutionError({
+          name: "cancelEnterpriseAdminInvitation",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Update your status on GitHub.
      */
 
-    changeUserStatus: <T extends Array<Selection>>(
+    changeUserStatus: async <T extends Array<Selection>>(
       variables: { input?: ChangeUserStatusInput },
       select: (t: ChangeUserStatusPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"changeUserStatus", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "changeUserStatus",
-          "mutation",
-          new SelectionSet([Mutation.changeUserStatus<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"changeUserStatus", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "changeUserStatus",
+            "mutation",
+            new SelectionSet([Mutation.changeUserStatus<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "changeUserStatus",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "changeUserStatus", result });
+      } else if (result.data) {
+        return result.data.changeUserStatus;
+      } else {
+        throw new ExecutionError({ name: "changeUserStatus", result });
+      }
+    },
 
     /**
      * @description Clears all labels from a labelable object.
      */
 
-    clearLabelsFromLabelable: <T extends Array<Selection>>(
+    clearLabelsFromLabelable: async <T extends Array<Selection>>(
       variables: { input?: ClearLabelsFromLabelableInput },
       select: (t: ClearLabelsFromLabelablePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"clearLabelsFromLabelable", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"clearLabelsFromLabelable", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "clearLabelsFromLabelable",
-          "mutation",
-          new SelectionSet([
-            Mutation.clearLabelsFromLabelable<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "clearLabelsFromLabelable",
+            "mutation",
+            new SelectionSet([
+              Mutation.clearLabelsFromLabelable<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "clearLabelsFromLabelable",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "clearLabelsFromLabelable", result });
+      } else if (result.data) {
+        return result.data.clearLabelsFromLabelable;
+      } else {
+        throw new ExecutionError({ name: "clearLabelsFromLabelable", result });
+      }
+    },
 
     /**
      * @description Creates a new project by cloning configuration from an existing project.
      */
 
-    cloneProject: <T extends Array<Selection>>(
+    cloneProject: async <T extends Array<Selection>>(
       variables: { input?: CloneProjectInput },
       select: (t: CloneProjectPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"cloneProject", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "cloneProject",
-          "mutation",
-          new SelectionSet([Mutation.cloneProject<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"cloneProject", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "cloneProject",
+            "mutation",
+            new SelectionSet([Mutation.cloneProject<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "cloneProject",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "cloneProject", result });
+      } else if (result.data) {
+        return result.data.cloneProject;
+      } else {
+        throw new ExecutionError({ name: "cloneProject", result });
+      }
+    },
 
     /**
      * @description Create a new repository with the same files and directory structure as a template repository.
      */
 
-    cloneTemplateRepository: <T extends Array<Selection>>(
+    cloneTemplateRepository: async <T extends Array<Selection>>(
       variables: { input?: CloneTemplateRepositoryInput },
       select: (t: CloneTemplateRepositoryPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"cloneTemplateRepository", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "cloneTemplateRepository",
-          "mutation",
-          new SelectionSet([
-            Mutation.cloneTemplateRepository<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"cloneTemplateRepository", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "cloneTemplateRepository",
+            "mutation",
+            new SelectionSet([
+              Mutation.cloneTemplateRepository<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "cloneTemplateRepository",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "cloneTemplateRepository", result });
+      } else if (result.data) {
+        return result.data.cloneTemplateRepository;
+      } else {
+        throw new ExecutionError({ name: "cloneTemplateRepository", result });
+      }
+    },
 
     /**
      * @description Close an issue.
      */
 
-    closeIssue: <T extends Array<Selection>>(
+    closeIssue: async <T extends Array<Selection>>(
       variables: { input?: CloseIssueInput },
       select: (t: CloseIssuePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"closeIssue", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "closeIssue",
-          "mutation",
-          new SelectionSet([Mutation.closeIssue<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"closeIssue", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "closeIssue",
+            "mutation",
+            new SelectionSet([Mutation.closeIssue<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "closeIssue",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "closeIssue", result });
+      } else if (result.data) {
+        return result.data.closeIssue;
+      } else {
+        throw new ExecutionError({ name: "closeIssue", result });
+      }
+    },
 
     /**
      * @description Close a pull request.
      */
 
-    closePullRequest: <T extends Array<Selection>>(
+    closePullRequest: async <T extends Array<Selection>>(
       variables: { input?: ClosePullRequestInput },
       select: (t: ClosePullRequestPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"closePullRequest", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "closePullRequest",
-          "mutation",
-          new SelectionSet([Mutation.closePullRequest<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"closePullRequest", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "closePullRequest",
+            "mutation",
+            new SelectionSet([Mutation.closePullRequest<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "closePullRequest",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "closePullRequest", result });
+      } else if (result.data) {
+        return result.data.closePullRequest;
+      } else {
+        throw new ExecutionError({ name: "closePullRequest", result });
+      }
+    },
 
     /**
      * @description Convert a project note card to one associated with a newly created issue.
      */
 
-    convertProjectCardNoteToIssue: <T extends Array<Selection>>(
+    convertProjectCardNoteToIssue: async <T extends Array<Selection>>(
       variables: { input?: ConvertProjectCardNoteToIssueInput },
       select: (t: ConvertProjectCardNoteToIssuePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"convertProjectCardNoteToIssue", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"convertProjectCardNoteToIssue", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "convertProjectCardNoteToIssue",
-          "mutation",
-          new SelectionSet([
-            Mutation.convertProjectCardNoteToIssue<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "convertProjectCardNoteToIssue",
+            "mutation",
+            new SelectionSet([
+              Mutation.convertProjectCardNoteToIssue<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "convertProjectCardNoteToIssue",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "convertProjectCardNoteToIssue",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.convertProjectCardNoteToIssue;
+      } else {
+        throw new ExecutionError({
+          name: "convertProjectCardNoteToIssue",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Create a new branch protection rule
      */
 
-    createBranchProtectionRule: <T extends Array<Selection>>(
+    createBranchProtectionRule: async <T extends Array<Selection>>(
       variables: { input?: CreateBranchProtectionRuleInput },
       select: (t: CreateBranchProtectionRulePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"createBranchProtectionRule", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"createBranchProtectionRule", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "createBranchProtectionRule",
-          "mutation",
-          new SelectionSet([
-            Mutation.createBranchProtectionRule<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "createBranchProtectionRule",
+            "mutation",
+            new SelectionSet([
+              Mutation.createBranchProtectionRule<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createBranchProtectionRule",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "createBranchProtectionRule",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.createBranchProtectionRule;
+      } else {
+        throw new ExecutionError({
+          name: "createBranchProtectionRule",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Create a check run.
      */
 
-    createCheckRun: <T extends Array<Selection>>(
+    createCheckRun: async <T extends Array<Selection>>(
       variables: { input?: CreateCheckRunInput },
       select: (t: CreateCheckRunPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"createCheckRun", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "createCheckRun",
-          "mutation",
-          new SelectionSet([Mutation.createCheckRun<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"createCheckRun", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "createCheckRun",
+            "mutation",
+            new SelectionSet([Mutation.createCheckRun<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createCheckRun",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createCheckRun", result });
+      } else if (result.data) {
+        return result.data.createCheckRun;
+      } else {
+        throw new ExecutionError({ name: "createCheckRun", result });
+      }
+    },
 
     /**
      * @description Create a check suite
      */
 
-    createCheckSuite: <T extends Array<Selection>>(
+    createCheckSuite: async <T extends Array<Selection>>(
       variables: { input?: CreateCheckSuiteInput },
       select: (t: CreateCheckSuitePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"createCheckSuite", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "createCheckSuite",
-          "mutation",
-          new SelectionSet([Mutation.createCheckSuite<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"createCheckSuite", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "createCheckSuite",
+            "mutation",
+            new SelectionSet([Mutation.createCheckSuite<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createCheckSuite",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createCheckSuite", result });
+      } else if (result.data) {
+        return result.data.createCheckSuite;
+      } else {
+        throw new ExecutionError({ name: "createCheckSuite", result });
+      }
+    },
 
     /**
      * @description Creates an organization as part of an enterprise account.
      */
 
-    createEnterpriseOrganization: <T extends Array<Selection>>(
+    createEnterpriseOrganization: async <T extends Array<Selection>>(
       variables: { input?: CreateEnterpriseOrganizationInput },
       select: (t: CreateEnterpriseOrganizationPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"createEnterpriseOrganization", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"createEnterpriseOrganization", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "createEnterpriseOrganization",
-          "mutation",
-          new SelectionSet([
-            Mutation.createEnterpriseOrganization<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "createEnterpriseOrganization",
+            "mutation",
+            new SelectionSet([
+              Mutation.createEnterpriseOrganization<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createEnterpriseOrganization",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "createEnterpriseOrganization",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.createEnterpriseOrganization;
+      } else {
+        throw new ExecutionError({
+          name: "createEnterpriseOrganization",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Creates a new IP allow list entry.
      */
 
-    createIpAllowListEntry: <T extends Array<Selection>>(
+    createIpAllowListEntry: async <T extends Array<Selection>>(
       variables: { input?: CreateIpAllowListEntryInput },
       select: (t: CreateIpAllowListEntryPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"createIpAllowListEntry", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "createIpAllowListEntry",
-          "mutation",
-          new SelectionSet([
-            Mutation.createIpAllowListEntry<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"createIpAllowListEntry", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "createIpAllowListEntry",
+            "mutation",
+            new SelectionSet([
+              Mutation.createIpAllowListEntry<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createIpAllowListEntry",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createIpAllowListEntry", result });
+      } else if (result.data) {
+        return result.data.createIpAllowListEntry;
+      } else {
+        throw new ExecutionError({ name: "createIpAllowListEntry", result });
+      }
+    },
 
     /**
      * @description Creates a new issue.
      */
 
-    createIssue: <T extends Array<Selection>>(
+    createIssue: async <T extends Array<Selection>>(
       variables: { input?: CreateIssueInput },
       select: (t: CreateIssuePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"createIssue", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "createIssue",
-          "mutation",
-          new SelectionSet([Mutation.createIssue<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"createIssue", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "createIssue",
+            "mutation",
+            new SelectionSet([Mutation.createIssue<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createIssue",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createIssue", result });
+      } else if (result.data) {
+        return result.data.createIssue;
+      } else {
+        throw new ExecutionError({ name: "createIssue", result });
+      }
+    },
 
     /**
      * @description Creates a new project.
      */
 
-    createProject: <T extends Array<Selection>>(
+    createProject: async <T extends Array<Selection>>(
       variables: { input?: CreateProjectInput },
       select: (t: CreateProjectPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"createProject", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "createProject",
-          "mutation",
-          new SelectionSet([Mutation.createProject<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"createProject", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "createProject",
+            "mutation",
+            new SelectionSet([Mutation.createProject<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createProject",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createProject", result });
+      } else if (result.data) {
+        return result.data.createProject;
+      } else {
+        throw new ExecutionError({ name: "createProject", result });
+      }
+    },
 
     /**
      * @description Create a new pull request
      */
 
-    createPullRequest: <T extends Array<Selection>>(
+    createPullRequest: async <T extends Array<Selection>>(
       variables: { input?: CreatePullRequestInput },
       select: (t: CreatePullRequestPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"createPullRequest", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "createPullRequest",
-          "mutation",
-          new SelectionSet([Mutation.createPullRequest<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"createPullRequest", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "createPullRequest",
+            "mutation",
+            new SelectionSet([Mutation.createPullRequest<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createPullRequest",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createPullRequest", result });
+      } else if (result.data) {
+        return result.data.createPullRequest;
+      } else {
+        throw new ExecutionError({ name: "createPullRequest", result });
+      }
+    },
 
     /**
      * @description Create a new Git Ref.
      */
 
-    createRef: <T extends Array<Selection>>(
+    createRef: async <T extends Array<Selection>>(
       variables: { input?: CreateRefInput },
       select: (t: CreateRefPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"createRef", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "createRef",
-          "mutation",
-          new SelectionSet([Mutation.createRef<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"createRef", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "createRef",
+            "mutation",
+            new SelectionSet([Mutation.createRef<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createRef",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createRef", result });
+      } else if (result.data) {
+        return result.data.createRef;
+      } else {
+        throw new ExecutionError({ name: "createRef", result });
+      }
+    },
 
     /**
      * @description Create a new repository.
      */
 
-    createRepository: <T extends Array<Selection>>(
+    createRepository: async <T extends Array<Selection>>(
       variables: { input?: CreateRepositoryInput },
       select: (t: CreateRepositoryPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"createRepository", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "createRepository",
-          "mutation",
-          new SelectionSet([Mutation.createRepository<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"createRepository", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "createRepository",
+            "mutation",
+            new SelectionSet([Mutation.createRepository<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createRepository",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createRepository", result });
+      } else if (result.data) {
+        return result.data.createRepository;
+      } else {
+        throw new ExecutionError({ name: "createRepository", result });
+      }
+    },
 
     /**
      * @description Creates a new team discussion.
      */
 
-    createTeamDiscussion: <T extends Array<Selection>>(
+    createTeamDiscussion: async <T extends Array<Selection>>(
       variables: { input?: CreateTeamDiscussionInput },
       select: (t: CreateTeamDiscussionPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"createTeamDiscussion", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "createTeamDiscussion",
-          "mutation",
-          new SelectionSet([
-            Mutation.createTeamDiscussion<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"createTeamDiscussion", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "createTeamDiscussion",
+            "mutation",
+            new SelectionSet([
+              Mutation.createTeamDiscussion<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createTeamDiscussion",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "createTeamDiscussion", result });
+      } else if (result.data) {
+        return result.data.createTeamDiscussion;
+      } else {
+        throw new ExecutionError({ name: "createTeamDiscussion", result });
+      }
+    },
 
     /**
      * @description Creates a new team discussion comment.
      */
 
-    createTeamDiscussionComment: <T extends Array<Selection>>(
+    createTeamDiscussionComment: async <T extends Array<Selection>>(
       variables: { input?: CreateTeamDiscussionCommentInput },
       select: (t: CreateTeamDiscussionCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"createTeamDiscussionComment", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"createTeamDiscussionComment", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "createTeamDiscussionComment",
-          "mutation",
-          new SelectionSet([
-            Mutation.createTeamDiscussionComment<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "createTeamDiscussionComment",
+            "mutation",
+            new SelectionSet([
+              Mutation.createTeamDiscussionComment<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "createTeamDiscussionComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "createTeamDiscussionComment",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.createTeamDiscussionComment;
+      } else {
+        throw new ExecutionError({
+          name: "createTeamDiscussionComment",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Rejects a suggested topic for the repository.
      */
 
-    declineTopicSuggestion: <T extends Array<Selection>>(
+    declineTopicSuggestion: async <T extends Array<Selection>>(
       variables: { input?: DeclineTopicSuggestionInput },
       select: (t: DeclineTopicSuggestionPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"declineTopicSuggestion", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "declineTopicSuggestion",
-          "mutation",
-          new SelectionSet([
-            Mutation.declineTopicSuggestion<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"declineTopicSuggestion", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "declineTopicSuggestion",
+            "mutation",
+            new SelectionSet([
+              Mutation.declineTopicSuggestion<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "declineTopicSuggestion",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "declineTopicSuggestion", result });
+      } else if (result.data) {
+        return result.data.declineTopicSuggestion;
+      } else {
+        throw new ExecutionError({ name: "declineTopicSuggestion", result });
+      }
+    },
 
     /**
      * @description Delete a branch protection rule
      */
 
-    deleteBranchProtectionRule: <T extends Array<Selection>>(
+    deleteBranchProtectionRule: async <T extends Array<Selection>>(
       variables: { input?: DeleteBranchProtectionRuleInput },
       select: (t: DeleteBranchProtectionRulePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"deleteBranchProtectionRule", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"deleteBranchProtectionRule", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "deleteBranchProtectionRule",
-          "mutation",
-          new SelectionSet([
-            Mutation.deleteBranchProtectionRule<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "deleteBranchProtectionRule",
+            "mutation",
+            new SelectionSet([
+              Mutation.deleteBranchProtectionRule<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteBranchProtectionRule",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "deleteBranchProtectionRule",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.deleteBranchProtectionRule;
+      } else {
+        throw new ExecutionError({
+          name: "deleteBranchProtectionRule",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Deletes a deployment.
      */
 
-    deleteDeployment: <T extends Array<Selection>>(
+    deleteDeployment: async <T extends Array<Selection>>(
       variables: { input?: DeleteDeploymentInput },
       select: (t: DeleteDeploymentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"deleteDeployment", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "deleteDeployment",
-          "mutation",
-          new SelectionSet([Mutation.deleteDeployment<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"deleteDeployment", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "deleteDeployment",
+            "mutation",
+            new SelectionSet([Mutation.deleteDeployment<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteDeployment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteDeployment", result });
+      } else if (result.data) {
+        return result.data.deleteDeployment;
+      } else {
+        throw new ExecutionError({ name: "deleteDeployment", result });
+      }
+    },
 
     /**
      * @description Deletes an IP allow list entry.
      */
 
-    deleteIpAllowListEntry: <T extends Array<Selection>>(
+    deleteIpAllowListEntry: async <T extends Array<Selection>>(
       variables: { input?: DeleteIpAllowListEntryInput },
       select: (t: DeleteIpAllowListEntryPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"deleteIpAllowListEntry", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "deleteIpAllowListEntry",
-          "mutation",
-          new SelectionSet([
-            Mutation.deleteIpAllowListEntry<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"deleteIpAllowListEntry", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "deleteIpAllowListEntry",
+            "mutation",
+            new SelectionSet([
+              Mutation.deleteIpAllowListEntry<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteIpAllowListEntry",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteIpAllowListEntry", result });
+      } else if (result.data) {
+        return result.data.deleteIpAllowListEntry;
+      } else {
+        throw new ExecutionError({ name: "deleteIpAllowListEntry", result });
+      }
+    },
 
     /**
      * @description Deletes an Issue object.
      */
 
-    deleteIssue: <T extends Array<Selection>>(
+    deleteIssue: async <T extends Array<Selection>>(
       variables: { input?: DeleteIssueInput },
       select: (t: DeleteIssuePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"deleteIssue", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "deleteIssue",
-          "mutation",
-          new SelectionSet([Mutation.deleteIssue<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"deleteIssue", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "deleteIssue",
+            "mutation",
+            new SelectionSet([Mutation.deleteIssue<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteIssue",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteIssue", result });
+      } else if (result.data) {
+        return result.data.deleteIssue;
+      } else {
+        throw new ExecutionError({ name: "deleteIssue", result });
+      }
+    },
 
     /**
      * @description Deletes an IssueComment object.
      */
 
-    deleteIssueComment: <T extends Array<Selection>>(
+    deleteIssueComment: async <T extends Array<Selection>>(
       variables: { input?: DeleteIssueCommentInput },
       select: (t: DeleteIssueCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"deleteIssueComment", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "deleteIssueComment",
-          "mutation",
-          new SelectionSet([Mutation.deleteIssueComment<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"deleteIssueComment", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "deleteIssueComment",
+            "mutation",
+            new SelectionSet([
+              Mutation.deleteIssueComment<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteIssueComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteIssueComment", result });
+      } else if (result.data) {
+        return result.data.deleteIssueComment;
+      } else {
+        throw new ExecutionError({ name: "deleteIssueComment", result });
+      }
+    },
 
     /**
      * @description Deletes a project.
      */
 
-    deleteProject: <T extends Array<Selection>>(
+    deleteProject: async <T extends Array<Selection>>(
       variables: { input?: DeleteProjectInput },
       select: (t: DeleteProjectPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"deleteProject", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "deleteProject",
-          "mutation",
-          new SelectionSet([Mutation.deleteProject<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"deleteProject", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "deleteProject",
+            "mutation",
+            new SelectionSet([Mutation.deleteProject<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteProject",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteProject", result });
+      } else if (result.data) {
+        return result.data.deleteProject;
+      } else {
+        throw new ExecutionError({ name: "deleteProject", result });
+      }
+    },
 
     /**
      * @description Deletes a project card.
      */
 
-    deleteProjectCard: <T extends Array<Selection>>(
+    deleteProjectCard: async <T extends Array<Selection>>(
       variables: { input?: DeleteProjectCardInput },
       select: (t: DeleteProjectCardPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"deleteProjectCard", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "deleteProjectCard",
-          "mutation",
-          new SelectionSet([Mutation.deleteProjectCard<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"deleteProjectCard", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "deleteProjectCard",
+            "mutation",
+            new SelectionSet([Mutation.deleteProjectCard<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteProjectCard",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteProjectCard", result });
+      } else if (result.data) {
+        return result.data.deleteProjectCard;
+      } else {
+        throw new ExecutionError({ name: "deleteProjectCard", result });
+      }
+    },
 
     /**
      * @description Deletes a project column.
      */
 
-    deleteProjectColumn: <T extends Array<Selection>>(
+    deleteProjectColumn: async <T extends Array<Selection>>(
       variables: { input?: DeleteProjectColumnInput },
       select: (t: DeleteProjectColumnPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"deleteProjectColumn", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "deleteProjectColumn",
-          "mutation",
-          new SelectionSet([Mutation.deleteProjectColumn<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"deleteProjectColumn", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "deleteProjectColumn",
+            "mutation",
+            new SelectionSet([
+              Mutation.deleteProjectColumn<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteProjectColumn",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteProjectColumn", result });
+      } else if (result.data) {
+        return result.data.deleteProjectColumn;
+      } else {
+        throw new ExecutionError({ name: "deleteProjectColumn", result });
+      }
+    },
 
     /**
      * @description Deletes a pull request review.
      */
 
-    deletePullRequestReview: <T extends Array<Selection>>(
+    deletePullRequestReview: async <T extends Array<Selection>>(
       variables: { input?: DeletePullRequestReviewInput },
       select: (t: DeletePullRequestReviewPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"deletePullRequestReview", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "deletePullRequestReview",
-          "mutation",
-          new SelectionSet([
-            Mutation.deletePullRequestReview<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"deletePullRequestReview", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "deletePullRequestReview",
+            "mutation",
+            new SelectionSet([
+              Mutation.deletePullRequestReview<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deletePullRequestReview",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deletePullRequestReview", result });
+      } else if (result.data) {
+        return result.data.deletePullRequestReview;
+      } else {
+        throw new ExecutionError({ name: "deletePullRequestReview", result });
+      }
+    },
 
     /**
      * @description Deletes a pull request review comment.
      */
 
-    deletePullRequestReviewComment: <T extends Array<Selection>>(
+    deletePullRequestReviewComment: async <T extends Array<Selection>>(
       variables: { input?: DeletePullRequestReviewCommentInput },
       select: (t: DeletePullRequestReviewCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"deletePullRequestReviewComment", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"deletePullRequestReviewComment", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "deletePullRequestReviewComment",
-          "mutation",
-          new SelectionSet([
-            Mutation.deletePullRequestReviewComment<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "deletePullRequestReviewComment",
+            "mutation",
+            new SelectionSet([
+              Mutation.deletePullRequestReviewComment<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deletePullRequestReviewComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "deletePullRequestReviewComment",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.deletePullRequestReviewComment;
+      } else {
+        throw new ExecutionError({
+          name: "deletePullRequestReviewComment",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Delete a Git Ref.
      */
 
-    deleteRef: <T extends Array<Selection>>(
+    deleteRef: async <T extends Array<Selection>>(
       variables: { input?: DeleteRefInput },
       select: (t: DeleteRefPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"deleteRef", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "deleteRef",
-          "mutation",
-          new SelectionSet([Mutation.deleteRef<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"deleteRef", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "deleteRef",
+            "mutation",
+            new SelectionSet([Mutation.deleteRef<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteRef",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteRef", result });
+      } else if (result.data) {
+        return result.data.deleteRef;
+      } else {
+        throw new ExecutionError({ name: "deleteRef", result });
+      }
+    },
 
     /**
      * @description Deletes a team discussion.
      */
 
-    deleteTeamDiscussion: <T extends Array<Selection>>(
+    deleteTeamDiscussion: async <T extends Array<Selection>>(
       variables: { input?: DeleteTeamDiscussionInput },
       select: (t: DeleteTeamDiscussionPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"deleteTeamDiscussion", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "deleteTeamDiscussion",
-          "mutation",
-          new SelectionSet([
-            Mutation.deleteTeamDiscussion<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"deleteTeamDiscussion", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "deleteTeamDiscussion",
+            "mutation",
+            new SelectionSet([
+              Mutation.deleteTeamDiscussion<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteTeamDiscussion",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "deleteTeamDiscussion", result });
+      } else if (result.data) {
+        return result.data.deleteTeamDiscussion;
+      } else {
+        throw new ExecutionError({ name: "deleteTeamDiscussion", result });
+      }
+    },
 
     /**
      * @description Deletes a team discussion comment.
      */
 
-    deleteTeamDiscussionComment: <T extends Array<Selection>>(
+    deleteTeamDiscussionComment: async <T extends Array<Selection>>(
       variables: { input?: DeleteTeamDiscussionCommentInput },
       select: (t: DeleteTeamDiscussionCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"deleteTeamDiscussionComment", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"deleteTeamDiscussionComment", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "deleteTeamDiscussionComment",
-          "mutation",
-          new SelectionSet([
-            Mutation.deleteTeamDiscussionComment<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "deleteTeamDiscussionComment",
+            "mutation",
+            new SelectionSet([
+              Mutation.deleteTeamDiscussionComment<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "deleteTeamDiscussionComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "deleteTeamDiscussionComment",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.deleteTeamDiscussionComment;
+      } else {
+        throw new ExecutionError({
+          name: "deleteTeamDiscussionComment",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Dismisses an approved or rejected pull request review.
      */
 
-    dismissPullRequestReview: <T extends Array<Selection>>(
+    dismissPullRequestReview: async <T extends Array<Selection>>(
       variables: { input?: DismissPullRequestReviewInput },
       select: (t: DismissPullRequestReviewPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"dismissPullRequestReview", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"dismissPullRequestReview", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "dismissPullRequestReview",
-          "mutation",
-          new SelectionSet([
-            Mutation.dismissPullRequestReview<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "dismissPullRequestReview",
+            "mutation",
+            new SelectionSet([
+              Mutation.dismissPullRequestReview<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "dismissPullRequestReview",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "dismissPullRequestReview", result });
+      } else if (result.data) {
+        return result.data.dismissPullRequestReview;
+      } else {
+        throw new ExecutionError({ name: "dismissPullRequestReview", result });
+      }
+    },
 
     /**
      * @description Follow a user.
      */
 
-    followUser: <T extends Array<Selection>>(
+    followUser: async <T extends Array<Selection>>(
       variables: { input?: FollowUserInput },
       select: (t: FollowUserPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"followUser", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "followUser",
-          "mutation",
-          new SelectionSet([Mutation.followUser<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"followUser", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "followUser",
+            "mutation",
+            new SelectionSet([Mutation.followUser<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "followUser",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "followUser", result });
+      } else if (result.data) {
+        return result.data.followUser;
+      } else {
+        throw new ExecutionError({ name: "followUser", result });
+      }
+    },
 
     /**
      * @description Invite someone to become an administrator of the enterprise.
      */
 
-    inviteEnterpriseAdmin: <T extends Array<Selection>>(
+    inviteEnterpriseAdmin: async <T extends Array<Selection>>(
       variables: { input?: InviteEnterpriseAdminInput },
       select: (t: InviteEnterpriseAdminPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"inviteEnterpriseAdmin", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "inviteEnterpriseAdmin",
-          "mutation",
-          new SelectionSet([
-            Mutation.inviteEnterpriseAdmin<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"inviteEnterpriseAdmin", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "inviteEnterpriseAdmin",
+            "mutation",
+            new SelectionSet([
+              Mutation.inviteEnterpriseAdmin<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "inviteEnterpriseAdmin",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "inviteEnterpriseAdmin", result });
+      } else if (result.data) {
+        return result.data.inviteEnterpriseAdmin;
+      } else {
+        throw new ExecutionError({ name: "inviteEnterpriseAdmin", result });
+      }
+    },
 
     /**
      * @description Creates a repository link for a project.
      */
 
-    linkRepositoryToProject: <T extends Array<Selection>>(
+    linkRepositoryToProject: async <T extends Array<Selection>>(
       variables: { input?: LinkRepositoryToProjectInput },
       select: (t: LinkRepositoryToProjectPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"linkRepositoryToProject", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "linkRepositoryToProject",
-          "mutation",
-          new SelectionSet([
-            Mutation.linkRepositoryToProject<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"linkRepositoryToProject", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "linkRepositoryToProject",
+            "mutation",
+            new SelectionSet([
+              Mutation.linkRepositoryToProject<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "linkRepositoryToProject",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "linkRepositoryToProject", result });
+      } else if (result.data) {
+        return result.data.linkRepositoryToProject;
+      } else {
+        throw new ExecutionError({ name: "linkRepositoryToProject", result });
+      }
+    },
 
     /**
      * @description Lock a lockable object
      */
 
-    lockLockable: <T extends Array<Selection>>(
+    lockLockable: async <T extends Array<Selection>>(
       variables: { input?: LockLockableInput },
       select: (t: LockLockablePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"lockLockable", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "lockLockable",
-          "mutation",
-          new SelectionSet([Mutation.lockLockable<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"lockLockable", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "lockLockable",
+            "mutation",
+            new SelectionSet([Mutation.lockLockable<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "lockLockable",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "lockLockable", result });
+      } else if (result.data) {
+        return result.data.lockLockable;
+      } else {
+        throw new ExecutionError({ name: "lockLockable", result });
+      }
+    },
 
     /**
      * @description Mark a pull request file as viewed
      */
 
-    markFileAsViewed: <T extends Array<Selection>>(
+    markFileAsViewed: async <T extends Array<Selection>>(
       variables: { input?: MarkFileAsViewedInput },
       select: (t: MarkFileAsViewedPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"markFileAsViewed", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "markFileAsViewed",
-          "mutation",
-          new SelectionSet([Mutation.markFileAsViewed<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"markFileAsViewed", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "markFileAsViewed",
+            "mutation",
+            new SelectionSet([Mutation.markFileAsViewed<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "markFileAsViewed",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "markFileAsViewed", result });
+      } else if (result.data) {
+        return result.data.markFileAsViewed;
+      } else {
+        throw new ExecutionError({ name: "markFileAsViewed", result });
+      }
+    },
 
     /**
      * @description Marks a pull request ready for review.
      */
 
-    markPullRequestReadyForReview: <T extends Array<Selection>>(
+    markPullRequestReadyForReview: async <T extends Array<Selection>>(
       variables: { input?: MarkPullRequestReadyForReviewInput },
       select: (t: MarkPullRequestReadyForReviewPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"markPullRequestReadyForReview", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"markPullRequestReadyForReview", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "markPullRequestReadyForReview",
-          "mutation",
-          new SelectionSet([
-            Mutation.markPullRequestReadyForReview<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "markPullRequestReadyForReview",
+            "mutation",
+            new SelectionSet([
+              Mutation.markPullRequestReadyForReview<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "markPullRequestReadyForReview",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "markPullRequestReadyForReview",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.markPullRequestReadyForReview;
+      } else {
+        throw new ExecutionError({
+          name: "markPullRequestReadyForReview",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Merge a head into a branch.
      */
 
-    mergeBranch: <T extends Array<Selection>>(
+    mergeBranch: async <T extends Array<Selection>>(
       variables: { input?: MergeBranchInput },
       select: (t: MergeBranchPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"mergeBranch", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "mergeBranch",
-          "mutation",
-          new SelectionSet([Mutation.mergeBranch<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"mergeBranch", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "mergeBranch",
+            "mutation",
+            new SelectionSet([Mutation.mergeBranch<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "mergeBranch",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "mergeBranch", result });
+      } else if (result.data) {
+        return result.data.mergeBranch;
+      } else {
+        throw new ExecutionError({ name: "mergeBranch", result });
+      }
+    },
 
     /**
      * @description Merge a pull request.
      */
 
-    mergePullRequest: <T extends Array<Selection>>(
+    mergePullRequest: async <T extends Array<Selection>>(
       variables: { input?: MergePullRequestInput },
       select: (t: MergePullRequestPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"mergePullRequest", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "mergePullRequest",
-          "mutation",
-          new SelectionSet([Mutation.mergePullRequest<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"mergePullRequest", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "mergePullRequest",
+            "mutation",
+            new SelectionSet([Mutation.mergePullRequest<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "mergePullRequest",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "mergePullRequest", result });
+      } else if (result.data) {
+        return result.data.mergePullRequest;
+      } else {
+        throw new ExecutionError({ name: "mergePullRequest", result });
+      }
+    },
 
     /**
      * @description Minimizes a comment on an Issue, Commit, Pull Request, or Gist
      */
 
-    minimizeComment: <T extends Array<Selection>>(
+    minimizeComment: async <T extends Array<Selection>>(
       variables: { input?: MinimizeCommentInput },
       select: (t: MinimizeCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"minimizeComment", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "minimizeComment",
-          "mutation",
-          new SelectionSet([Mutation.minimizeComment<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"minimizeComment", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "minimizeComment",
+            "mutation",
+            new SelectionSet([Mutation.minimizeComment<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "minimizeComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "minimizeComment", result });
+      } else if (result.data) {
+        return result.data.minimizeComment;
+      } else {
+        throw new ExecutionError({ name: "minimizeComment", result });
+      }
+    },
 
     /**
      * @description Moves a project card to another place.
      */
 
-    moveProjectCard: <T extends Array<Selection>>(
+    moveProjectCard: async <T extends Array<Selection>>(
       variables: { input?: MoveProjectCardInput },
       select: (t: MoveProjectCardPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"moveProjectCard", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "moveProjectCard",
-          "mutation",
-          new SelectionSet([Mutation.moveProjectCard<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"moveProjectCard", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "moveProjectCard",
+            "mutation",
+            new SelectionSet([Mutation.moveProjectCard<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "moveProjectCard",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "moveProjectCard", result });
+      } else if (result.data) {
+        return result.data.moveProjectCard;
+      } else {
+        throw new ExecutionError({ name: "moveProjectCard", result });
+      }
+    },
 
     /**
      * @description Moves a project column to another place.
      */
 
-    moveProjectColumn: <T extends Array<Selection>>(
+    moveProjectColumn: async <T extends Array<Selection>>(
       variables: { input?: MoveProjectColumnInput },
       select: (t: MoveProjectColumnPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"moveProjectColumn", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "moveProjectColumn",
-          "mutation",
-          new SelectionSet([Mutation.moveProjectColumn<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"moveProjectColumn", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "moveProjectColumn",
+            "mutation",
+            new SelectionSet([Mutation.moveProjectColumn<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "moveProjectColumn",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "moveProjectColumn", result });
+      } else if (result.data) {
+        return result.data.moveProjectColumn;
+      } else {
+        throw new ExecutionError({ name: "moveProjectColumn", result });
+      }
+    },
 
     /**
      * @description Regenerates the identity provider recovery codes for an enterprise
      */
 
-    regenerateEnterpriseIdentityProviderRecoveryCodes: <
+    regenerateEnterpriseIdentityProviderRecoveryCodes: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -90492,731 +92272,1333 @@ export class GitHub implements Client {
       select: (
         t: RegenerateEnterpriseIdentityProviderRecoveryCodesPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "regenerateEnterpriseIdentityProviderRecoveryCodes",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "regenerateEnterpriseIdentityProviderRecoveryCodes",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "regenerateEnterpriseIdentityProviderRecoveryCodes",
-          "mutation",
-          new SelectionSet([
-            Mutation.regenerateEnterpriseIdentityProviderRecoveryCodes<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "regenerateEnterpriseIdentityProviderRecoveryCodes",
+            "mutation",
+            new SelectionSet([
+              Mutation.regenerateEnterpriseIdentityProviderRecoveryCodes<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "regenerateEnterpriseIdentityProviderRecoveryCodes",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "regenerateEnterpriseIdentityProviderRecoveryCodes",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.regenerateEnterpriseIdentityProviderRecoveryCodes;
+      } else {
+        throw new ExecutionError({
+          name: "regenerateEnterpriseIdentityProviderRecoveryCodes",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Removes assignees from an assignable object.
      */
 
-    removeAssigneesFromAssignable: <T extends Array<Selection>>(
+    removeAssigneesFromAssignable: async <T extends Array<Selection>>(
       variables: { input?: RemoveAssigneesFromAssignableInput },
       select: (t: RemoveAssigneesFromAssignablePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"removeAssigneesFromAssignable", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"removeAssigneesFromAssignable", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "removeAssigneesFromAssignable",
-          "mutation",
-          new SelectionSet([
-            Mutation.removeAssigneesFromAssignable<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "removeAssigneesFromAssignable",
+            "mutation",
+            new SelectionSet([
+              Mutation.removeAssigneesFromAssignable<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "removeAssigneesFromAssignable",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "removeAssigneesFromAssignable",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.removeAssigneesFromAssignable;
+      } else {
+        throw new ExecutionError({
+          name: "removeAssigneesFromAssignable",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Removes an administrator from the enterprise.
      */
 
-    removeEnterpriseAdmin: <T extends Array<Selection>>(
+    removeEnterpriseAdmin: async <T extends Array<Selection>>(
       variables: { input?: RemoveEnterpriseAdminInput },
       select: (t: RemoveEnterpriseAdminPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"removeEnterpriseAdmin", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "removeEnterpriseAdmin",
-          "mutation",
-          new SelectionSet([
-            Mutation.removeEnterpriseAdmin<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"removeEnterpriseAdmin", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "removeEnterpriseAdmin",
+            "mutation",
+            new SelectionSet([
+              Mutation.removeEnterpriseAdmin<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "removeEnterpriseAdmin",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "removeEnterpriseAdmin", result });
+      } else if (result.data) {
+        return result.data.removeEnterpriseAdmin;
+      } else {
+        throw new ExecutionError({ name: "removeEnterpriseAdmin", result });
+      }
+    },
 
     /**
      * @description Removes the identity provider from an enterprise
      */
 
-    removeEnterpriseIdentityProvider: <T extends Array<Selection>>(
+    removeEnterpriseIdentityProvider: async <T extends Array<Selection>>(
       variables: { input?: RemoveEnterpriseIdentityProviderInput },
       select: (t: RemoveEnterpriseIdentityProviderPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"removeEnterpriseIdentityProvider", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"removeEnterpriseIdentityProvider", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "removeEnterpriseIdentityProvider",
-          "mutation",
-          new SelectionSet([
-            Mutation.removeEnterpriseIdentityProvider<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "removeEnterpriseIdentityProvider",
+            "mutation",
+            new SelectionSet([
+              Mutation.removeEnterpriseIdentityProvider<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "removeEnterpriseIdentityProvider",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "removeEnterpriseIdentityProvider",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.removeEnterpriseIdentityProvider;
+      } else {
+        throw new ExecutionError({
+          name: "removeEnterpriseIdentityProvider",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Removes an organization from the enterprise
      */
 
-    removeEnterpriseOrganization: <T extends Array<Selection>>(
+    removeEnterpriseOrganization: async <T extends Array<Selection>>(
       variables: { input?: RemoveEnterpriseOrganizationInput },
       select: (t: RemoveEnterpriseOrganizationPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"removeEnterpriseOrganization", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"removeEnterpriseOrganization", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "removeEnterpriseOrganization",
-          "mutation",
-          new SelectionSet([
-            Mutation.removeEnterpriseOrganization<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "removeEnterpriseOrganization",
+            "mutation",
+            new SelectionSet([
+              Mutation.removeEnterpriseOrganization<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "removeEnterpriseOrganization",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "removeEnterpriseOrganization",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.removeEnterpriseOrganization;
+      } else {
+        throw new ExecutionError({
+          name: "removeEnterpriseOrganization",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Removes labels from a Labelable object.
      */
 
-    removeLabelsFromLabelable: <T extends Array<Selection>>(
+    removeLabelsFromLabelable: async <T extends Array<Selection>>(
       variables: { input?: RemoveLabelsFromLabelableInput },
       select: (t: RemoveLabelsFromLabelablePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"removeLabelsFromLabelable", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"removeLabelsFromLabelable", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "removeLabelsFromLabelable",
-          "mutation",
-          new SelectionSet([
-            Mutation.removeLabelsFromLabelable<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "removeLabelsFromLabelable",
+            "mutation",
+            new SelectionSet([
+              Mutation.removeLabelsFromLabelable<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "removeLabelsFromLabelable",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "removeLabelsFromLabelable", result });
+      } else if (result.data) {
+        return result.data.removeLabelsFromLabelable;
+      } else {
+        throw new ExecutionError({ name: "removeLabelsFromLabelable", result });
+      }
+    },
 
     /**
      * @description Removes outside collaborator from all repositories in an organization.
      */
 
-    removeOutsideCollaborator: <T extends Array<Selection>>(
+    removeOutsideCollaborator: async <T extends Array<Selection>>(
       variables: { input?: RemoveOutsideCollaboratorInput },
       select: (t: RemoveOutsideCollaboratorPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"removeOutsideCollaborator", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"removeOutsideCollaborator", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "removeOutsideCollaborator",
-          "mutation",
-          new SelectionSet([
-            Mutation.removeOutsideCollaborator<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "removeOutsideCollaborator",
+            "mutation",
+            new SelectionSet([
+              Mutation.removeOutsideCollaborator<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "removeOutsideCollaborator",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "removeOutsideCollaborator", result });
+      } else if (result.data) {
+        return result.data.removeOutsideCollaborator;
+      } else {
+        throw new ExecutionError({ name: "removeOutsideCollaborator", result });
+      }
+    },
 
     /**
      * @description Removes a reaction from a subject.
      */
 
-    removeReaction: <T extends Array<Selection>>(
+    removeReaction: async <T extends Array<Selection>>(
       variables: { input?: RemoveReactionInput },
       select: (t: RemoveReactionPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"removeReaction", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "removeReaction",
-          "mutation",
-          new SelectionSet([Mutation.removeReaction<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"removeReaction", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "removeReaction",
+            "mutation",
+            new SelectionSet([Mutation.removeReaction<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "removeReaction",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "removeReaction", result });
+      } else if (result.data) {
+        return result.data.removeReaction;
+      } else {
+        throw new ExecutionError({ name: "removeReaction", result });
+      }
+    },
 
     /**
      * @description Removes a star from a Starrable.
      */
 
-    removeStar: <T extends Array<Selection>>(
+    removeStar: async <T extends Array<Selection>>(
       variables: { input?: RemoveStarInput },
       select: (t: RemoveStarPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"removeStar", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "removeStar",
-          "mutation",
-          new SelectionSet([Mutation.removeStar<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"removeStar", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "removeStar",
+            "mutation",
+            new SelectionSet([Mutation.removeStar<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "removeStar",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "removeStar", result });
+      } else if (result.data) {
+        return result.data.removeStar;
+      } else {
+        throw new ExecutionError({ name: "removeStar", result });
+      }
+    },
 
     /**
      * @description Reopen a issue.
      */
 
-    reopenIssue: <T extends Array<Selection>>(
+    reopenIssue: async <T extends Array<Selection>>(
       variables: { input?: ReopenIssueInput },
       select: (t: ReopenIssuePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"reopenIssue", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "reopenIssue",
-          "mutation",
-          new SelectionSet([Mutation.reopenIssue<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"reopenIssue", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "reopenIssue",
+            "mutation",
+            new SelectionSet([Mutation.reopenIssue<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "reopenIssue",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "reopenIssue", result });
+      } else if (result.data) {
+        return result.data.reopenIssue;
+      } else {
+        throw new ExecutionError({ name: "reopenIssue", result });
+      }
+    },
 
     /**
      * @description Reopen a pull request.
      */
 
-    reopenPullRequest: <T extends Array<Selection>>(
+    reopenPullRequest: async <T extends Array<Selection>>(
       variables: { input?: ReopenPullRequestInput },
       select: (t: ReopenPullRequestPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"reopenPullRequest", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "reopenPullRequest",
-          "mutation",
-          new SelectionSet([Mutation.reopenPullRequest<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"reopenPullRequest", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "reopenPullRequest",
+            "mutation",
+            new SelectionSet([Mutation.reopenPullRequest<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "reopenPullRequest",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "reopenPullRequest", result });
+      } else if (result.data) {
+        return result.data.reopenPullRequest;
+      } else {
+        throw new ExecutionError({ name: "reopenPullRequest", result });
+      }
+    },
 
     /**
      * @description Set review requests on a pull request.
      */
 
-    requestReviews: <T extends Array<Selection>>(
+    requestReviews: async <T extends Array<Selection>>(
       variables: { input?: RequestReviewsInput },
       select: (t: RequestReviewsPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"requestReviews", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "requestReviews",
-          "mutation",
-          new SelectionSet([Mutation.requestReviews<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"requestReviews", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "requestReviews",
+            "mutation",
+            new SelectionSet([Mutation.requestReviews<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "requestReviews",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "requestReviews", result });
+      } else if (result.data) {
+        return result.data.requestReviews;
+      } else {
+        throw new ExecutionError({ name: "requestReviews", result });
+      }
+    },
 
     /**
      * @description Rerequests an existing check suite.
      */
 
-    rerequestCheckSuite: <T extends Array<Selection>>(
+    rerequestCheckSuite: async <T extends Array<Selection>>(
       variables: { input?: RerequestCheckSuiteInput },
       select: (t: RerequestCheckSuitePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"rerequestCheckSuite", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "rerequestCheckSuite",
-          "mutation",
-          new SelectionSet([Mutation.rerequestCheckSuite<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"rerequestCheckSuite", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "rerequestCheckSuite",
+            "mutation",
+            new SelectionSet([
+              Mutation.rerequestCheckSuite<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "rerequestCheckSuite",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "rerequestCheckSuite", result });
+      } else if (result.data) {
+        return result.data.rerequestCheckSuite;
+      } else {
+        throw new ExecutionError({ name: "rerequestCheckSuite", result });
+      }
+    },
 
     /**
      * @description Marks a review thread as resolved.
      */
 
-    resolveReviewThread: <T extends Array<Selection>>(
+    resolveReviewThread: async <T extends Array<Selection>>(
       variables: { input?: ResolveReviewThreadInput },
       select: (t: ResolveReviewThreadPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"resolveReviewThread", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "resolveReviewThread",
-          "mutation",
-          new SelectionSet([Mutation.resolveReviewThread<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"resolveReviewThread", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "resolveReviewThread",
+            "mutation",
+            new SelectionSet([
+              Mutation.resolveReviewThread<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "resolveReviewThread",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "resolveReviewThread", result });
+      } else if (result.data) {
+        return result.data.resolveReviewThread;
+      } else {
+        throw new ExecutionError({ name: "resolveReviewThread", result });
+      }
+    },
 
     /**
      * @description Creates or updates the identity provider for an enterprise.
      */
 
-    setEnterpriseIdentityProvider: <T extends Array<Selection>>(
+    setEnterpriseIdentityProvider: async <T extends Array<Selection>>(
       variables: { input?: SetEnterpriseIdentityProviderInput },
       select: (t: SetEnterpriseIdentityProviderPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"setEnterpriseIdentityProvider", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"setEnterpriseIdentityProvider", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "setEnterpriseIdentityProvider",
-          "mutation",
-          new SelectionSet([
-            Mutation.setEnterpriseIdentityProvider<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "setEnterpriseIdentityProvider",
+            "mutation",
+            new SelectionSet([
+              Mutation.setEnterpriseIdentityProvider<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "setEnterpriseIdentityProvider",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "setEnterpriseIdentityProvider",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.setEnterpriseIdentityProvider;
+      } else {
+        throw new ExecutionError({
+          name: "setEnterpriseIdentityProvider",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Set an organization level interaction limit for an organization's public repositories.
      */
 
-    setOrganizationInteractionLimit: <T extends Array<Selection>>(
+    setOrganizationInteractionLimit: async <T extends Array<Selection>>(
       variables: { input?: SetOrganizationInteractionLimitInput },
       select: (t: SetOrganizationInteractionLimitPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"setOrganizationInteractionLimit", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"setOrganizationInteractionLimit", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "setOrganizationInteractionLimit",
-          "mutation",
-          new SelectionSet([
-            Mutation.setOrganizationInteractionLimit<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "setOrganizationInteractionLimit",
+            "mutation",
+            new SelectionSet([
+              Mutation.setOrganizationInteractionLimit<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "setOrganizationInteractionLimit",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "setOrganizationInteractionLimit",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.setOrganizationInteractionLimit;
+      } else {
+        throw new ExecutionError({
+          name: "setOrganizationInteractionLimit",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets an interaction limit setting for a repository.
      */
 
-    setRepositoryInteractionLimit: <T extends Array<Selection>>(
+    setRepositoryInteractionLimit: async <T extends Array<Selection>>(
       variables: { input?: SetRepositoryInteractionLimitInput },
       select: (t: SetRepositoryInteractionLimitPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"setRepositoryInteractionLimit", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"setRepositoryInteractionLimit", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "setRepositoryInteractionLimit",
-          "mutation",
-          new SelectionSet([
-            Mutation.setRepositoryInteractionLimit<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "setRepositoryInteractionLimit",
+            "mutation",
+            new SelectionSet([
+              Mutation.setRepositoryInteractionLimit<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "setRepositoryInteractionLimit",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "setRepositoryInteractionLimit",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.setRepositoryInteractionLimit;
+      } else {
+        throw new ExecutionError({
+          name: "setRepositoryInteractionLimit",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Set a user level interaction limit for an user's public repositories.
      */
 
-    setUserInteractionLimit: <T extends Array<Selection>>(
+    setUserInteractionLimit: async <T extends Array<Selection>>(
       variables: { input?: SetUserInteractionLimitInput },
       select: (t: SetUserInteractionLimitPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"setUserInteractionLimit", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "setUserInteractionLimit",
-          "mutation",
-          new SelectionSet([
-            Mutation.setUserInteractionLimit<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"setUserInteractionLimit", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "setUserInteractionLimit",
+            "mutation",
+            new SelectionSet([
+              Mutation.setUserInteractionLimit<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "setUserInteractionLimit",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "setUserInteractionLimit", result });
+      } else if (result.data) {
+        return result.data.setUserInteractionLimit;
+      } else {
+        throw new ExecutionError({ name: "setUserInteractionLimit", result });
+      }
+    },
 
     /**
      * @description Submits a pending pull request review.
      */
 
-    submitPullRequestReview: <T extends Array<Selection>>(
+    submitPullRequestReview: async <T extends Array<Selection>>(
       variables: { input?: SubmitPullRequestReviewInput },
       select: (t: SubmitPullRequestReviewPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"submitPullRequestReview", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "submitPullRequestReview",
-          "mutation",
-          new SelectionSet([
-            Mutation.submitPullRequestReview<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"submitPullRequestReview", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "submitPullRequestReview",
+            "mutation",
+            new SelectionSet([
+              Mutation.submitPullRequestReview<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "submitPullRequestReview",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "submitPullRequestReview", result });
+      } else if (result.data) {
+        return result.data.submitPullRequestReview;
+      } else {
+        throw new ExecutionError({ name: "submitPullRequestReview", result });
+      }
+    },
 
     /**
      * @description Transfer an issue to a different repository
      */
 
-    transferIssue: <T extends Array<Selection>>(
+    transferIssue: async <T extends Array<Selection>>(
       variables: { input?: TransferIssueInput },
       select: (t: TransferIssuePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"transferIssue", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "transferIssue",
-          "mutation",
-          new SelectionSet([Mutation.transferIssue<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"transferIssue", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "transferIssue",
+            "mutation",
+            new SelectionSet([Mutation.transferIssue<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "transferIssue",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "transferIssue", result });
+      } else if (result.data) {
+        return result.data.transferIssue;
+      } else {
+        throw new ExecutionError({ name: "transferIssue", result });
+      }
+    },
 
     /**
      * @description Unarchives a repository.
      */
 
-    unarchiveRepository: <T extends Array<Selection>>(
+    unarchiveRepository: async <T extends Array<Selection>>(
       variables: { input?: UnarchiveRepositoryInput },
       select: (t: UnarchiveRepositoryPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"unarchiveRepository", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "unarchiveRepository",
-          "mutation",
-          new SelectionSet([Mutation.unarchiveRepository<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"unarchiveRepository", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "unarchiveRepository",
+            "mutation",
+            new SelectionSet([
+              Mutation.unarchiveRepository<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "unarchiveRepository",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "unarchiveRepository", result });
+      } else if (result.data) {
+        return result.data.unarchiveRepository;
+      } else {
+        throw new ExecutionError({ name: "unarchiveRepository", result });
+      }
+    },
 
     /**
      * @description Unfollow a user.
      */
 
-    unfollowUser: <T extends Array<Selection>>(
+    unfollowUser: async <T extends Array<Selection>>(
       variables: { input?: UnfollowUserInput },
       select: (t: UnfollowUserPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"unfollowUser", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "unfollowUser",
-          "mutation",
-          new SelectionSet([Mutation.unfollowUser<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"unfollowUser", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "unfollowUser",
+            "mutation",
+            new SelectionSet([Mutation.unfollowUser<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "unfollowUser",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "unfollowUser", result });
+      } else if (result.data) {
+        return result.data.unfollowUser;
+      } else {
+        throw new ExecutionError({ name: "unfollowUser", result });
+      }
+    },
 
     /**
      * @description Deletes a repository link from a project.
      */
 
-    unlinkRepositoryFromProject: <T extends Array<Selection>>(
+    unlinkRepositoryFromProject: async <T extends Array<Selection>>(
       variables: { input?: UnlinkRepositoryFromProjectInput },
       select: (t: UnlinkRepositoryFromProjectPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"unlinkRepositoryFromProject", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"unlinkRepositoryFromProject", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "unlinkRepositoryFromProject",
-          "mutation",
-          new SelectionSet([
-            Mutation.unlinkRepositoryFromProject<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "unlinkRepositoryFromProject",
+            "mutation",
+            new SelectionSet([
+              Mutation.unlinkRepositoryFromProject<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "unlinkRepositoryFromProject",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "unlinkRepositoryFromProject",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.unlinkRepositoryFromProject;
+      } else {
+        throw new ExecutionError({
+          name: "unlinkRepositoryFromProject",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Unlock a lockable object
      */
 
-    unlockLockable: <T extends Array<Selection>>(
+    unlockLockable: async <T extends Array<Selection>>(
       variables: { input?: UnlockLockableInput },
       select: (t: UnlockLockablePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"unlockLockable", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "unlockLockable",
-          "mutation",
-          new SelectionSet([Mutation.unlockLockable<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"unlockLockable", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "unlockLockable",
+            "mutation",
+            new SelectionSet([Mutation.unlockLockable<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "unlockLockable",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "unlockLockable", result });
+      } else if (result.data) {
+        return result.data.unlockLockable;
+      } else {
+        throw new ExecutionError({ name: "unlockLockable", result });
+      }
+    },
 
     /**
      * @description Unmark a pull request file as viewed
      */
 
-    unmarkFileAsViewed: <T extends Array<Selection>>(
+    unmarkFileAsViewed: async <T extends Array<Selection>>(
       variables: { input?: UnmarkFileAsViewedInput },
       select: (t: UnmarkFileAsViewedPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"unmarkFileAsViewed", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "unmarkFileAsViewed",
-          "mutation",
-          new SelectionSet([Mutation.unmarkFileAsViewed<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"unmarkFileAsViewed", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "unmarkFileAsViewed",
+            "mutation",
+            new SelectionSet([
+              Mutation.unmarkFileAsViewed<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "unmarkFileAsViewed",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "unmarkFileAsViewed", result });
+      } else if (result.data) {
+        return result.data.unmarkFileAsViewed;
+      } else {
+        throw new ExecutionError({ name: "unmarkFileAsViewed", result });
+      }
+    },
 
     /**
      * @description Unmark an issue as a duplicate of another issue.
      */
 
-    unmarkIssueAsDuplicate: <T extends Array<Selection>>(
+    unmarkIssueAsDuplicate: async <T extends Array<Selection>>(
       variables: { input?: UnmarkIssueAsDuplicateInput },
       select: (t: UnmarkIssueAsDuplicatePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"unmarkIssueAsDuplicate", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "unmarkIssueAsDuplicate",
-          "mutation",
-          new SelectionSet([
-            Mutation.unmarkIssueAsDuplicate<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"unmarkIssueAsDuplicate", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "unmarkIssueAsDuplicate",
+            "mutation",
+            new SelectionSet([
+              Mutation.unmarkIssueAsDuplicate<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "unmarkIssueAsDuplicate",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "unmarkIssueAsDuplicate", result });
+      } else if (result.data) {
+        return result.data.unmarkIssueAsDuplicate;
+      } else {
+        throw new ExecutionError({ name: "unmarkIssueAsDuplicate", result });
+      }
+    },
 
     /**
      * @description Unminimizes a comment on an Issue, Commit, Pull Request, or Gist
      */
 
-    unminimizeComment: <T extends Array<Selection>>(
+    unminimizeComment: async <T extends Array<Selection>>(
       variables: { input?: UnminimizeCommentInput },
       select: (t: UnminimizeCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"unminimizeComment", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "unminimizeComment",
-          "mutation",
-          new SelectionSet([Mutation.unminimizeComment<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"unminimizeComment", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "unminimizeComment",
+            "mutation",
+            new SelectionSet([Mutation.unminimizeComment<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "unminimizeComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "unminimizeComment", result });
+      } else if (result.data) {
+        return result.data.unminimizeComment;
+      } else {
+        throw new ExecutionError({ name: "unminimizeComment", result });
+      }
+    },
 
     /**
      * @description Marks a review thread as unresolved.
      */
 
-    unresolveReviewThread: <T extends Array<Selection>>(
+    unresolveReviewThread: async <T extends Array<Selection>>(
       variables: { input?: UnresolveReviewThreadInput },
       select: (t: UnresolveReviewThreadPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"unresolveReviewThread", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "unresolveReviewThread",
-          "mutation",
-          new SelectionSet([
-            Mutation.unresolveReviewThread<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"unresolveReviewThread", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "unresolveReviewThread",
+            "mutation",
+            new SelectionSet([
+              Mutation.unresolveReviewThread<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "unresolveReviewThread",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "unresolveReviewThread", result });
+      } else if (result.data) {
+        return result.data.unresolveReviewThread;
+      } else {
+        throw new ExecutionError({ name: "unresolveReviewThread", result });
+      }
+    },
 
     /**
      * @description Create a new branch protection rule
      */
 
-    updateBranchProtectionRule: <T extends Array<Selection>>(
+    updateBranchProtectionRule: async <T extends Array<Selection>>(
       variables: { input?: UpdateBranchProtectionRuleInput },
       select: (t: UpdateBranchProtectionRulePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"updateBranchProtectionRule", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updateBranchProtectionRule", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateBranchProtectionRule",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateBranchProtectionRule<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "updateBranchProtectionRule",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateBranchProtectionRule<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateBranchProtectionRule",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateBranchProtectionRule",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateBranchProtectionRule;
+      } else {
+        throw new ExecutionError({
+          name: "updateBranchProtectionRule",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Update a check run
      */
 
-    updateCheckRun: <T extends Array<Selection>>(
+    updateCheckRun: async <T extends Array<Selection>>(
       variables: { input?: UpdateCheckRunInput },
       select: (t: UpdateCheckRunPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"updateCheckRun", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "updateCheckRun",
-          "mutation",
-          new SelectionSet([Mutation.updateCheckRun<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updateCheckRun", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updateCheckRun",
+            "mutation",
+            new SelectionSet([Mutation.updateCheckRun<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateCheckRun",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateCheckRun", result });
+      } else if (result.data) {
+        return result.data.updateCheckRun;
+      } else {
+        throw new ExecutionError({ name: "updateCheckRun", result });
+      }
+    },
 
     /**
      * @description Modifies the settings of an existing check suite
      */
 
-    updateCheckSuitePreferences: <T extends Array<Selection>>(
+    updateCheckSuitePreferences: async <T extends Array<Selection>>(
       variables: { input?: UpdateCheckSuitePreferencesInput },
       select: (t: UpdateCheckSuitePreferencesPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"updateCheckSuitePreferences", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updateCheckSuitePreferences", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateCheckSuitePreferences",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateCheckSuitePreferences<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "updateCheckSuitePreferences",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateCheckSuitePreferences<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateCheckSuitePreferences",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateCheckSuitePreferences",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateCheckSuitePreferences;
+      } else {
+        throw new ExecutionError({
+          name: "updateCheckSuitePreferences",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Updates the role of an enterprise administrator.
      */
 
-    updateEnterpriseAdministratorRole: <T extends Array<Selection>>(
+    updateEnterpriseAdministratorRole: async <T extends Array<Selection>>(
       variables: { input?: UpdateEnterpriseAdministratorRoleInput },
       select: (t: UpdateEnterpriseAdministratorRolePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"updateEnterpriseAdministratorRole", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updateEnterpriseAdministratorRole", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseAdministratorRole",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseAdministratorRole<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseAdministratorRole",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseAdministratorRole<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseAdministratorRole",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseAdministratorRole",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseAdministratorRole;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseAdministratorRole",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets whether private repository forks are enabled for an enterprise.
      */
 
-    updateEnterpriseAllowPrivateRepositoryForkingSetting: <
+    updateEnterpriseAllowPrivateRepositoryForkingSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91225,38 +93607,60 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseAllowPrivateRepositoryForkingSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseAllowPrivateRepositoryForkingSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseAllowPrivateRepositoryForkingSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseAllowPrivateRepositoryForkingSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseAllowPrivateRepositoryForkingSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseAllowPrivateRepositoryForkingSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseAllowPrivateRepositoryForkingSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseAllowPrivateRepositoryForkingSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseAllowPrivateRepositoryForkingSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseAllowPrivateRepositoryForkingSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseAllowPrivateRepositoryForkingSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets the default repository permission for organizations in an enterprise.
      */
 
-    updateEnterpriseDefaultRepositoryPermissionSetting: <
+    updateEnterpriseDefaultRepositoryPermissionSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91265,38 +93669,60 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseDefaultRepositoryPermissionSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseDefaultRepositoryPermissionSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseDefaultRepositoryPermissionSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseDefaultRepositoryPermissionSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseDefaultRepositoryPermissionSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseDefaultRepositoryPermissionSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseDefaultRepositoryPermissionSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseDefaultRepositoryPermissionSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseDefaultRepositoryPermissionSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseDefaultRepositoryPermissionSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseDefaultRepositoryPermissionSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets whether organization members with admin permissions on a repository can change repository visibility.
      */
 
-    updateEnterpriseMembersCanChangeRepositoryVisibilitySetting: <
+    updateEnterpriseMembersCanChangeRepositoryVisibilitySetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91305,38 +93731,61 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseMembersCanChangeRepositoryVisibilitySettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseMembersCanChangeRepositoryVisibilitySetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseMembersCanChangeRepositoryVisibilitySetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseMembersCanChangeRepositoryVisibilitySetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseMembersCanChangeRepositoryVisibilitySetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseMembersCanChangeRepositoryVisibilitySetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseMembersCanChangeRepositoryVisibilitySetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseMembersCanChangeRepositoryVisibilitySetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanChangeRepositoryVisibilitySetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data
+          .updateEnterpriseMembersCanChangeRepositoryVisibilitySetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanChangeRepositoryVisibilitySetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets the members can create repositories setting for an enterprise.
      */
 
-    updateEnterpriseMembersCanCreateRepositoriesSetting: <
+    updateEnterpriseMembersCanCreateRepositoriesSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91345,74 +93794,120 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseMembersCanCreateRepositoriesSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseMembersCanCreateRepositoriesSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseMembersCanCreateRepositoriesSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseMembersCanCreateRepositoriesSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseMembersCanCreateRepositoriesSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseMembersCanCreateRepositoriesSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseMembersCanCreateRepositoriesSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseMembersCanCreateRepositoriesSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanCreateRepositoriesSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseMembersCanCreateRepositoriesSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanCreateRepositoriesSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets the members can delete issues setting for an enterprise.
      */
 
-    updateEnterpriseMembersCanDeleteIssuesSetting: <T extends Array<Selection>>(
+    updateEnterpriseMembersCanDeleteIssuesSetting: async <
+      T extends Array<Selection>
+    >(
       variables: { input?: UpdateEnterpriseMembersCanDeleteIssuesSettingInput },
       select: (
         t: UpdateEnterpriseMembersCanDeleteIssuesSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseMembersCanDeleteIssuesSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseMembersCanDeleteIssuesSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseMembersCanDeleteIssuesSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseMembersCanDeleteIssuesSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseMembersCanDeleteIssuesSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseMembersCanDeleteIssuesSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseMembersCanDeleteIssuesSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanDeleteIssuesSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseMembersCanDeleteIssuesSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanDeleteIssuesSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets the members can delete repositories setting for an enterprise.
      */
 
-    updateEnterpriseMembersCanDeleteRepositoriesSetting: <
+    updateEnterpriseMembersCanDeleteRepositoriesSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91421,38 +93916,60 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseMembersCanDeleteRepositoriesSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseMembersCanDeleteRepositoriesSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseMembersCanDeleteRepositoriesSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseMembersCanDeleteRepositoriesSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseMembersCanDeleteRepositoriesSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseMembersCanDeleteRepositoriesSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseMembersCanDeleteRepositoriesSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseMembersCanDeleteRepositoriesSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanDeleteRepositoriesSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseMembersCanDeleteRepositoriesSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanDeleteRepositoriesSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets whether members can invite collaborators are enabled for an enterprise.
      */
 
-    updateEnterpriseMembersCanInviteCollaboratorsSetting: <
+    updateEnterpriseMembersCanInviteCollaboratorsSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91461,38 +93978,60 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseMembersCanInviteCollaboratorsSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseMembersCanInviteCollaboratorsSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseMembersCanInviteCollaboratorsSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseMembersCanInviteCollaboratorsSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseMembersCanInviteCollaboratorsSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseMembersCanInviteCollaboratorsSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseMembersCanInviteCollaboratorsSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseMembersCanInviteCollaboratorsSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanInviteCollaboratorsSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseMembersCanInviteCollaboratorsSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanInviteCollaboratorsSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets whether or not an organization admin can make purchases.
      */
 
-    updateEnterpriseMembersCanMakePurchasesSetting: <
+    updateEnterpriseMembersCanMakePurchasesSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91501,38 +94040,60 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseMembersCanMakePurchasesSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseMembersCanMakePurchasesSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseMembersCanMakePurchasesSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseMembersCanMakePurchasesSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseMembersCanMakePurchasesSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseMembersCanMakePurchasesSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseMembersCanMakePurchasesSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseMembersCanMakePurchasesSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanMakePurchasesSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseMembersCanMakePurchasesSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanMakePurchasesSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets the members can update protected branches setting for an enterprise.
      */
 
-    updateEnterpriseMembersCanUpdateProtectedBranchesSetting: <
+    updateEnterpriseMembersCanUpdateProtectedBranchesSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91541,38 +94102,61 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseMembersCanUpdateProtectedBranchesSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseMembersCanUpdateProtectedBranchesSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseMembersCanUpdateProtectedBranchesSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseMembersCanUpdateProtectedBranchesSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseMembersCanUpdateProtectedBranchesSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseMembersCanUpdateProtectedBranchesSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseMembersCanUpdateProtectedBranchesSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseMembersCanUpdateProtectedBranchesSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanUpdateProtectedBranchesSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data
+          .updateEnterpriseMembersCanUpdateProtectedBranchesSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanUpdateProtectedBranchesSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets the members can view dependency insights for an enterprise.
      */
 
-    updateEnterpriseMembersCanViewDependencyInsightsSetting: <
+    updateEnterpriseMembersCanViewDependencyInsightsSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91581,165 +94165,276 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseMembersCanViewDependencyInsightsSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseMembersCanViewDependencyInsightsSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseMembersCanViewDependencyInsightsSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseMembersCanViewDependencyInsightsSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseMembersCanViewDependencyInsightsSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseMembersCanViewDependencyInsightsSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseMembersCanViewDependencyInsightsSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseMembersCanViewDependencyInsightsSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanViewDependencyInsightsSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data
+          .updateEnterpriseMembersCanViewDependencyInsightsSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseMembersCanViewDependencyInsightsSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets whether organization projects are enabled for an enterprise.
      */
 
-    updateEnterpriseOrganizationProjectsSetting: <T extends Array<Selection>>(
+    updateEnterpriseOrganizationProjectsSetting: async <
+      T extends Array<Selection>
+    >(
       variables: { input?: UpdateEnterpriseOrganizationProjectsSettingInput },
       select: (
         t: UpdateEnterpriseOrganizationProjectsSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseOrganizationProjectsSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseOrganizationProjectsSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseOrganizationProjectsSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseOrganizationProjectsSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseOrganizationProjectsSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseOrganizationProjectsSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseOrganizationProjectsSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseOrganizationProjectsSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseOrganizationProjectsSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseOrganizationProjectsSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Updates an enterprise's profile.
      */
 
-    updateEnterpriseProfile: <T extends Array<Selection>>(
+    updateEnterpriseProfile: async <T extends Array<Selection>>(
       variables: { input?: UpdateEnterpriseProfileInput },
       select: (t: UpdateEnterpriseProfilePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updateEnterpriseProfile", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updateEnterpriseProfile",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseProfile<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updateEnterpriseProfile", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "updateEnterpriseProfile",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseProfile<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseProfile",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateEnterpriseProfile", result });
+      } else if (result.data) {
+        return result.data.updateEnterpriseProfile;
+      } else {
+        throw new ExecutionError({ name: "updateEnterpriseProfile", result });
+      }
+    },
 
     /**
      * @description Sets whether repository projects are enabled for a enterprise.
      */
 
-    updateEnterpriseRepositoryProjectsSetting: <T extends Array<Selection>>(
+    updateEnterpriseRepositoryProjectsSetting: async <
+      T extends Array<Selection>
+    >(
       variables: { input?: UpdateEnterpriseRepositoryProjectsSettingInput },
       select: (t: UpdateEnterpriseRepositoryProjectsSettingPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseRepositoryProjectsSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseRepositoryProjectsSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseRepositoryProjectsSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseRepositoryProjectsSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseRepositoryProjectsSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseRepositoryProjectsSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseRepositoryProjectsSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseRepositoryProjectsSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseRepositoryProjectsSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseRepositoryProjectsSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets whether team discussions are enabled for an enterprise.
      */
 
-    updateEnterpriseTeamDiscussionsSetting: <T extends Array<Selection>>(
+    updateEnterpriseTeamDiscussionsSetting: async <T extends Array<Selection>>(
       variables: { input?: UpdateEnterpriseTeamDiscussionsSettingInput },
       select: (t: UpdateEnterpriseTeamDiscussionsSettingPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseTeamDiscussionsSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseTeamDiscussionsSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseTeamDiscussionsSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseTeamDiscussionsSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseTeamDiscussionsSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseTeamDiscussionsSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseTeamDiscussionsSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseTeamDiscussionsSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateEnterpriseTeamDiscussionsSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseTeamDiscussionsSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets whether two factor authentication is required for all users in an enterprise.
      */
 
-    updateEnterpriseTwoFactorAuthenticationRequiredSetting: <
+    updateEnterpriseTwoFactorAuthenticationRequiredSetting: async <
       T extends Array<Selection>
     >(
       variables: {
@@ -91748,377 +94443,686 @@ export class GitHub implements Client {
       select: (
         t: UpdateEnterpriseTwoFactorAuthenticationRequiredSettingPayloadSelector
       ) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [
-              Field<
-                "updateEnterpriseTwoFactorAuthenticationRequiredSetting",
-                any,
-                SelectionSet<T>
-              >
-            ]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [
+                Field<
+                  "updateEnterpriseTwoFactorAuthenticationRequiredSetting",
+                  any,
+                  SelectionSet<T>
+                >
+              ]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateEnterpriseTwoFactorAuthenticationRequiredSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateEnterpriseTwoFactorAuthenticationRequiredSetting<T>(
-              variables,
-              select
-            ),
-          ])
+        >(
+          new Operation(
+            "updateEnterpriseTwoFactorAuthenticationRequiredSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateEnterpriseTwoFactorAuthenticationRequiredSetting<T>(
+                variables,
+                select
+              ),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateEnterpriseTwoFactorAuthenticationRequiredSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateEnterpriseTwoFactorAuthenticationRequiredSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data
+          .updateEnterpriseTwoFactorAuthenticationRequiredSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateEnterpriseTwoFactorAuthenticationRequiredSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Sets whether an IP allow list is enabled on an owner.
      */
 
-    updateIpAllowListEnabledSetting: <T extends Array<Selection>>(
+    updateIpAllowListEnabledSetting: async <T extends Array<Selection>>(
       variables: { input?: UpdateIpAllowListEnabledSettingInput },
       select: (t: UpdateIpAllowListEnabledSettingPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"updateIpAllowListEnabledSetting", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updateIpAllowListEnabledSetting", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateIpAllowListEnabledSetting",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateIpAllowListEnabledSetting<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "updateIpAllowListEnabledSetting",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateIpAllowListEnabledSetting<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateIpAllowListEnabledSetting",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateIpAllowListEnabledSetting",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateIpAllowListEnabledSetting;
+      } else {
+        throw new ExecutionError({
+          name: "updateIpAllowListEnabledSetting",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Updates an IP allow list entry.
      */
 
-    updateIpAllowListEntry: <T extends Array<Selection>>(
+    updateIpAllowListEntry: async <T extends Array<Selection>>(
       variables: { input?: UpdateIpAllowListEntryInput },
       select: (t: UpdateIpAllowListEntryPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updateIpAllowListEntry", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updateIpAllowListEntry",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateIpAllowListEntry<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updateIpAllowListEntry", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "updateIpAllowListEntry",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateIpAllowListEntry<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateIpAllowListEntry",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateIpAllowListEntry", result });
+      } else if (result.data) {
+        return result.data.updateIpAllowListEntry;
+      } else {
+        throw new ExecutionError({ name: "updateIpAllowListEntry", result });
+      }
+    },
 
     /**
      * @description Updates an Issue.
      */
 
-    updateIssue: <T extends Array<Selection>>(
+    updateIssue: async <T extends Array<Selection>>(
       variables: { input?: UpdateIssueInput },
       select: (t: UpdateIssuePayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"updateIssue", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "updateIssue",
-          "mutation",
-          new SelectionSet([Mutation.updateIssue<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"updateIssue", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "updateIssue",
+            "mutation",
+            new SelectionSet([Mutation.updateIssue<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateIssue",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateIssue", result });
+      } else if (result.data) {
+        return result.data.updateIssue;
+      } else {
+        throw new ExecutionError({ name: "updateIssue", result });
+      }
+    },
 
     /**
      * @description Updates an IssueComment object.
      */
 
-    updateIssueComment: <T extends Array<Selection>>(
+    updateIssueComment: async <T extends Array<Selection>>(
       variables: { input?: UpdateIssueCommentInput },
       select: (t: UpdateIssueCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updateIssueComment", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updateIssueComment",
-          "mutation",
-          new SelectionSet([Mutation.updateIssueComment<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updateIssueComment", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updateIssueComment",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateIssueComment<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateIssueComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateIssueComment", result });
+      } else if (result.data) {
+        return result.data.updateIssueComment;
+      } else {
+        throw new ExecutionError({ name: "updateIssueComment", result });
+      }
+    },
 
     /**
      * @description Updates an existing project.
      */
 
-    updateProject: <T extends Array<Selection>>(
+    updateProject: async <T extends Array<Selection>>(
       variables: { input?: UpdateProjectInput },
       select: (t: UpdateProjectPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"updateProject", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "updateProject",
-          "mutation",
-          new SelectionSet([Mutation.updateProject<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updateProject", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updateProject",
+            "mutation",
+            new SelectionSet([Mutation.updateProject<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateProject",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateProject", result });
+      } else if (result.data) {
+        return result.data.updateProject;
+      } else {
+        throw new ExecutionError({ name: "updateProject", result });
+      }
+    },
 
     /**
      * @description Updates an existing project card.
      */
 
-    updateProjectCard: <T extends Array<Selection>>(
+    updateProjectCard: async <T extends Array<Selection>>(
       variables: { input?: UpdateProjectCardInput },
       select: (t: UpdateProjectCardPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updateProjectCard", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updateProjectCard",
-          "mutation",
-          new SelectionSet([Mutation.updateProjectCard<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updateProjectCard", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updateProjectCard",
+            "mutation",
+            new SelectionSet([Mutation.updateProjectCard<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateProjectCard",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateProjectCard", result });
+      } else if (result.data) {
+        return result.data.updateProjectCard;
+      } else {
+        throw new ExecutionError({ name: "updateProjectCard", result });
+      }
+    },
 
     /**
      * @description Updates an existing project column.
      */
 
-    updateProjectColumn: <T extends Array<Selection>>(
+    updateProjectColumn: async <T extends Array<Selection>>(
       variables: { input?: UpdateProjectColumnInput },
       select: (t: UpdateProjectColumnPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updateProjectColumn", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updateProjectColumn",
-          "mutation",
-          new SelectionSet([Mutation.updateProjectColumn<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updateProjectColumn", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updateProjectColumn",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateProjectColumn<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateProjectColumn",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateProjectColumn", result });
+      } else if (result.data) {
+        return result.data.updateProjectColumn;
+      } else {
+        throw new ExecutionError({ name: "updateProjectColumn", result });
+      }
+    },
 
     /**
      * @description Update a pull request
      */
 
-    updatePullRequest: <T extends Array<Selection>>(
+    updatePullRequest: async <T extends Array<Selection>>(
       variables: { input?: UpdatePullRequestInput },
       select: (t: UpdatePullRequestPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updatePullRequest", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updatePullRequest",
-          "mutation",
-          new SelectionSet([Mutation.updatePullRequest<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updatePullRequest", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updatePullRequest",
+            "mutation",
+            new SelectionSet([Mutation.updatePullRequest<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updatePullRequest",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updatePullRequest", result });
+      } else if (result.data) {
+        return result.data.updatePullRequest;
+      } else {
+        throw new ExecutionError({ name: "updatePullRequest", result });
+      }
+    },
 
     /**
      * @description Updates the body of a pull request review.
      */
 
-    updatePullRequestReview: <T extends Array<Selection>>(
+    updatePullRequestReview: async <T extends Array<Selection>>(
       variables: { input?: UpdatePullRequestReviewInput },
       select: (t: UpdatePullRequestReviewPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updatePullRequestReview", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updatePullRequestReview",
-          "mutation",
-          new SelectionSet([
-            Mutation.updatePullRequestReview<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updatePullRequestReview", any, SelectionSet<T>>]
+            >
+          >
+        >(
+          new Operation(
+            "updatePullRequestReview",
+            "mutation",
+            new SelectionSet([
+              Mutation.updatePullRequestReview<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updatePullRequestReview",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updatePullRequestReview", result });
+      } else if (result.data) {
+        return result.data.updatePullRequestReview;
+      } else {
+        throw new ExecutionError({ name: "updatePullRequestReview", result });
+      }
+    },
 
     /**
      * @description Updates a pull request review comment.
      */
 
-    updatePullRequestReviewComment: <T extends Array<Selection>>(
+    updatePullRequestReviewComment: async <T extends Array<Selection>>(
       variables: { input?: UpdatePullRequestReviewCommentInput },
       select: (t: UpdatePullRequestReviewCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"updatePullRequestReviewComment", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updatePullRequestReviewComment", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updatePullRequestReviewComment",
-          "mutation",
-          new SelectionSet([
-            Mutation.updatePullRequestReviewComment<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "updatePullRequestReviewComment",
+            "mutation",
+            new SelectionSet([
+              Mutation.updatePullRequestReviewComment<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updatePullRequestReviewComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updatePullRequestReviewComment",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updatePullRequestReviewComment;
+      } else {
+        throw new ExecutionError({
+          name: "updatePullRequestReviewComment",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Update a Git Ref.
      */
 
-    updateRef: <T extends Array<Selection>>(
+    updateRef: async <T extends Array<Selection>>(
       variables: { input?: UpdateRefInput },
       select: (t: UpdateRefPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"updateRef", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "updateRef",
-          "mutation",
-          new SelectionSet([Mutation.updateRef<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"updateRef", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "updateRef",
+            "mutation",
+            new SelectionSet([Mutation.updateRef<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateRef",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateRef", result });
+      } else if (result.data) {
+        return result.data.updateRef;
+      } else {
+        throw new ExecutionError({ name: "updateRef", result });
+      }
+    },
 
     /**
      * @description Update information about a repository.
      */
 
-    updateRepository: <T extends Array<Selection>>(
+    updateRepository: async <T extends Array<Selection>>(
       variables: { input?: UpdateRepositoryInput },
       select: (t: UpdateRepositoryPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updateRepository", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updateRepository",
-          "mutation",
-          new SelectionSet([Mutation.updateRepository<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updateRepository", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updateRepository",
+            "mutation",
+            new SelectionSet([Mutation.updateRepository<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateRepository",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateRepository", result });
+      } else if (result.data) {
+        return result.data.updateRepository;
+      } else {
+        throw new ExecutionError({ name: "updateRepository", result });
+      }
+    },
 
     /**
      * @description Updates the state for subscribable subjects.
      */
 
-    updateSubscription: <T extends Array<Selection>>(
+    updateSubscription: async <T extends Array<Selection>>(
       variables: { input?: UpdateSubscriptionInput },
       select: (t: UpdateSubscriptionPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updateSubscription", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updateSubscription",
-          "mutation",
-          new SelectionSet([Mutation.updateSubscription<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updateSubscription", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updateSubscription",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateSubscription<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateSubscription",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateSubscription", result });
+      } else if (result.data) {
+        return result.data.updateSubscription;
+      } else {
+        throw new ExecutionError({ name: "updateSubscription", result });
+      }
+    },
 
     /**
      * @description Updates a team discussion.
      */
 
-    updateTeamDiscussion: <T extends Array<Selection>>(
+    updateTeamDiscussion: async <T extends Array<Selection>>(
       variables: { input?: UpdateTeamDiscussionInput },
       select: (t: UpdateTeamDiscussionPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<[Field<"updateTeamDiscussion", any, SelectionSet<T>>]>
-        >
-      >(
-        new Operation(
-          "updateTeamDiscussion",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateTeamDiscussion<T>(variables, select),
-          ])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<[Field<"updateTeamDiscussion", any, SelectionSet<T>>]>
+          >
+        >(
+          new Operation(
+            "updateTeamDiscussion",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateTeamDiscussion<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateTeamDiscussion",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateTeamDiscussion", result });
+      } else if (result.data) {
+        return result.data.updateTeamDiscussion;
+      } else {
+        throw new ExecutionError({ name: "updateTeamDiscussion", result });
+      }
+    },
 
     /**
      * @description Updates a discussion comment.
      */
 
-    updateTeamDiscussionComment: <T extends Array<Selection>>(
+    updateTeamDiscussionComment: async <T extends Array<Selection>>(
       variables: { input?: UpdateTeamDiscussionCommentInput },
       select: (t: UpdateTeamDiscussionCommentPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<
-          SelectionSet<
-            [Field<"updateTeamDiscussionComment", any, SelectionSet<T>>]
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<
+            SelectionSet<
+              [Field<"updateTeamDiscussionComment", any, SelectionSet<T>>]
+            >
           >
-        >
-      >(
-        new Operation(
-          "updateTeamDiscussionComment",
-          "mutation",
-          new SelectionSet([
-            Mutation.updateTeamDiscussionComment<T>(variables, select),
-          ])
+        >(
+          new Operation(
+            "updateTeamDiscussionComment",
+            "mutation",
+            new SelectionSet([
+              Mutation.updateTeamDiscussionComment<T>(variables, select),
+            ])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateTeamDiscussionComment",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({
+          name: "updateTeamDiscussionComment",
+          result,
+        });
+      } else if (result.data) {
+        return result.data.updateTeamDiscussionComment;
+      } else {
+        throw new ExecutionError({
+          name: "updateTeamDiscussionComment",
+          result,
+        });
+      }
+    },
 
     /**
      * @description Replaces the repository's topics with the given topics.
      */
 
-    updateTopics: <T extends Array<Selection>>(
+    updateTopics: async <T extends Array<Selection>>(
       variables: { input?: UpdateTopicsInput },
       select: (t: UpdateTopicsPayloadSelector) => T
-    ) =>
-      this.executor.execute<
-        IMutation,
-        Operation<SelectionSet<[Field<"updateTopics", any, SelectionSet<T>>]>>
-      >(
-        new Operation(
-          "updateTopics",
-          "mutation",
-          new SelectionSet([Mutation.updateTopics<T>(variables, select)])
+    ) => {
+      const result = await this.executor
+        .execute<
+          IMutation,
+          Operation<SelectionSet<[Field<"updateTopics", any, SelectionSet<T>>]>>
+        >(
+          new Operation(
+            "updateTopics",
+            "mutation",
+            new SelectionSet([Mutation.updateTopics<T>(variables, select)])
+          )
         )
-      ),
+        .catch((error: any) => {
+          throw new ExecutionError({
+            name: "updateTopics",
+            transportError: error,
+          });
+        });
+
+      if (result.errors) {
+        throw new ExecutionError({ name: "updateTopics", result });
+      } else if (result.data) {
+        return result.data.updateTopics;
+      } else {
+        throw new ExecutionError({ name: "updateTopics", result });
+      }
+    },
   };
 }

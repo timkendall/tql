@@ -126,7 +126,7 @@ export class Argument<Name extends string, Value = any> {
     public readonly name: Name,
     public readonly value?: Value,
     // @note Janky enum support
-    public readonly _enum?: any
+    public readonly _enumValues?: Record<string, true>
   ) {}
 
   get ast(): ArgumentNode {
@@ -135,7 +135,13 @@ export class Argument<Name extends string, Value = any> {
       value:
         this.value instanceof Variable
           ? this.value.ast
-          : valueNodeOf(this.value, this._enum ? [this._enum] : undefined),
+          : valueNodeOf(
+              this.value,
+              this._enumValues ??
+                {
+                  /* empty */
+                }
+            ),
     });
   }
 }

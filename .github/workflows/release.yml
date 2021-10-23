@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        # quick way to fetch all commits so our changelog is generated correctly
+        with:
+          fetch-depth: 0
 
       - name: Setup Node
         uses: actions/setup-node@v1

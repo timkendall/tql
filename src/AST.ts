@@ -147,10 +147,12 @@ export const nameNodeOf = (name: string): NameNode => ({
   value: name,
 });
 
-export const valueNodeOf = (value: any, enums: any[] = []): ValueNode => {
+export const valueNodeOf = (
+  value: any,
+  enumValues: Record<string, true>
+): ValueNode => {
   if (typeof value === "string") {
-    if (enums.some((e) => Object.values(e).includes(value)))
-      return { kind: Kind.ENUM, value: value };
+    if (enumValues[value]) return { kind: Kind.ENUM, value: value };
     return { kind: Kind.STRING, value: value };
   } else if (Number.isInteger(value)) {
     return { kind: Kind.INT, value: value };
@@ -163,7 +165,7 @@ export const valueNodeOf = (value: any, enums: any[] = []): ValueNode => {
   } else if (Array.isArray(value)) {
     return {
       kind: Kind.LIST,
-      values: value.map((v) => valueNodeOf(v, enums)),
+      values: value.map((v) => valueNodeOf(v, enumValues)),
     };
   } else if (typeof value === "object") {
     return {
@@ -171,7 +173,7 @@ export const valueNodeOf = (value: any, enums: any[] = []): ValueNode => {
       fields: Object.entries(value)
         .filter(([_, value]) => value !== undefined)
         .map(([key, value]) => {
-          const keyValNode = valueNodeOf(value, enums);
+          const keyValNode = valueNodeOf(value, enumValues);
           return {
             kind: Kind.OBJECT_FIELD,
             name: nameNodeOf(key),

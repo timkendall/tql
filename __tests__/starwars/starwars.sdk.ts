@@ -17,6 +17,36 @@ export const VERSION = "unversioned";
 
 export const SCHEMA_SHA = "4c13c55";
 
+const _ENUM_VALUES = {
+  NEWHOPE: true,
+  EMPIRE: true,
+  JEDI: true,
+  METER: true,
+  FOOT: true,
+  CUBIT: true,
+  SCALAR: true,
+  OBJECT: true,
+  INTERFACE: true,
+  UNION: true,
+  ENUM: true,
+  INPUT_OBJECT: true,
+  LIST: true,
+  NON_NULL: true,
+  QUERY: true,
+  MUTATION: true,
+  SUBSCRIPTION: true,
+  FIELD: true,
+  FRAGMENT_DEFINITION: true,
+  FRAGMENT_SPREAD: true,
+  INLINE_FRAGMENT: true,
+  VARIABLE_DEFINITION: true,
+  SCHEMA: true,
+  FIELD_DEFINITION: true,
+  ARGUMENT_DEFINITION: true,
+  ENUM_VALUE: true,
+  INPUT_FIELD_DEFINITION: true,
+} as const;
+
 export enum Episode {
   NEWHOPE = "NEWHOPE",
   EMPIRE = "EMPIRE",
@@ -200,49 +230,49 @@ export const Query: QuerySelector = {
   hero: (variables, select) =>
     new Field(
       "hero",
-      [new Argument("episode", variables.episode, Episode)],
+      [new Argument("episode", variables.episode, _ENUM_VALUES)],
       new SelectionSet(select(Character))
     ),
 
   reviews: (variables, select) =>
     new Field(
       "reviews",
-      [new Argument("episode", variables.episode, Episode)],
+      [new Argument("episode", variables.episode, _ENUM_VALUES)],
       new SelectionSet(select(Review))
     ),
 
   search: (variables, select) =>
     new Field(
       "search",
-      [new Argument("text", variables.text)],
+      [new Argument("text", variables.text, _ENUM_VALUES)],
       new SelectionSet(select(SearchResult))
     ),
 
   character: (variables, select) =>
     new Field(
       "character",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(Character))
     ),
 
   droid: (variables, select) =>
     new Field(
       "droid",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(Droid))
     ),
 
   human: (variables, select) =>
     new Field(
       "human",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(Human))
     ),
 
   starship: (variables, select) =>
     new Field(
       "starship",
-      [new Argument("id", variables.id)],
+      [new Argument("id", variables.id, _ENUM_VALUES)],
       new SelectionSet(select(Starship))
     ),
 };
@@ -278,8 +308,8 @@ export const Mutation: MutationSelector = {
     new Field(
       "createReview",
       [
-        new Argument("episode", variables.episode, Episode),
-        new Argument("review", variables.review),
+        new Argument("episode", variables.episode, _ENUM_VALUES),
+        new Argument("review", variables.review, _ENUM_VALUES),
       ],
       new SelectionSet(select(Review))
     ),
@@ -386,8 +416,8 @@ export const Character: CharacterSelector = {
     new Field(
       "friendsConnection",
       [
-        new Argument("first", variables.first),
-        new Argument("after", variables.after),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
       ],
       new SelectionSet(select(FriendsConnection))
     ),
@@ -562,8 +592,8 @@ export const Human: HumanSelector = {
     new Field(
       "friendsConnection",
       [
-        new Argument("first", variables.first),
-        new Argument("after", variables.after),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
       ],
       new SelectionSet(select(FriendsConnection))
     ),
@@ -683,8 +713,8 @@ export const Droid: DroidSelector = {
     new Field(
       "friendsConnection",
       [
-        new Argument("first", variables.first),
-        new Argument("after", variables.after),
+        new Argument("first", variables.first, _ENUM_VALUES),
+        new Argument("after", variables.after, _ENUM_VALUES),
       ],
       new SelectionSet(select(FriendsConnection))
     ),
