@@ -578,6 +578,9 @@ export class Codegen {
         const _base = getBaseInputType(arg.type);
 
         // @note Janky enum value support
+        // @todo We could have a global lookup of enum values
+        // that `toValueNode` uses to determine if a TS value is an enum at runtime
+        // (since enums are erased)
         return _base instanceof GraphQLEnumType
           ? `new Argument("${arg.name}", variables.${arg.name}, ${_base.name})`
           : `new Argument("${arg.name}", variables.${arg.name})`;
