@@ -4,6 +4,7 @@
     "strict": true,
     "noEmit": true,
     "rootDir": ".",
+    "outDir": "dist",
     "sourceMap": false,
     "target": "ES2019",
     "module": "commonjs",

@@ -1,15 +1,14 @@
-import {
+import type {
   Primitive,
   NamedType,
   SelectionSet,
   Selection,
   Field,
   InlineFragment,
-} from "./Operation";
+  FragmentSpread,
+} from "./AST";
 
-type FilterFragments<
-  T extends Array<Field<any, any, any> | InlineFragment<any, any>>
-> = Array<
+type Fields<T extends ReadonlyArray<Selection>> = Array<
   T[number] extends infer U
     ? U extends Field<any, any, any>
       ? T[number]
@@ -17,35 +16,31 @@ type FilterFragments<
     : never
 >;
 
+// SelectionSet<Selection<Field | InlineFragment | FragmentSpread>>
+
+// @note `Result` takes a root `Type` (TS) and `SelectionSet` (GQL) and recursively walks the
+// array of `Selection` nodes's (i.e `Field`, `InlineFragment`, or `FragmentSpread` nodes)
 export type Result<
   Type,
-  TSelectionSet extends SelectionSet<Array<Selection>>
+  Selected extends SelectionSet<Array<Selection>>
 > = Type extends Array<infer T> | ReadonlyArray<infer T>
   ? T extends Primitive
     ? // @note Return scalar array
       ReadonlyArray<T>
     : // @note Wrap complex object in array
-      ReadonlyArray<Result<T, TSelectionSet>>
+      ReadonlyArray<Result<T, Selected>>
   : {
-      readonly // @note Build out object from non-fragment field selections
-      [Key in FilterFragments<
-        TSelectionSet["selections"]
-      >[number]["name"]]: Type[Key] extends Primitive
-        ? Type[Key]
-        : TSelectionSet["selections"][number] extends infer U
-        ? U extends Field<Key, any, infer Selections>
-          ? null extends Type[Key]
-            ? Result<NonNullable<Type[Key]>, Selections> | null
-            : Result<Type[Key], Selections>
+      readonly [Selection in Selected["selections"][number] as Selection extends Field<
+        infer N,
+        any,
+        any
+      >
+        ? N
+        : never]: Selection extends Field<infer Name, infer Args, infer Sel>
+        ? Type[Selection["name"]["value"]] extends Primitive
+          ? Type[Selection["name"]["value"]]
+          : Sel extends SelectionSet<any>
+          ? Result<Type[Selection["name"]["value"]], Sel>
           : never
         : never;
-    } &
-      (TSelectionSet["selections"][number] extends infer U
-        ? U extends InlineFragment<infer TypeCondition, infer SelectionSet>
-          ? TypeCondition extends NamedType<string, infer Type>
-            ? null extends Type
-              ? Result<NonNullable<Type>, SelectionSet> | null
-              : Result<Type, SelectionSet>
-            : {}
-          : {}
-        : {}); // @note need to use empty objects to not nuke the left side of our intersection type (&)
+    };
