@@ -1,6 +1,6 @@
 # TQL
 
-> Note: this is **pre-production software** at this point, see the **[current limitations](./CURRENT_LIMITATIONS.md)**.
+> Note: this is **pre-production software** at this point, see the **[current limitations](./docs/CURRENT_LIMITATIONS.md)**.
 
 **tql** is a TypeScript GraphQL query builder.
 

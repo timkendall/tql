@@ -1,5 +1,5 @@
-import {
-  Kind,
+import { Kind } from "graphql/language";
+import type {
   NamedTypeNode,
   ListTypeNode,
   NonNullTypeNode,

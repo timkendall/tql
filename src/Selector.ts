@@ -1,9 +1,5 @@
-import {
-  TypedQueryDocumentNode,
-  print,
-  GraphQLSchema,
-  NameNode,
-} from "graphql";
+import { print } from "graphql/language";
+import type { GraphQLSchema, TypedQueryDocumentNode } from "graphql";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
 import {
