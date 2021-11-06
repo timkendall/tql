@@ -5,7 +5,7 @@
     "noEmit": true,
     "rootDir": ".",
     "outDir": "dist",
-    "sourceMap": false,
+    "sourceMap": true,
     "target": "ES2019",
     "module": "commonjs",
     "noUnusedLocals": false,
