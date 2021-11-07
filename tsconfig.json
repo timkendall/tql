@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "examples/**/*", "__tests__/**/*"],
+  "include": ["src/**/*", "examples/**/*", "__tests__/**/*", "test-d/**/*"],
   "compilerOptions": {
     "strict": true,
     "noEmit": true,
