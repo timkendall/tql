@@ -27,6 +27,7 @@
     "prepush": "yarn test",
     "prepublish": "yarn clean && yarn build:release",
     "test": "jest --cache=false",
+    "type-test": "tsd",
     "format": "prettier --write",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },

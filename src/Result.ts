@@ -17,18 +17,29 @@ type Fields<T extends ReadonlyArray<Selection>> = Array<
 >;
 
 // SelectionSet<Selection<Field | InlineFragment | FragmentSpread>>
+type NameOf<T extends Field<any, any, any>> = T extends Field<
+  infer Name,
+  any,
+  any
+>
+  ? Name
+  : never;
 
 // @note `Result` takes a root `Type` (TS) and `SelectionSet` (GQL) and recursively walks the
 // array of `Selection` nodes's (i.e `Field`, `InlineFragment`, or `FragmentSpread` nodes)
 export type Result<
   Type,
   Selected extends SelectionSet<Array<Selection>>
-> = Type extends Array<infer T> | ReadonlyArray<infer T>
+> = NonNullable<Type> extends Array<infer T> | ReadonlyArray<infer T>
   ? T extends Primitive
     ? // @note Return scalar array
-      ReadonlyArray<T>
+      null extends Type
+      ? ReadonlyArray<T> | null
+      : ReadonlyArray<T>
     : // @note Wrap complex object in array
-      ReadonlyArray<Result<T, Selected>>
+    null extends Type
+    ? ReadonlyArray<Result<T, Selected>> | null
+    : ReadonlyArray<Result<T, Selected>>
   : {
       readonly [Selection in Selected["selections"][number] as Selection extends Field<
         infer N,
@@ -36,11 +47,11 @@ export type Result<
         any
       >
         ? N
-        : never]: Selection extends Field<infer Name, infer Args, infer Sel>
-        ? Type[Selection["name"]["value"]] extends Primitive
-          ? Type[Selection["name"]["value"]]
-          : Sel extends SelectionSet<any>
-          ? Result<Type[Selection["name"]["value"]], Sel>
+        : never]: Selection extends Field<any, any, undefined>
+        ? Type[NameOf<Selection>]
+        : Selection extends Field<any, any, infer S>
+        ? S extends SelectionSet<any>
+          ? Result<Type[NameOf<Selection>], S>
           : never
         : never;
     };

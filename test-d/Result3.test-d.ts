@@ -1,22 +1,27 @@
-import { expectType } from "tsd";
+import { expectAssignable } from "tsd";
 import freeze from "deep-freeze";
 
 import { selectionSet, field, Result } from "../src";
 
 interface Query {
   viewer: User;
+  friendsByUserId: User[] | null;
 }
 
 interface User {
   id: string;
   firstName: string;
   age: number | null;
-  friends: [User] | null;
+  friends: User[] | null;
 }
 
+type f = User["friends"] extends Array<any> | null ? true : false;
+type isNullable = null extends User["friends"] ? true : false;
+
 const selection = selectionSet([
+  field("viewer", undefined, selectionSet([field("id")])),
   field(
-    "viewer",
+    "friendsByUserId",
     undefined,
     selectionSet([
       field("id"),
@@ -29,24 +34,27 @@ const selection = selectionSet([
 
 type Test = Result<Query, typeof selection>;
 
-expectType<Test>(
+expectAssignable<Test>(
   freeze({
     viewer: {
       id: "foo",
-      firstName: "Tim",
-      age: 69,
-      friends: [{ id: "bar" }],
     },
+    friendsByUserId: [
+      {
+        id: "foo",
+        firstName: "Tim",
+        age: 69,
+        friends: [{ id: "bar" }],
+      },
+    ],
   })
 );
 
-expectType<Test>(
+expectAssignable<Test>(
   freeze({
     viewer: {
       id: "foo",
-      firstName: "Tim",
-      age: null,
-      friends: [{ id: "bar" }],
     },
+    friendsByUserId: null,
   })
 );
