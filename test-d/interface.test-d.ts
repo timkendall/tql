@@ -44,17 +44,21 @@ const selection = selectionSet([
     "node",
     undefined,
     selectionSet([
-      field("__typename"),
-      field("id"),
+      // field("__typename"),
+      // field("id"),
 
       inlineFragment(
         namedType<"Employee">("Employee"),
-        selectionSet([field("firstName")] as const)
+        selectionSet([field("id"), field("firstName")] as const)
       ),
 
       inlineFragment(
         namedType<"Admin">("Admin"),
-        selectionSet([field("badass"), field("badgeNumber")] as const)
+        selectionSet([
+          field("id"),
+          field("badass"),
+          field("badgeNumber"),
+        ] as const)
       ),
     ] as const)
   ),
@@ -66,7 +70,7 @@ const data = {} as Test;
 
 if (data.node?.__typename === "Employee") {
   data.node.__typename;
-  data.node.id;
+  // data.node.id;
   data.node.firstName;
 } else if (data.node?.__typename === "Admin") {
   data.node.__typename;

@@ -35,18 +35,8 @@ export type Result<
   : Parent extends Record<string, any>
   ? Selected extends SelectionSet<ReadonlyArray<Selection>>
     ? HasInlineFragment<Selected> extends Test.Pass
-      ? {
-          readonly // @todo cleanup mapped typed field name mapping
-          [F in Selected["selections"][number] as F extends Field<
-            infer Name,
-            any,
-            any
-          >
-            ? Name
-            : never]: F extends Field<infer Name, any, infer SS>
-            ? Result<Schema, Parent[Name], SS>
-            : never;
-        } & SpreadFragments<Schema, InlineFragments<Selected>>
+      ? // @todo merge Field selections into each fragment's selection
+        SpreadFragments<Schema, InlineFragments<Selected>>
       : {
           readonly // @todo cleanup mapped typed field name mapping
           [F in Selected["selections"][number] as F extends Field<
@@ -65,8 +55,11 @@ export type Result<
 export type SpreadFragment<
   Schema extends Record<string, any>,
   T extends InlineFragment<any, any>
-> = T extends InlineFragment<NamedType<infer Typename>, infer SS>
-  ? Merge<{ __typename: Typename }, Result<Schema, Schema[Typename], SS>>
+> = T extends InlineFragment<NamedType<infer Typename>, infer SelectionSet>
+  ? Merge<
+      { __typename: Typename },
+      Result<Schema, Schema[Typename], SelectionSet>
+    >
   : never;
 
 export type SpreadFragments<
