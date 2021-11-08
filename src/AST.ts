@@ -28,36 +28,35 @@ export type Primitive =
   | null
   | undefined;
 
-export interface NonNullType<
-  Type extends NamedType<string, any> | ListType<any>
-> extends NonNullTypeNode {
+export interface NonNullType<Type extends NamedType<string> | ListType<any>>
+  extends NonNullTypeNode {
   type: Type;
 }
 
-export const nonNull = <Type extends NamedType<string, any> | ListType<any>>(
+export const nonNull = <Type extends NamedType<string> | ListType<any>>(
   type: Type
 ): NonNullType<Type> => ({
   kind: Kind.NON_NULL_TYPE,
   type,
 });
 
-export interface ListType<
-  Type extends NamedType<string, any> | NonNullType<any>
-> extends ListTypeNode {
+export interface ListType<Type extends NamedType<string> | NonNullType<any>>
+  extends ListTypeNode {
   type: Type;
 }
 
-export interface NamedType<Name extends string, Type = unknown>
-  extends NamedTypeNode {}
+export interface NamedType<Name extends string> extends NamedTypeNode {
+  name: { kind: "Name"; value: Name };
+}
 
 export const namedType = <Name extends string>(
   name: string
 ): NamedType<Name> => ({
   kind: Kind.NAMED_TYPE,
-  name: { kind: Kind.NAME, value: name },
+  name: { kind: Kind.NAME, value: name as Name },
 });
 
-export type Type = NamedType<string, any> | ListType<any> | NonNullType<any>;
+export type Type = NamedType<string> | ListType<any> | NonNullType<any>;
 
 export interface Variable<Name extends string> extends VariableNode {
   name: { kind: "Name"; value: Name };
@@ -144,12 +143,12 @@ export const field = <
 });
 
 export interface InlineFragment<
-  TypeCondition extends NamedType<string, any>,
+  TypeCondition extends NamedType<string>,
   SS extends SelectionSet<ReadonlyArray<Selection>>
 > extends InlineFragmentNode {}
 
 export const inlineFragment = <
-  TypeCondition extends NamedType<string, any>,
+  TypeCondition extends NamedType<string>,
   SS extends SelectionSet<ReadonlyArray<Selection>>
 >(
   typeCondition: TypeCondition,
@@ -165,7 +164,7 @@ export const inlineFragment = <
 
 export interface FragmentDefinition<
   Name extends string,
-  TypeCondition extends NamedType<string, any>,
+  TypeCondition extends NamedType<string>,
   SS extends SelectionSet<ReadonlyArray<Selection>>
 > extends FragmentDefinitionNode {
   readonly name: { kind: "Name"; value: Name };
@@ -175,7 +174,7 @@ export interface FragmentDefinition<
 
 export const fragmentDefinition = <
   Name extends string,
-  TypeCondition extends NamedType<string, any>,
+  TypeCondition extends NamedType<string>,
   SS extends SelectionSet<ReadonlyArray<Selection>>
 >(
   name: Name,

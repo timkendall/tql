@@ -37,6 +37,8 @@
     "node-fetch": "^2.6.1",
     "prettier": "^2.1.2",
     "ts-poet": "^4.5.0",
+    "ts-toolbelt": "^9.6.0",
+    "type-fest": "^2.5.2",
     "yargs": "^16.1.0"
   },
   "devDependencies": {

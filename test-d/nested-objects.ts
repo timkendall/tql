@@ -3,12 +3,25 @@ import freeze from "deep-freeze";
 
 import { selectionSet, field, Result } from "../src";
 
+interface Schema {
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  ID: string;
+
+  Query: Query;
+  User: User;
+}
+
 interface Query {
+  __typename: "Query";
   viewer: User;
   friendsByUserId: User[] | null;
 }
 
 interface User {
+  __typename: "User";
   id: string;
   firstName: string;
   age: number | null;
@@ -32,7 +45,7 @@ const selection = selectionSet([
   ),
 ]);
 
-type Test = Result<Query, typeof selection>;
+type Test = Result<Schema, Query, typeof selection>;
 
 expectAssignable<Test>(
   freeze({
