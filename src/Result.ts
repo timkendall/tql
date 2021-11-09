@@ -55,6 +55,7 @@ export type Result<
 export type SpreadFragment<
   Schema extends Record<string, any>,
   T extends InlineFragment<any, any>
+  // @todo CommonSelection extends SelectionSet<ReadonlyArray<Field<any, any, any>>>
 > = T extends InlineFragment<NamedType<infer Typename>, infer SelectionSet>
   ? Merge<
       { __typename: Typename },
