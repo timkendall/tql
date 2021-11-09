@@ -1,7 +1,4 @@
-import { Simplify } from "type-fest";
-import { A } from "ts-toolbelt";
-import { expectType, expectAssignable } from "tsd";
-import freeze from "deep-freeze";
+import { expectAssignable } from "tsd";
 
 import { selectionSet, field, namedType, inlineFragment, Result } from "../src";
 
@@ -20,7 +17,7 @@ interface Schema {
 
 interface Query {
   __typename: "Query";
-  search: SearchResult[];
+  search: (SearchResult | null)[] | null;
 }
 
 interface Author {
@@ -58,19 +55,27 @@ const selection = selectionSet([
 type Test = Result<Schema, Query, typeof selection>;
 
 const data = {} as Test;
+const first = data.search?.[0];
 
-if (data.search[0].__typename === "Author") {
-  data.search[0].__typename;
-  data.search[0];
-} else if (data.search[0].__typename === "Book") {
-  data.search[0].__typename;
+if (first?.__typename === "Author") {
+  first.__typename;
+  first.name;
+} else if (first?.__typename === "Book") {
+  first.__typename;
+  first.title;
 } else {
-  // expect null
-  data.search[0];
+  // expect null or undefined
+  first;
 }
 
 expectAssignable<Test>({
+  search: null,
+});
+expectAssignable<Test>({
   search: [],
+});
+expectAssignable<Test>({
+  search: [null],
 });
 expectAssignable<Test>({
   search: [
@@ -86,5 +91,14 @@ expectAssignable<Test>({
       __typename: "Book",
       title: "Holy Bible",
     },
+  ],
+});
+expectAssignable<Test>({
+  search: [
+    {
+      __typename: "Book",
+      title: "Holy Bible",
+    },
+    null,
   ],
 });

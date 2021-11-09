@@ -6,7 +6,7 @@
     "rootDir": ".",
     "outDir": "dist",
     "sourceMap": true,
-    "target": "ES2019",
+    "target": "ES2020",
     "module": "commonjs",
     "noUnusedLocals": false,
     "allowJs": false,
@@ -18,6 +18,6 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true,
     "incremental": true,
-    "lib": ["ES2019"]
+    "lib": ["ES2020"]
   }
 }
