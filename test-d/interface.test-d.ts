@@ -49,7 +49,7 @@ const selection = selectionSet([
 
       inlineFragment(
         namedType<"Employee">("Employee"),
-        selectionSet([field("id"), field("firstName")] as const)
+        selectionSet([field("firstName")] as const)
       ),
 
       inlineFragment(

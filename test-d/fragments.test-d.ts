@@ -1,11 +1,16 @@
 import { expectType } from "tsd";
 import freeze from "deep-freeze";
+import { L } from "ts-toolbelt";
 
 import {
+  SelectionSet,
   selectionSet,
   field,
+  Field,
   namedType,
   inlineFragment,
+  InlineFragment,
+  MergeSelectionSets,
   SpreadFragment,
   SpreadFragments,
 } from "../src";
@@ -57,9 +62,11 @@ const fragment2 = inlineFragment(
 // need to assert const because not function return?
 const s = selectionSet([field("id"), fragment1, fragment2] as const);
 
+type filtered = L.Filter<typeof s["selections"], InlineFragment<any, any>>;
+
 // working
-type TFragment1 = SpreadFragment<Schema, typeof fragment1>;
-type TFragment2 = SpreadFragment<Schema, typeof fragment2>;
+type TFragment1 = SpreadFragment<Schema, typeof fragment1, SelectionSet<[]>>;
+type TFragment2 = SpreadFragment<Schema, typeof fragment2, SelectionSet<[]>>;
 
 expectType<TFragment1>(freeze({ __typename: "Employee", firstName: "John" }));
 expectType<TFragment2>(
@@ -74,3 +81,11 @@ if (data.__typename === "Admin") {
 } else {
   data.firstName;
 }
+
+type merged = MergeSelectionSets<
+  SelectionSet<[Field<"id">]>,
+  SelectionSet<[Field<"name">]>
+>;
+type merged2 = L.Concat<[Field<"id">], [Field<"name">]>;
+
+const m = [field("id"), field("name")] as merged2;

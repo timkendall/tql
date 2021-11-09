@@ -1,4 +1,4 @@
-import { O, L, Test } from "ts-toolbelt";
+import { L, Test } from "ts-toolbelt";
 
 import type {
   Primitive,
@@ -51,48 +51,42 @@ export type Result<
     : never
   : Parent;
 
-export type SpreadFragment<
-  Schema extends Record<string, any>,
-  Fragment extends InlineFragment<any, any>
-> = Fragment extends InlineFragment<
-  NamedType<infer Typename>,
-  infer SelectionSet
->
-  ? Merge<
-      { __typename: Typename },
-      Result<Schema, Schema[Typename], SelectionSet>
-    >
-  : never;
-
 export type SpreadFragments<
   Schema extends Record<string, any>,
   Selected extends SelectionSet<ReadonlyArray<Selection>>
 > = Selected["selections"][number] extends infer Selection
   ? Selection extends InlineFragment<any, any>
-    ? SpreadFragment<Schema, Selection>
+    ? SpreadFragment<
+        Schema,
+        Selection,
+        SelectionSet<L.Filter<Selected["selections"], InlineFragment<any, any>>> // @bug are we are losing inference here since `SelectionSet<[Field<'id'>]>` works?
+      >
     : never
   : never;
 
-type Fields<T extends SelectionSet<ReadonlyArray<Selection>>> = SelectionSet<
-  ReadonlyArray<
-    T["selections"][number] extends infer U
-      ? U extends Field<any, any, any>
-        ? T["selections"][number]
-        : never
-      : never
-  >
->;
-
-type InlineFragments<T extends SelectionSet<ReadonlyArray<Selection>>> =
-  SelectionSet<
-    ReadonlyArray<
-      T["selections"][number] extends infer U
-        ? U extends InlineFragment<any, any>
-          ? T["selections"][number]
-          : never
-        : never
+export type SpreadFragment<
+  Schema extends Record<string, any>,
+  Fragment extends InlineFragment<any, any>,
+  CommonSelection extends SelectionSet<ReadonlyArray<Field<any, any, any>>>
+> = Fragment extends InlineFragment<
+  NamedType<infer Typename>,
+  infer SelectionSet
+>
+  ? Merge<
+      { __typename: Typename }, // @todo figure out how to merge in the common selection
+      Result<
+        Schema,
+        Schema[Typename],
+        // @bug `CommonSelection` this should give us just the generic selection on the specific type
+        MergeSelectionSets<SelectionSet, CommonSelection> // @todo OR merge the common selection into the fragments //MergeSelectionSets<SelectionSet, CommonSelection>
+      >
     >
-  >;
+  : never;
+
+export type MergeSelectionSets<
+  A extends SelectionSet<ReadonlyArray<Selection>>,
+  B extends SelectionSet<ReadonlyArray<Selection>>
+> = SelectionSet<L.Concat<A["selections"], B["selections"]>>;
 
 type HasInlineFragment<T extends SelectionSet<any> | undefined> =
   T extends SelectionSet<infer Selections>
