@@ -1,4 +1,5 @@
 import { expectType } from "tsd";
+import freeze from "deep-freeze";
 
 import {
   selectionSet,
@@ -7,7 +8,6 @@ import {
   inlineFragment,
   SpreadFragment,
   SpreadFragments,
-  Result,
 } from "../src";
 
 interface Schema {
@@ -61,8 +61,10 @@ const s = selectionSet([field("id"), fragment1, fragment2] as const);
 type TFragment1 = SpreadFragment<Schema, typeof fragment1>;
 type TFragment2 = SpreadFragment<Schema, typeof fragment2>;
 
-expectType<TFragment1>({ __typename: "Employee", firstName: "John" });
-expectType<TFragment2>({ __typename: "Admin", badass: true, badgeNumber: 69 });
+expectType<TFragment1>(freeze({ __typename: "Employee", firstName: "John" }));
+expectType<TFragment2>(
+  freeze({ __typename: "Admin", badass: true, badgeNumber: 69 })
+);
 
 const data = {} as SpreadFragments<Schema, typeof s>;
 
