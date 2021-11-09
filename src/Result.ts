@@ -36,7 +36,7 @@ export type Result<
   ? Selected extends SelectionSet<ReadonlyArray<Selection>>
     ? HasInlineFragment<Selected> extends Test.Pass
       ? // @todo merge Field selections into each fragment's selection
-        SpreadFragments<Schema, InlineFragments<Selected>>
+        SpreadFragments<Schema, Selected>
       : {
           readonly // @todo cleanup mapped typed field name mapping
           [F in Selected["selections"][number] as F extends Field<
@@ -54,11 +54,15 @@ export type Result<
 
 export type SpreadFragment<
   Schema extends Record<string, any>,
-  T extends InlineFragment<any, any>
-  // @todo CommonSelection extends SelectionSet<ReadonlyArray<Field<any, any, any>>>
-> = T extends InlineFragment<NamedType<infer Typename>, infer SelectionSet>
+  Fragment extends InlineFragment<any, any>,
+  CommonSelection extends SelectionSet<ReadonlyArray<Field<any, any, any>>>
+> = Fragment extends InlineFragment<
+  NamedType<infer Typename>,
+  infer SelectionSet
+>
   ? Merge<
       { __typename: Typename },
+      // @question need MergeSelectionSets<SelectionSet, CommonSelection>?
       Result<Schema, Schema[Typename], SelectionSet>
     >
   : never;
@@ -68,16 +72,23 @@ export type SpreadFragments<
   Selected extends SelectionSet<ReadonlyArray<Selection>>
 > = Selected["selections"][number] extends infer Selection
   ? Selection extends InlineFragment<any, any>
-    ? SpreadFragment<Schema, Selection>
+    ? SpreadFragment<Schema, Selection, Fields<Selected>>
     : never
   : never;
 
-type Fields<T extends ReadonlyArray<Selection>> = Array<
-  T[number] extends infer U
-    ? U extends Field<any, any, any>
-      ? T[number]
+type MergeSelectionSets<
+  A extends SelectionSet<ReadonlyArray<Selection>>,
+  B extends SelectionSet<ReadonlyArray<Selection>>
+> = SelectionSet<L.Merge<A["selections"], B["selections"]>>;
+
+type Fields<T extends SelectionSet<ReadonlyArray<Selection>>> = SelectionSet<
+  ReadonlyArray<
+    T["selections"][number] extends infer U
+      ? U extends Field<any, any, any>
+        ? T["selections"][number]
+        : never
       : never
-    : never
+  >
 >;
 
 type InlineFragments<T extends SelectionSet<ReadonlyArray<Selection>>> =
