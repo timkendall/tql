@@ -1,4 +1,3 @@
-import { Simplify } from "type-fest";
 import { O, L, Test } from "ts-toolbelt";
 
 import type {
@@ -54,15 +53,13 @@ export type Result<
 
 export type SpreadFragment<
   Schema extends Record<string, any>,
-  Fragment extends InlineFragment<any, any>,
-  CommonSelection extends SelectionSet<ReadonlyArray<Field<any, any, any>>>
+  Fragment extends InlineFragment<any, any>
 > = Fragment extends InlineFragment<
   NamedType<infer Typename>,
   infer SelectionSet
 >
   ? Merge<
       { __typename: Typename },
-      // @question need MergeSelectionSets<SelectionSet, CommonSelection>?
       Result<Schema, Schema[Typename], SelectionSet>
     >
   : never;
@@ -72,14 +69,9 @@ export type SpreadFragments<
   Selected extends SelectionSet<ReadonlyArray<Selection>>
 > = Selected["selections"][number] extends infer Selection
   ? Selection extends InlineFragment<any, any>
-    ? SpreadFragment<Schema, Selection, Fields<Selected>>
+    ? SpreadFragment<Schema, Selection>
     : never
   : never;
-
-type MergeSelectionSets<
-  A extends SelectionSet<ReadonlyArray<Selection>>,
-  B extends SelectionSet<ReadonlyArray<Selection>>
-> = SelectionSet<L.Merge<A["selections"], B["selections"]>>;
 
 type Fields<T extends SelectionSet<ReadonlyArray<Selection>>> = SelectionSet<
   ReadonlyArray<
