@@ -12,6 +12,7 @@ import {
   VariableDefinition,
   variable,
   variableDefinition,
+  NamedType,
 } from "./AST";
 
 export const $ = <Name extends string>(name: Name): Variable<Name> =>
@@ -63,13 +64,11 @@ export type Variables<
             FilterMapArguments<RootType, FieldName, FieldArgs>,
             Variables<Schema, RootType[FieldName], SS>
           >
-        : // @todo InlineFragment's
-        Selection extends InlineFragment<infer Typename, infer FragSelection>
-        ? Variables<
-            Schema,
-            Typename extends string ? Schema[Typename] : {},
-            FragSelection
+        : Selection extends InlineFragment<
+            NamedType<infer Typename>,
+            infer FragSelection
           >
+        ? Variables<Schema, Schema[Typename], FragSelection>
         : {}
       : {}
     : {}

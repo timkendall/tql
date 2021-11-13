@@ -39,7 +39,15 @@ export type Result<
             >
               ? Name
               : never]: F extends Field<infer Name, any, infer SS>
-              ? Result<Schema, Parent[Name], SS>
+              ? Result<
+                  Schema,
+                  /* @note support parameterized fields */ Parent[Name] extends (
+                    variables: any
+                  ) => infer T
+                    ? T
+                    : Parent[Name] /*Parent[Name]*/,
+                  SS
+                >
               : never;
           }
       : never

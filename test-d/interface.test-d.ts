@@ -1,7 +1,4 @@
-import { Simplify } from "type-fest";
-import { A } from "ts-toolbelt";
-import { expectType, expectAssignable } from "tsd";
-import freeze from "deep-freeze";
+import { expectAssignable } from "tsd";
 
 import { selectionSet, field, namedType, inlineFragment, Result } from "../src";
 
