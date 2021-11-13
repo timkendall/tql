@@ -1,5 +1,4 @@
-import { expectType } from "tsd";
-import freeze from "deep-freeze";
+import { expectAssignable } from "tsd";
 import { L } from "ts-toolbelt";
 
 import {
@@ -68,10 +67,12 @@ type filtered = L.Filter<typeof s["selections"], InlineFragment<any, any>>;
 type TFragment1 = SpreadFragment<Schema, typeof fragment1, SelectionSet<[]>>;
 type TFragment2 = SpreadFragment<Schema, typeof fragment2, SelectionSet<[]>>;
 
-expectType<TFragment1>(freeze({ __typename: "Employee", firstName: "John" }));
-expectType<TFragment2>(
-  freeze({ __typename: "Admin", badass: true, badgeNumber: 69 })
-);
+expectAssignable<TFragment1>({ __typename: "Employee", firstName: "John" });
+expectAssignable<TFragment2>({
+  __typename: "Admin",
+  badass: true,
+  badgeNumber: 69,
+});
 
 const data = {} as SpreadFragments<Schema, typeof s>;
 

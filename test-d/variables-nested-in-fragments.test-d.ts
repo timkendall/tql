@@ -1,4 +1,4 @@
-import { expectType } from "tsd";
+import { expectAssignable } from "tsd";
 
 import {
   selectionSet,
@@ -61,6 +61,6 @@ const selection = selectionSet([
 type Test = Variables<Schema, Query, typeof selection>;
 type Test2 = Result<Schema, Query, typeof selection>;
 
-expectType<Test>({
+expectAssignable<Test>({
   heightUnit: Unit.FEET,
 });

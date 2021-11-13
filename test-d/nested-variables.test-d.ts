@@ -1,4 +1,4 @@
-import { expectType } from "tsd";
+import { expectAssignable } from "tsd";
 import { Variables, selectionSet, field, argument, variable } from "../src";
 
 interface Schema {
@@ -40,7 +40,7 @@ const selection = selectionSet([
 
 type Test = Variables<Schema, Query, typeof selection>;
 
-expectType<Test>({
+expectAssignable<Test>({
   id: "abc",
   limit: 5,
 });
