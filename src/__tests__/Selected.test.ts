@@ -1,6 +1,6 @@
-import { Selected } from "../Selected";
+import { Selection } from "../Selection";
 
-describe("Selector", () => {
+describe("Selection", () => {
   it.todo("is an Array of Selection AST objects");
   it.todo("converts to a SelectionSet AST object");
   it.todo("converts to an InlineFragment AST object");

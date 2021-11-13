@@ -1,6 +1,21 @@
+import { TypedQueryDocumentNode } from "graphql";
+
 import { Codegen } from "../Codegen";
 
 describe("Codegen", () => {
+  // `interface Selectable TypedDocumentNode<Result<Schema, Query, SelectionSet<T>>>, Variables<Schema, Query, SelectionSet>`
+  //
+  // const OPERATION = operation({ name: '', selectionSet: QUERY.toSelectionSet(), directives: [], variableDefinitions: QUERY.getVariableDefs() })
+  // const OPERATION2 = operation('query', t => []).directive('live', { if: $('if') })
+  //
+  // query/user/etc -> Selection (.toOperation(queryName, useVariables, dropNullInputValues), .toFragment)
+  // (optional)
+  //
+  // const QUERY = query(t => [ t.viewer(t => [ t.id().skip({ if: $('skipIf') }) ])]).named('MyQuery') // TypedQueryDocumentNode (maybe have a `.configure()` escape-hatch?)
+  // const FRAGMENT = user(t => [ t.id() ]).toInlineFragment() // InlineFragment
+  // const FRAGMENT2 = on(type: Types<Schema>, select: <T>(selector: ) => ): InlineFragment<T, U>
+  //
+  // const NAMED_FRAGMENT = fragment(name: string, on: Types, select: (selector: A) => ) => NamedFragment<T, U>
   describe("schema", () => {
     describe("scalars", () => {
       it.todo("converts ScalarTypes to primitives"); // @todo what about custom scalars like DateTime
