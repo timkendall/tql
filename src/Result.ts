@@ -13,43 +13,38 @@ import type {
 // @note `Result` takes a root `Type` (TS) and `SelectionSet` (GQL) and recursively walks the
 // array of `Selection` nodes's (i.e `Field`, `InlineFragment`, or `FragmentSpread` nodes)
 //
-// /*Merge<Type extends Record<string, any> ? { __typename: Type['__typename'] } : {},*/
-//
 // @note We are essentially executing an operation at compile-type to derive the shape of the result.
 // This means we need the following pieces of data available to our type:
 //  Schema, FragmentDefinitions, Operations, Root Type*
-//
-//
-// Alternative implementation:
-//  - Parent extends Primitive ? Parent
-//  - Parent extends Array<infer T> ? Array<Result<_, T, _>>
-//  - { [Field in Fields<SelectionSet>[n] as NameOf<Field>]: Result<Schema, Parent[NameOf<Field>], SelectionOf<Field>> & SpreadFragments<Schema, SelectionSet>}
-
 export type Result<
   Schema extends Record<string, any>,
   Parent,
   Selected extends SelectionSet<ReadonlyArray<Selection>> | undefined
-> = Parent extends Array<infer T>
-  ? ReadonlyArray<Result<Schema, T, Selected>>
-  : Parent extends Record<string, any>
-  ? Selected extends SelectionSet<ReadonlyArray<Selection>>
-    ? HasInlineFragment<Selected> extends Test.Pass
-      ? // @todo merge Field selections into each fragment's selection
-        SpreadFragments<Schema, Selected>
-      : {
-          readonly // @todo cleanup mapped typed field name mapping
-          [F in Selected["selections"][number] as F extends Field<
-            infer Name,
-            any,
-            any
-          >
-            ? Name
-            : never]: F extends Field<infer Name, any, infer SS>
-            ? Result<Schema, Parent[Name], SS>
-            : never;
-        }
-    : never
-  : Parent;
+> =
+  // Lists
+  Parent extends Array<infer T>
+    ? ReadonlyArray<Result<Schema, T, Selected>>
+    : // Objects
+    Parent extends Record<string, any>
+    ? Selected extends SelectionSet<ReadonlyArray<Selection>>
+      ? HasInlineFragment<Selected> extends Test.Pass
+        ? // @todo merge Field selections into each fragment's selection
+          SpreadFragments<Schema, Selected>
+        : {
+            readonly // @todo cleanup mapped typed field name mapping
+            [F in Selected["selections"][number] as F extends Field<
+              infer Name,
+              any,
+              any
+            >
+              ? Name
+              : never]: F extends Field<infer Name, any, infer SS>
+              ? Result<Schema, Parent[Name], SS>
+              : never;
+          }
+      : never
+    : // Scalars
+      Parent;
 
 export type SpreadFragments<
   Schema extends Record<string, any>,
