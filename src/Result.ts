@@ -28,8 +28,7 @@ export type Result<
     Parent extends Record<string, any>
     ? Selected extends SelectionSet<ReadonlyArray<Selection>>
       ? HasInlineFragment<Selected> extends Test.Pass
-        ? // @todo merge Field selections into each fragment's selection
-          SpreadFragments<Schema, Selected>
+        ? SpreadFragments<Schema, Selected>
         : {
             readonly // @todo cleanup mapped typed field name mapping
             [F in Selected["selections"][number] as F extends Field<
@@ -76,12 +75,11 @@ export type SpreadFragment<
   infer SelectionSet
 >
   ? Merge<
-      { __typename: Typename }, // @todo figure out how to merge in the common selection
+      { __typename: Typename },
       Result<
         Schema,
         Schema[Typename],
-        // @bug `CommonSelection` this should give us just the generic selection on the specific type
-        MergeSelectionSets<SelectionSet, CommonSelection> // @todo OR merge the common selection into the fragments //MergeSelectionSets<SelectionSet, CommonSelection>
+        MergeSelectionSets<SelectionSet, CommonSelection>
       >
     >
   : never;
@@ -95,22 +93,5 @@ type HasInlineFragment<T extends SelectionSet<any> | undefined> =
   T extends SelectionSet<infer Selections>
     ? L.Includes<Selections, InlineFragment<any, any>>
     : never;
-
-// SelectionSet<Selection<Field | InlineFragment | FragmentSpread>>
-type NameOf<T extends Field<any, any, any>> = T extends Field<
-  infer Name,
-  any,
-  any
->
-  ? Name
-  : never;
-
-type SelectionOf<T extends Field<any, any, any>> = T extends Field<
-  any,
-  any,
-  infer SelectionSet
->
-  ? SelectionSet
-  : never;
 
 type Merge<M, N> = Omit<M, keyof N> & N;
