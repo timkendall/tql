@@ -1,7 +1,5 @@
 # TQL
 
-> Note: this is **pre-production software** at this point, see the **[current limitations](./CURRENT_LIMITATIONS.md)**.
-
 **tql** is a TypeScript GraphQL query builder.
 
 - **Codegen once** - regenerate your GraphQL API client only when your schema changes.
@@ -10,32 +8,55 @@
 
 ## [Try it Out](https://repl.it/@timkendall/TQL-Starwars)
 
-Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)! 
+Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)!
 
 ## Installation
 
-`npm install @timkendall/tql` or `yarn add @timkendall/tql` 
+`npm install @timkendall/tql`
 
 * **TypeScript 4.1+** is required for [Recursive Conditional Type](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#recursive-conditional-types) support
+
+## Usage
+
+1. []()
+1. []
 
 
 ## Usage
 
 You will need to compile a type-safe client one time before using. Do this with the provided CLI:
 
-`yarn --silent tql <schema> > example.api.ts`.
+`yarn --silent tql <schema> > api.ts`.
 
 
 ```typescript
-import { query } from './example.api'
+import { SDK, $ } from '@timkendall/tql'
+import { request } from 'graphql-request'
+import { useQuery } from '@apollo/client'
 
-const operation = query("Example", (t) => [
+// if pre-compiled (a little painful but best other than that!)
+// import { $, query } from './starwars'
+
+// using custom ES module loader... (requires changes to prod config unless Node starts supporting native HTTP URL modules like Deno)
+// import { SDK } from 'https://api.macromon.app/' // configured middleware
+// import { SDK } from 'https://get.tql.io/?api=api.macromon.app' // hosted proxy
+
+// @note you will need to have configured the TypeScript compiler plugin
+// for this to work. The compiler plugin is simply a convienience method
+// for initiating codegen (run once per compiler processes; no source* code is emitted).
+//
+// For production applications we generally recommend pre-compiling your
+// sdk and publishing/importing it from a package registry.
+const { query } = new SDK<'./starwars.graphql'>({/* custom serde */})
+// const { query } = createSDK<'./starwars.graphql'>()
+
+const QUERY = query((t) => [
   t.reviews({ episode: Episode.EMPIRE }, (t) => [
     t.stars(),
     t.commentary(),
   ]),
 
-  t.human({ id: "1002" }, (t) => [
+  t.human({ id: $('id') }, (t) => [
     t.__typename(),
     t.id(),
     t.name(),
@@ -57,7 +78,14 @@ const operation = query("Example", (t) => [
 
     t.starships((t) => [t.id(), t.name()]),
   ]),
-]);
+]).toQuery({ name: 'Example' })
+
+const { data } = request('https://graphql.org/swapi-graphql/', QUERY, { id: '1011' })
+
+// or
+
+const { data } = useQuery(QUERY, { variables: { id: '1011' }})
+
 ```
 
 ## Inspiration

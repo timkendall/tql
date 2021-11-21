@@ -106,3 +106,5 @@ dist
 notes.txt
 
 failing-examples
+
+sdk.ts

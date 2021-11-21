@@ -32,9 +32,11 @@
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "dependencies": {
+    "ast-types": "^0.14.2",
     "fs-extra": "^9.0.1",
     "jssha": "^3.2.0",
     "node-fetch": "^2.6.1",
+    "outvariant": "^1.2.1",
     "prettier": "^2.1.2",
     "ts-poet": "^4.5.0",
     "ts-toolbelt": "^9.6.0",
@@ -54,7 +56,7 @@
     "auto-changelog": "^2.2.1",
     "deep-freeze": "^0.0.1",
     "graphql": "^15.3.0",
-    "graphql-request": "^3.5.0",
+    "graphql-request": "^3.6.1",
     "graphql-subscriptions": "^1.0.0",
     "graphql-tools": "^4.0.8",
     "jest": "^26.6.3",

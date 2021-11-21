@@ -18,6 +18,7 @@
     "strictPropertyInitialization": false,
     "skipLibCheck": true,
     "incremental": true,
+    "forceConsistentCasingInFileNames": true,
     "lib": ["ES2020"]
   }
 }

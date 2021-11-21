@@ -10,16 +10,18 @@ specifiers:
   '@types/node-fetch': ^2.5.7
   '@types/prettier': ^2.1.5
   '@types/yargs': ^15.0.12
+  ast-types: ^0.14.2
   auto-changelog: ^2.2.1
   deep-freeze: ^0.0.1
   fs-extra: ^9.0.1
   graphql: ^15.3.0
-  graphql-request: ^3.5.0
+  graphql-request: ^3.6.1
   graphql-subscriptions: ^1.0.0
   graphql-tools: ^4.0.8
   jest: ^26.6.3
   jssha: ^3.2.0
   node-fetch: ^2.6.1
+  outvariant: ^1.2.1
   prettier: ^2.1.2
   ts-jest: ^26.4.4
   ts-node: ^9.0.0
@@ -31,9 +33,11 @@ specifiers:
   yargs: ^16.1.0
 
 dependencies:
+  ast-types: 0.14.2
   fs-extra: 9.1.0
   jssha: 3.2.0
   node-fetch: 2.6.6
+  outvariant: 1.2.1
   prettier: 2.4.1
   ts-poet: 4.6.1
   ts-toolbelt: 9.6.0
@@ -992,6 +996,13 @@ packages:
     resolution: {integrity: sha1-WWZ/QfrdTyDMvCu5a41Pf3jsA2c=}
     engines: {node: '>=0.10.0'}
     dev: true
+
+  /ast-types/0.14.2:
+    resolution: {integrity: sha512-O0yuUDnZeQDL+ncNGlJ78BiO4jnYI3bvMsD5prT0/nsgijG/LpNBIr63gTjVTNsiGkgQhiyCShTgxt8oXOrklA==}
+    engines: {node: '>=4'}
+    dependencies:
+      tslib: 2.3.1
+    dev: false
 
   /asynckit/0.4.0:
     resolution: {integrity: sha1-x57Zf380y48robyXkLzDZkdLS3k=}
@@ -3260,6 +3271,10 @@ packages:
       word-wrap: 1.2.3
     dev: true
 
+  /outvariant/1.2.1:
+    resolution: {integrity: sha512-bcILvFkvpMXh66+Ubax/inxbKRyWTUiiFIW2DWkiS79wakrLGn3Ydy+GvukadiyfZjaL6C7YhIem4EZSM282wA==}
+    dev: false
+
   /p-each-series/2.2.0:
     resolution: {integrity: sha512-ycIL2+1V32th+8scbpTvyHNaHe02z0sjgh91XXjAk+ZeXoPN4Z46DVUnzdso0aX4KckKw0FNNFHdjZ2UsZvxiA==}
     engines: {node: '>=8'}
@@ -4026,7 +4041,6 @@ packages:
 
   /tslib/2.3.1:
     resolution: {integrity: sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==}
-    dev: true
 
   /type-check/0.3.2:
     resolution: {integrity: sha1-WITKtRLPHTVeP7eE8wgEsrUg23I=}

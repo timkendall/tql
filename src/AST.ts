@@ -1,5 +1,6 @@
 import { Kind } from "graphql/language";
 import type {
+  TypeNode,
   NamedTypeNode,
   ListTypeNode,
   NonNullTypeNode,
@@ -290,3 +291,17 @@ export const toValueNode = (value: any, enums: any[] = []): ValueNode => {
     throw new Error(`Unknown value type: ${value}`);
   }
 };
+
+export function getBaseTypeNode(type: TypeNode): NamedTypeNode {
+  if (type.kind === Kind.NON_NULL_TYPE) {
+    return getBaseTypeNode(type.type);
+  } else if (type.kind === Kind.LIST_TYPE) {
+    return getBaseTypeNode(type.type);
+  } else {
+    return type;
+  }
+}
+
+export function getBaseType(type: TypeNode): string {
+  return getBaseTypeNode(type).name.value;
+}

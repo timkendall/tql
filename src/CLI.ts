@@ -6,9 +6,11 @@ import {
   getIntrospectionQuery,
   buildASTSchema,
   buildClientSchema,
+  printSchema,
 } from "graphql";
 
-import { Codegen } from "./Codegen";
+// import { Codegen } from "./Codegen";
+import { render } from "./codegen";
 
 Yargs.command(
   "$0 <schema>",
@@ -47,22 +49,24 @@ Yargs.command(
       ? await remoteSchema(schemaPath)
       : await localSchema(schemaPath);
 
-    const codegen = new Codegen({
-      schema,
-      client: argv.client
-        ? { name: argv.client, version: argv.tag }
-        : undefined,
-      mutableFields: argv.mutableFields,
-      modulePath: argv["module-path"],
-    });
+    // const codegen = new Codegen({
+    //   schema,
+    //   client: argv.client
+    //     ? { name: argv.client, version: argv.tag }
+    //     : undefined,
+    //   mutableFields: argv.mutableFields,
+    //   modulePath: argv["module-path"],
+    // });
 
-    process.stdout.write(codegen.render());
+    // process.stdout.write(codegen.render());
+
+    process.stdout.write(render(schema));
   }
 ).argv;
 
 async function localSchema(path: string) {
   const typeDefs = await fs.readFile(path, "utf-8");
-  return buildASTSchema(parse(typeDefs));
+  return typeDefs;
 }
 
 async function remoteSchema(url: string) {
@@ -79,5 +83,5 @@ async function remoteSchema(url: string) {
     throw new Error("Error fetching remote schema!");
   }
 
-  return buildClientSchema(data);
+  return printSchema(buildClientSchema(data));
 }

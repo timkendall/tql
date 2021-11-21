@@ -1,29 +1,80 @@
 import { TypedQueryDocumentNode } from "graphql";
 
-import { Codegen } from "../Codegen";
+import { codegen } from "../Codegen2";
 
 describe("Codegen", () => {
-  // `interface Selectable TypedDocumentNode<Result<Schema, Query, SelectionSet<T>>>, Variables<Schema, Query, SelectionSet>`
-  //
-  // const OPERATION = operation({ name: '', selectionSet: QUERY.toSelectionSet(), directives: [], variableDefinitions: QUERY.getVariableDefs() })
-  // const OPERATION2 = operation('query', t => []).directive('live', { if: $('if') })
-  //
-  // query/user/etc -> Selection (.toOperation(queryName, useVariables, dropNullInputValues), .toFragment)
-  // (optional)
-  //
-  // const QUERY = query(t => [ t.viewer(t => [ t.id().skip({ if: $('skipIf') }) ])]).named('MyQuery') // TypedQueryDocumentNode (maybe have a `.configure()` escape-hatch?)
-  // const FRAGMENT = user(t => [ t.id() ]).toInlineFragment() // InlineFragment
-  // const FRAGMENT2 = on(type: Types<Schema>, select: <T>(selector: ) => ): InlineFragment<T, U>
-  //
-  // const NAMED_FRAGMENT = fragment(name: string, on: Types, select: (selector: A) => ) => NamedFragment<T, U>
   describe("schema", () => {
     describe("scalars", () => {
-      it.todo("converts ScalarTypes to primitives"); // @todo what about custom scalars like DateTime
-      it.todo("converts custom scalars to string types");
+      it("converts ScalarTypes to primitives", () => {
+        const input = `
+          scalar String
+          scalar Int
+          scalar Float
+          scalar ID
+          scalar Boolean
+        `;
+
+        const output = codegen(input);
+
+        expect(output).toBe(
+          expect.stringContaining(`
+          interface ISchema {
+            String: string
+            Int: number
+            Float: number
+            ID: string
+            Boolean: boolean
+          }
+        `)
+        );
+      });
+
+      it("converts custom scalars to string types", () => {
+        const input = `
+          scalar DateTime
+        `;
+
+        const output = codegen(input);
+
+        expect(output).toBe(
+          expect.stringContaining(`
+          interface ISchema {
+            String: string
+            Int: number
+            Float: number
+            ID: string
+            Boolean: boolean
+            DateTime: string
+          }
+        `)
+        );
+      });
     });
 
     describe("enums", () => {
-      it.todo("converts EnumTypes to enums");
+      it("converts EnumTypes to enums", () => {
+        const input = `
+          enum Foo {
+            BAR
+            BAZ
+          }
+        `;
+
+        const output = codegen(input);
+
+        expect(output).toBe(
+          expect.stringContaining(`
+          interface ISchema {
+            Foo: Foo
+          }
+
+          export enum Foo {
+            BAR = 'BAR',
+            BAZ = 'BAZ'
+          }
+        `)
+        );
+      });
     });
 
     describe("objects", () => {
@@ -67,6 +118,13 @@ describe("Codegen", () => {
         "generates an `on` method for defining an `InlineFragment` selection"
       );
     });
+  });
+
+  describe("top-level API", () => {
+    // for defining variables
+    it.todo("exposes a `$` fn");
+    // for constructing inline-fragments
+    it.todo("exposes a `on` selector fn");
   });
 
   describe("utilities", () => {
