@@ -200,7 +200,7 @@ export const transform = (
         }
 
         ${/* selector object */ ""}
-        export const ${typename}Selector: I${typename}Selector = {
+        const ${typename}Selector: I${typename}Selector = {
           __typename: () => field("__typename"),
           ${fields.map(printMethod).join("\n")}
         }
@@ -236,7 +236,7 @@ export const transform = (
         }
 
         ${/* selector object */ ""}
-        export const ${typename}Selector: I${typename}Selector = {
+        const ${typename}Selector: I${typename}Selector = {
           __typename: () => field("__typename"),
           ${fields.map(printMethod).join("\n")}
         }
@@ -271,7 +271,7 @@ export const transform = (
         }
 
         ${/* selector object */ ""}
-        export const ${typename}Selector: I${typename}Selector = {
+        const ${typename}Selector: I${typename}Selector = {
           __typename: () => field("__typename"),
           ${/* @todo add `on` inline fragment selector */ ""}
         }

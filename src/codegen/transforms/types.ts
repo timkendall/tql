@@ -168,11 +168,27 @@ export const transform = (
       );
 
       const fields = Object.values(type.getFields());
+      const interfaces = type.getInterfaces();
+
+      // @note TypeScript only requires new fields to be defined on interface extendors
+      const interfaceFields = interfaces.flatMap((i) =>
+        Object.values(i.getFields()).map((field) => field.name)
+      );
+      const uncommonFields = fields.filter(
+        (field) => !interfaceFields.includes(field.name)
+      );
+
+      // @todo extend any implemented interfaces
+      // @todo only render fields unique to this type
+      const extensions =
+        interfaces.length > 0
+          ? `extends ${interfaces.map((i) => "I" + i.name).join(", ")}`
+          : "";
 
       return code`
-        export interface I${typename} {
+        export interface I${typename} ${extensions} {
           readonly __typename: ${`"${typename}"`}
-          ${fields.map(printField).join("\n")}
+          ${uncommonFields.map(printField).join("\n")}
         }
       `;
     },

@@ -35,11 +35,24 @@ export const render = (sdl: string): string => {
   `;
 
   const source =
+    `import { 
+      Field, 
+      Argument, 
+      Variable, 
+      Selection, 
+      SelectionSet, 
+      SelectionBuilder, 
+      field, 
+      argument, 
+      selectionSet
+     } from './src'
+     
+     export { Result, Variables, $ } from './src'
+     ` +
     `
-    import { Field, Argument, Variable, Selection, SelectionSet, SelectionBuilder, field, argument, selectionSet } from './src'` +
-    `
-    const SCHEMA = ${JSON.stringify(ast)}
-    const ENUMS = ${ENUMS}
+    export const SCHEMA = ${JSON.stringify(ast)}
+    
+    export const ENUMS = ${ENUMS}
   ` +
     results
       .flatMap((result) =>
