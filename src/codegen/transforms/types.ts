@@ -40,9 +40,9 @@ const printInputType = (type: GraphQLInputType): string => {
 };
 
 const printVariable = (arg: GraphQLArgument): string => {
-  return `${arg.name}${
-    arg.type instanceof GraphQLNonNull ? "" : "?"
-  }: ${printInputType(arg.type)}`;
+  return `${arg.name}: ${printInputType(arg.type)} ${
+    arg.type instanceof GraphQLNonNull ? "" : "| undefined"
+  }`;
 };
 
 const printField = (field: GraphQLField<any, any, any>): string => {

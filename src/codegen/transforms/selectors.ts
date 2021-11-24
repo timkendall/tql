@@ -53,13 +53,13 @@ const printArgument = (arg: GraphQLArgument): string => {
       ? type.toString()
       : "I" + type.toString();
 
-  return `Argument<"${arg.name}", Variable<"${arg.name}"> | ${typename}>`;
+  return `Argument<"${arg.name}", V['${arg.name}']>`;
 };
 
 const printVariable = (arg: GraphQLArgument): string => {
   return `${arg.name}${
     arg.type instanceof GraphQLNonNull ? "" : "?"
-  }: Variable<"${arg.name}"> | ${printInputType(arg.type)}`;
+  }: Variable<string> | ${printInputType(arg.type)}`;
 };
 
 const printMethod = (field: GraphQLField<any, any, any>): string => {
@@ -84,7 +84,9 @@ const printMethod = (field: GraphQLField<any, any, any>): string => {
   if (type instanceof GraphQLScalarType || type instanceof GraphQLEnumType) {
     // @todo render arguments correctly
     return args.length > 0
-      ? jsDocComment.concat(`${name}: (variables) => field("${name}"),`)
+      ? jsDocComment.concat(
+          `${name}: (variables) => field("${name}", Object.entries(variables).map(([k, v]) => argument(k, v)) as any),`
+        )
       : jsDocComment.concat(`${name}: () => field("${name}"),`);
   } else {
     const renderArgument = (arg: GraphQLArgument): string => {
@@ -98,9 +100,7 @@ const printMethod = (field: GraphQLField<any, any, any>): string => {
       ${name}:(
         variables,
         select,
-      ) => field("${name}", [ ${args
-          .map(renderArgument)
-          .join(", ")} ], selectionSet(select(${type.toString()}Selector))),
+      ) => field("${name}", Object.entries(variables).map(([k, v]) => argument(k, v)) as any, selectionSet(select(${type.toString()}Selector))),
     `
       : `
       ${jsDocComment}
@@ -130,11 +130,12 @@ const printSignature = (field: GraphQLField<any, any, any>): string => {
     `
       : "";
 
+  // @todo define Args type parameter as mapped type OR non-constant (i.e Array<Argument<...> | Argument<...>>)
   if (type instanceof GraphQLScalarType || type instanceof GraphQLEnumType) {
     return args.length > 0
-      ? `${jsDocComment}\n readonly ${name}: (variables: { ${args
+      ? `${jsDocComment}\n readonly ${name}: <V extends { ${args
           .map(printVariable)
-          .join(", ")} }) => Field<"${name}", [ ${args
+          .join(", ")} }>(variables: V) => Field<"${name}", [ ${args
           .map(printArgument)
           .join(", ")} ]>`
       : `${jsDocComment}\n readonly ${name}: () => Field<"${name}">`;
@@ -143,8 +144,10 @@ const printSignature = (field: GraphQLField<any, any, any>): string => {
     return args.length > 0
       ? `
       ${jsDocComment}
-      readonly ${name}: <T extends Array<Selection>>(
-        variables: { ${args.map(printVariable).join(", ")} },
+      readonly ${name}: <V extends { ${args
+          .map(printVariable)
+          .join(", ")} }, T extends Array<Selection>>(
+        variables: V,
         select: (t: I${type.toString()}Selector) => T
       ) => Field<"${name}", [ ${args
           .map(printArgument)

@@ -29,7 +29,7 @@ specifiers:
   ts-toolbelt: ^9.6.0
   tsd: ^0.18.0
   type-fest: ^2.5.2
-  typescript: ^4.4.4
+  typescript: 4.5.2
   yargs: ^16.1.0
 
 dependencies:
@@ -61,10 +61,10 @@ devDependencies:
   graphql-subscriptions: 1.2.1_graphql@15.7.2
   graphql-tools: 4.0.8_graphql@15.7.2
   jest: 26.6.3_ts-node@9.1.1
-  ts-jest: 26.5.6_jest@26.6.3+typescript@4.4.4
-  ts-node: 9.1.1_typescript@4.4.4
+  ts-jest: 26.5.6_jest@26.6.3+typescript@4.5.2
+  ts-node: 9.1.1_typescript@4.5.2
   tsd: 0.18.0
-  typescript: 4.4.4
+  typescript: 4.5.2
 
 packages:
 
@@ -2411,7 +2411,7 @@ packages:
       jest-validate: 26.6.2
       micromatch: 4.0.4
       pretty-format: 26.6.2
-      ts-node: 9.1.1_typescript@4.4.4
+      ts-node: 9.1.1_typescript@4.5.2
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -3972,7 +3972,7 @@ packages:
       tslib: 2.3.1
     dev: true
 
-  /ts-jest/26.5.6_jest@26.6.3+typescript@4.4.4:
+  /ts-jest/26.5.6_jest@26.6.3+typescript@4.5.2:
     resolution: {integrity: sha512-rua+rCP8DxpA8b4DQD/6X2HQS8Zy/xzViVYfEs2OQu68tkCuKLV0Md8pmX55+W24uRIyAsf/BajRfxOs+R2MKA==}
     engines: {node: '>= 10'}
     hasBin: true
@@ -3990,11 +3990,11 @@ packages:
       make-error: 1.3.6
       mkdirp: 1.0.4
       semver: 7.3.5
-      typescript: 4.4.4
+      typescript: 4.5.2
       yargs-parser: 20.2.9
     dev: true
 
-  /ts-node/9.1.1_typescript@4.4.4:
+  /ts-node/9.1.1_typescript@4.5.2:
     resolution: {integrity: sha512-hPlt7ZACERQGf03M253ytLY3dHbGNGrAq9qIHWUY9XHYl1z7wYngSr3OQ5xmui8o2AaxsONxIzjafLUiWBo1Fg==}
     engines: {node: '>=10.0.0'}
     hasBin: true
@@ -4006,7 +4006,7 @@ packages:
       diff: 4.0.2
       make-error: 1.3.6
       source-map-support: 0.5.20
-      typescript: 4.4.4
+      typescript: 4.5.2
       yn: 3.1.1
     dev: true
 
@@ -4085,8 +4085,8 @@ packages:
       is-typedarray: 1.0.0
     dev: true
 
-  /typescript/4.4.4:
-    resolution: {integrity: sha512-DqGhF5IKoBl8WNf8C1gu8q0xZSInh9j1kJJMqT3a94w1JzVaBU4EXOSMrz9yDqMT0xt3selp83fuFMQ0uzv6qA==}
+  /typescript/4.5.2:
+    resolution: {integrity: sha512-5BlMof9H1yGt0P8/WF+wPNw6GfctgGjXp5hkblpyT+8rkASSmkUKMXrxR0Xg8ThVCi/JnHQiKXeBaEwCeQwMFw==}
     engines: {node: '>=4.2.0'}
     hasBin: true
     dev: true

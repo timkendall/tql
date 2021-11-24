@@ -32,12 +32,6 @@ Yargs.command(
         default: "unversioned",
         description: "Semantic versioning tag (ex. 1.0.0).",
       })
-      .option("mutableFields", {
-        type: "boolean",
-        default: false,
-        description:
-          "Generate schema types and results as mutable (default is read-only).",
-      })
       .option("module-path", {
         type: "string",
         description: "Path to @timkendall/tql module.",
@@ -48,17 +42,6 @@ Yargs.command(
     const schema = schemaPath.startsWith("http")
       ? await remoteSchema(schemaPath)
       : await localSchema(schemaPath);
-
-    // const codegen = new Codegen({
-    //   schema,
-    //   client: argv.client
-    //     ? { name: argv.client, version: argv.tag }
-    //     : undefined,
-    //   mutableFields: argv.mutableFields,
-    //   modulePath: argv["module-path"],
-    // });
-
-    // process.stdout.write(codegen.render());
 
     process.stdout.write(render(schema));
   }
