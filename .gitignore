@@ -108,3 +108,4 @@ notes.txt
 failing-examples
 
 sdk.ts
+*_test.ts
