@@ -32,6 +32,7 @@
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "dependencies": {
+    "@graphql-typed-document-node/core": "^3.1.1",
     "ast-types": "^0.14.2",
     "fs-extra": "^9.0.1",
     "jssha": "^3.2.0",
@@ -44,7 +45,7 @@
     "yargs": "^16.1.0"
   },
   "devDependencies": {
-    "@apollo/client": "^3.4.4",
+    "@apollo/client": "^3.4.16",
     "@arkweid/lefthook": "^0.7.2",
     "@types/deep-freeze": "^0.1.2",
     "@types/fs-extra": "^9.0.2",

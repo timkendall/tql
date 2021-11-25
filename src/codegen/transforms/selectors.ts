@@ -30,6 +30,33 @@ import {
   toLower,
 } from "../utils";
 
+const printConditionalNamedType = (types: string[]) => {
+  const [first, ...rest] = types;
+
+  if (rest.length === 0) {
+    return `I${first}`;
+  } else {
+    return types
+      .map((t) => `F extends "${t}" ? I${t} : `)
+      .join("")
+      .concat(" never");
+  }
+};
+
+// ex. F extends "Human" ? HumanSelector : DroidSelector
+const printConditionalSelectorArg = (types: string[]) => {
+  const [first, ...rest] = types;
+
+  if (rest.length === 0) {
+    return `${first}Selector`;
+  } else {
+    return types
+      .map((t) => `F extends "${t}" ? I${t}Selector : `)
+      .join("")
+      .concat(" never");
+  }
+};
+
 const printInputType = (type: GraphQLInputType): string => {
   const _base = inputType(type);
 
@@ -146,7 +173,7 @@ const printSignature = (field: GraphQLField<any, any, any>): string => {
       ${jsDocComment}
       readonly ${name}: <V extends { ${args
           .map(printVariable)
-          .join(", ")} }, T extends Array<Selection>>(
+          .join(", ")} }, T extends ReadonlyArray<Selection>>(
         variables: V,
         select: (t: I${type.toString()}Selector) => T
       ) => Field<"${name}", [ ${args
@@ -155,7 +182,7 @@ const printSignature = (field: GraphQLField<any, any, any>): string => {
     `
       : `
       ${jsDocComment}
-      readonly ${name}: <T extends Array<Selection>>(
+      readonly ${name}: <T extends ReadonlyArray<Selection>>(
         select: (t: I${type.toString()}Selector) => T
       ) => Field<"${name}", never, SelectionSet<T>>,
     `;
@@ -211,7 +238,7 @@ export const transform = (
         ${/* select fn */ ""}
         export const ${toLower(
           typename
-        )} = <T extends Array<Selection>>(select: (t: I${typename}Selector) => T) => new SelectionBuilder<ISchema, "${type}", T>(SCHEMA as any, "${typename}", select(${typename}Selector))
+        )} = <T extends ReadonlyArray<Selection>>(select: (t: I${typename}Selector) => T) => new SelectionBuilder<ISchema, "${type}", T>(SCHEMA as any, "${typename}", select(${typename}Selector))
       `;
     },
 
@@ -235,19 +262,55 @@ export const transform = (
         ${/* selector interface */ ""}
         interface I${type.name}Selector {
           readonly __typename: () => Field<"__typename">
+          
           ${fields.map(printSignature).join("\n")}
+
+          readonly on: <T extends ReadonlyArray<Selection>, F extends ${implementations
+            .map((name) => `"${name}"`)
+            .join(" | ")}>(
+            type: F,
+            select: (t: ${printConditionalSelectorArg(
+              implementations.map((name) => name)
+            )}) => T
+          ) => InlineFragment<NamedType<F>, SelectionSet<T>>
         }
 
         ${/* selector object */ ""}
         const ${typename}Selector: I${typename}Selector = {
           __typename: () => field("__typename"),
+          
           ${fields.map(printMethod).join("\n")}
+
+          on: (
+            type,
+            select,
+          ) => {
+            switch(type) {
+              ${implementations
+                .map(
+                  (name) => `
+                case "${name}": {
+                  return inlineFragment(
+                    namedType("${name}"),
+                    selectionSet(select(${name}Selector as Parameters<typeof select>[0])),
+                  )
+                }
+              `
+                )
+                .join("\n")}
+              default:
+                throw new TypeConditionError({ 
+                  selectedType: type, 
+                  abstractType: "${type.name}",
+                })
+            }
+          },
         }
 
         ${/* select fn */ ""}
         export const ${toLower(
           typename
-        )} = <T extends Array<Selection>>(select: (t: I${typename}Selector) => T) => new SelectionBuilder<ISchema, "${type}", T>(SCHEMA as any, "${typename}", select(${typename}Selector))
+        )} = <T extends ReadonlyArray<Selection>>(select: (t: I${typename}Selector) => T) => new SelectionBuilder<ISchema, "${type}", T>(SCHEMA as any, "${typename}", select(${typename}Selector))
       `;
     },
 
@@ -270,19 +333,50 @@ export const transform = (
         interface I${type.name}Selector {
           readonly __typename: () => Field<"__typename">
 
-          ${/* @todo add `on` inline fragment selector */ ""}
+          readonly on: <T extends ReadonlyArray<Selection>, F extends ${implementations
+            .map((name) => `"${name}"`)
+            .join(" | ")}>(
+            type: F,
+            select: (t: ${printConditionalSelectorArg(
+              implementations.map((name) => name)
+            )}) => T
+          ) => InlineFragment<NamedType<F>, SelectionSet<T>>
         }
 
         ${/* selector object */ ""}
         const ${typename}Selector: I${typename}Selector = {
           __typename: () => field("__typename"),
-          ${/* @todo add `on` inline fragment selector */ ""}
+          
+          on: (
+            type,
+            select,
+          ) => {
+            switch(type) {
+              ${implementations
+                .map(
+                  (name) => `
+                case "${name}": {
+                  return inlineFragment(
+                    namedType("${name}"),
+                    selectionSet(select(${name}Selector as Parameters<typeof select>[0])),
+                  )
+                }
+              `
+                )
+                .join("\n")}
+              default:
+                throw new TypeConditionError({ 
+                  selectedType: type, 
+                  abstractType: "${type.name}",
+                })
+            }
+          },
         }
 
         ${/* select fn */ ""}
         export const ${toLower(
           typename
-        )} = <T extends Array<Selection>>(select: (t: I${typename}Selector) => T) => new SelectionBuilder<ISchema, "${type}", T>(SCHEMA as any, "${typename}", select(${typename}Selector))
+        )} = <T extends ReadonlyArray<Selection>>(select: (t: I${typename}Selector) => T) => new SelectionBuilder<ISchema, "${type}", T>(SCHEMA as any, "${typename}", select(${typename}Selector))
       `;
     },
 

@@ -1,8 +1,9 @@
 lockfileVersion: 5.3
 
 specifiers:
-  '@apollo/client': ^3.4.4
+  '@apollo/client': ^3.4.16
   '@arkweid/lefthook': ^0.7.2
+  '@graphql-typed-document-node/core': ^3.1.1
   '@types/deep-freeze': ^0.1.2
   '@types/fs-extra': ^9.0.2
   '@types/jest': ^26.0.19
@@ -33,6 +34,7 @@ specifiers:
   yargs: ^16.1.0
 
 dependencies:
+  '@graphql-typed-document-node/core': 3.1.1_graphql@15.7.2
   ast-types: 0.14.2
   fs-extra: 9.1.0
   jssha: 3.2.0
@@ -80,7 +82,7 @@ packages:
       subscriptions-transport-ws:
         optional: true
     dependencies:
-      '@graphql-typed-document-node/core': 3.1.0_graphql@15.7.2
+      '@graphql-typed-document-node/core': 3.1.1_graphql@15.7.2
       '@wry/context': 0.6.1
       '@wry/equality': 0.5.2
       '@wry/trie': 0.3.1
@@ -443,13 +445,12 @@ packages:
       minimist: 1.2.5
     dev: true
 
-  /@graphql-typed-document-node/core/3.1.0_graphql@15.7.2:
-    resolution: {integrity: sha512-wYn6r8zVZyQJ6rQaALBEln5B1pzxb9shV5Ef97kTvn6yVGrqyXVnDqnU24MXnFubR+rZjBY9NWuxX3FB2sTsjg==}
+  /@graphql-typed-document-node/core/3.1.1_graphql@15.7.2:
+    resolution: {integrity: sha512-NQ17ii0rK1b34VZonlmT2QMJFI70m0TRwbknO/ihlbatXyaktDhN/98vBiUU6kNBPljqGqyIrl2T4nY2RpFANg==}
     peerDependencies:
-      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0
+      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 15.7.2
-    dev: true
 
   /@istanbuljs/load-nyc-config/1.1.0:
     resolution: {integrity: sha512-VjeHSlIzpv/NyD3N0YuHfXOPDIixcA1q2ZV98wsMqcYlPmv2n3Yb2lYP9XMElnaFVXg5A7YLTeLu6V84uQDjmQ==}

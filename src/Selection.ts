@@ -1,6 +1,7 @@
 import type { GraphQLSchema } from "graphql/type";
 import type { TypedQueryDocumentNode } from "graphql/utilities";
 import { OperationTypeNode, print } from "graphql/language";
+import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
 import type * as AST from "./AST";
 import {
@@ -19,7 +20,7 @@ type Element<T> = T extends Array<infer U> ? U : never;
 export class Selection<
   Schema extends Record<string, any>,
   RootType extends string /* @todo keyof Schema*/,
-  T extends Array<AST.Selection>
+  T extends ReadonlyArray<AST.Selection>
 > extends Array<Element<T>> {
   constructor(
     public readonly schema: GraphQLSchema,
@@ -59,7 +60,7 @@ export class Selection<
     queryName?: string;
     useVariables?: boolean;
     dropNullInputValues?: boolean;
-  }): TypedQueryDocumentNode<
+  }): TypedDocumentNode<
     Result<Schema, Schema[RootType], AST.SelectionSet<T>>,
     Variables<Schema, Schema[RootType], AST.SelectionSet<T>>
   > {
@@ -87,7 +88,7 @@ export class Selection<
       variableDefinitions
     );
 
-    return document([operationDefinition]) as TypedQueryDocumentNode<
+    return document([operationDefinition]) as TypedDocumentNode<
       Result<Schema, Schema[RootType], AST.SelectionSet<T>>,
       Variables<Schema, Schema[RootType], AST.SelectionSet<T>>
     >;
@@ -97,5 +98,13 @@ export class Selection<
 
   toString() {
     return print(this.toSelectionSet());
+  }
+}
+
+export class TypeConditionError extends Error {
+  constructor(metadata: { selectedType: string; abstractType: string }) {
+    super(
+      `"${metadata.selectedType}" is not a valid type of abstract "${metadata.abstractType}" type.`
+    );
   }
 }

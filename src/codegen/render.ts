@@ -36,13 +36,18 @@ export const render = (sdl: string): string => {
 
   const source =
     `import { 
-      Field, 
+      TypeConditionError,
+      NamedType,
+      Field,
+      InlineFragment,
       Argument, 
       Variable, 
       Selection, 
       SelectionSet, 
       SelectionBuilder, 
-      field, 
+      namedType,
+      field,
+      inlineFragment,
       argument, 
       selectionSet
      } from './src'
