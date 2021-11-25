@@ -1,5 +1,7 @@
 # TQL
 
+> Note: this is **pre-production software** at this point, see the **[current limitations](./CURRENT_LIMITATIONS.md)**.
+
 **tql** is a TypeScript GraphQL query builder.
 
 - **Codegen once** - regenerate your GraphQL API client only when your schema changes.
@@ -28,27 +30,11 @@ You will need to compile a type-safe client one time before using. Do this with 
 
 `yarn --silent tql <schema> > api.ts`.
 
-
 ```typescript
-import { SDK, $ } from '@timkendall/tql'
-import { request } from 'graphql-request'
 import { useQuery } from '@apollo/client'
 
-// if pre-compiled (a little painful but best other than that!)
-// import { $, query } from './starwars'
-
-// using custom ES module loader... (requires changes to prod config unless Node starts supporting native HTTP URL modules like Deno)
-// import { SDK } from 'https://api.macromon.app/' // configured middleware
-// import { SDK } from 'https://get.tql.io/?api=api.macromon.app' // hosted proxy
-
-// @note you will need to have configured the TypeScript compiler plugin
-// for this to work. The compiler plugin is simply a convienience method
-// for initiating codegen (run once per compiler processes; no source* code is emitted).
-//
-// For production applications we generally recommend pre-compiling your
-// sdk and publishing/importing it from a package registry.
-const { query } = new SDK<'./starwars.graphql'>({/* custom serde */})
-// const { query } = createSDK<'./starwars.graphql'>()
+// SDK generated in previous setp
+import { $, query } from './starwars'
 
 const QUERY = query((t) => [
   t.reviews({ episode: Episode.EMPIRE }, (t) => [
@@ -80,10 +66,7 @@ const QUERY = query((t) => [
   ]),
 ]).toQuery({ name: 'Example' })
 
-const { data } = request('https://graphql.org/swapi-graphql/', QUERY, { id: '1011' })
-
-// or
-
+// type-safe result and variables 👍
 const { data } = useQuery(QUERY, { variables: { id: '1011' }})
 
 ```

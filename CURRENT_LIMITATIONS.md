@@ -6,10 +6,10 @@
 - [x] Union type support
 - [x] `mutation` or `subscription` operation support
 - [x] Nullable field support
-- [ ] Variable definition support
+- [x] Variable definition support
 
 ## perhaps in 1.x
 - [ ] Field alias support
 - [ ] Directive support
 - [ ] Named fragments
-- [ ] Custom scalar support yet (e.g no `Date` objects), limited to JS built-ins.
+- [ ] Custom scalar support yet (e.g no `Date` objects), limited to JS built-ins (custom scalars default to `string`'s)
