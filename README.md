@@ -4,9 +4,10 @@
 
 **tql** is a TypeScript GraphQL query builder.
 
-- **Codegen once** - regenerate your GraphQL API client only when your schema changes.
-- **Fully type-safe** - take advantage of the full power of TypeScript's advanced type-system.
-- **Backendless** - integrate with any existing GraphQL client.
+- 🔒 **Fully Type-safe** - Operation results and variables are fully type-safe thanks to TypeScript's advanced type-system.
+- 🔌 **Backendless**: - Integrate with any GraphQL client to execute queries.
+- 🔮 **Automatic Variables**: - Variable definitions are automatically derived based on usage.
+- 📝 **Inline Documentation**: JSDoc comments provide descriptions and deprecation warnings for fields directly in your editor.
 
 ## [Try it Out](https://codesandbox.io/s/tql-starwars-wlfg9?file=/src/index.ts&runonclick=1)
 
@@ -29,7 +30,14 @@ Import selector functions to start defining queries 🎉
 import { useQuery } from '@apollo/client'
 
 // SDK generated in previous setup
-import { query, $ } from './starwars'
+import { character, query, $ } from './starwars'
+
+// define reusable selections
+const CHARECTER = character(t => [
+  t.id(),
+  t.name(),
+  t.appearsIn(),
+])
 
 const QUERY = query((t) => [
   t.reviews({ episode: Episode.EMPIRE }, (t) => [
@@ -44,14 +52,15 @@ const QUERY = query((t) => [
     t.appearsIn(),
     t.homePlanet(),
 
-    // @note Deprecated field should be properly picked-up by VSCode!
+    // deprecated field should be properly picked-up by your editor
     t.mass(),
 
     t.friends((t) => <const>[
       t.__typename(),
-      t.id(),
-      t.name(),
-      t.appearsIn(),
+      
+      ...CHARECTER,
+      // or
+      CHARECTER.toInlineFragment(),
 
       t.on("Human", (t) => [t.homePlanet()]),
       t.on("Droid", (t) => [t.primaryFunction()]),
