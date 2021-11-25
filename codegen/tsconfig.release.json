@@ -1,7 +1,6 @@
 {
   "extends": "./tsconfig.json",
   "include": ["src/**/*"],
-  "exclude": ["src/**/*_test.ts"],
   "compilerOptions": {
     "rootDir": "src",
     "outDir": "dist",
