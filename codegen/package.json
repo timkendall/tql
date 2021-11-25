@@ -16,8 +16,6 @@
     "build:release": "tsc --build tsconfig.release.json",
     "clean": "rm -rf dist tsconfig.tsbuildinfo tsconfig.release.tsbuildinfo",
     "dev": "tsc -b -w",
-    "prepush": "yarn test",
-    "prepublish": "yarn clean && yarn build:release",
     "test": "jest --cache=false",
     "type-test": "tsd",
     "format": "prettier --write",
