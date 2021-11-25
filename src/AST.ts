@@ -251,6 +251,7 @@ export const document = <T extends ReadonlyArray<Definition>>(
   definitions,
 });
 
+// @todo use the proper `astFromValue`
 export const toValueNode = (value: any, enums: any[] = []): ValueNode => {
   if (typeof value === "string") {
     if (enums.some((e) => Object.values(e).includes(value)))

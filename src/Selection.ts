@@ -79,7 +79,6 @@ export class Selection<
     const op = this.type.toLowerCase() as OperationTypeNode;
     const selectionSet = this.toSelectionSet();
     const variableDefinitions = buildVariableDefinitions(
-      op,
       this.schema,
       selectionSet
     );

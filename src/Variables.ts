@@ -1,6 +1,6 @@
 import type { GraphQLSchema } from "graphql";
 import { Kind, visitWithTypeInfo, TypeInfo, visit } from "graphql";
-import { O, U } from "ts-toolbelt";
+import type { O, U } from "ts-toolbelt";
 
 import {
   SelectionSet,
@@ -13,40 +13,43 @@ import {
   variable,
   variableDefinition,
   NamedType,
+  operation,
 } from "./AST";
 
 export const $ = <Name extends string>(name: Name): Variable<Name> =>
   variable(name);
 
 export const buildVariableDefinitions = <T extends SelectionSet<any>>(
-  op: "query" | "mutation" | "subscription",
   schema: GraphQLSchema,
   selectionSet: T
 ): Array<VariableDefinition<any, any>> => {
   const variableDefinitions: VariableDefinition<any, any>[] = [];
   const typeInfo = new TypeInfo(schema);
+
+  // @note need to wrap selectionset in operation for TypeInfo to track correctly
+  const operationDefinition = operation(
+    "query",
+    "",
+    selectionSet,
+    variableDefinitions
+  );
+
   const visitor = visitWithTypeInfo(typeInfo, {
-    [Kind.ARGUMENT]: (argNode) => {
-      if (isVariable(argNode.value) && typeInfo.getArgument()?.astNode?.type) {
+    [Kind.ARGUMENT]: (node) => {
+      const type = typeInfo.getArgument()?.astNode?.type!;
+
+      if (node.value.kind === "Variable") {
         // define the `VariableDefinition`
-        variableDefinitions.push(
-          variableDefinition(
-            argNode.value,
-            typeInfo.getArgument()?.astNode?.type!
-          )
-        );
+        variableDefinitions.push(variableDefinition(node.value, type));
       }
     },
   });
 
   // @todo return from here
-  visit(selectionSet, visitor);
+  visit(operationDefinition, visitor);
 
   return variableDefinitions;
 };
-
-export const isVariable = (value: any): value is Variable<string> =>
-  typeof value === "object" && value.kind === Kind.VARIABLE;
 
 // @note Traverse the AST extracting `Argument` nodes w/ values of `Variable`.
 // Extract the type the Variable value needs to be against/the Schema.

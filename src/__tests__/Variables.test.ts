@@ -29,7 +29,6 @@ describe("Variables", () => {
 
     // @note we need a way to get the input type at runtime
     const variableDefinitions = buildVariableDefinitions(
-      "query",
       schema,
       selectionSet(selection)
     );
@@ -48,7 +47,7 @@ describe("Variables", () => {
 
       type User {
         id: ID!
-        friends(limit: Int = 10): [User!]
+        friends(limit: Int!): [User!]
       }
     `,
       { noLocation: true }
@@ -69,7 +68,6 @@ describe("Variables", () => {
     ]);
 
     const variableDefinitions = buildVariableDefinitions(
-      "query",
       schema,
       selectionSet(selection)
     );
