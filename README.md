@@ -23,12 +23,12 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 You will need to compile a type-safe client one time before using. Do this with the provided CLI:
 
-`tql <schema> > api.ts`
+`npx @timkendall/tql-gen <schema> > api.ts`
 
 ```typescript
 import { useQuery } from '@apollo/client'
 
-// SDK generated in previous setp
+// SDK generated in previous setup
 import { query, $ } from './starwars'
 
 const QUERY = query((t) => [
