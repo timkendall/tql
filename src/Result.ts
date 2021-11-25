@@ -22,7 +22,7 @@ export type Result<
   Selected extends SelectionSet<ReadonlyArray<Selection>> | undefined
 > =
   // Lists
-  Parent extends Array<infer T>
+  Parent extends Array<infer T> | ReadonlyArray<infer T>
     ? ReadonlyArray<Result<Schema, T, Selected>>
     : // Objects
     Parent extends Record<string, any>
