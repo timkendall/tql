@@ -8,6 +8,7 @@
 - 🔌 **Backendless**: - Integrate with any GraphQL client to execute queries.
 - 🔮 **Automatic Variables**: - Variable definitions are automatically derived based on usage.
 - 📝 **Inline Documentation**: JSDoc comments provide descriptions and deprecation warnings for fields directly in your editor.
+- ⚡ **Single Dependency**: [`graphql-js`](https://github.com/graphql/graphql-js) is our single runtime (peer) dependency.
 
 ## [Try it Out](https://codesandbox.io/s/tql-starwars-wlfg9?file=/src/index.ts&runonclick=1)
 
