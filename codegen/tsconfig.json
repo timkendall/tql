@@ -1,0 +1,24 @@
+{
+  "include": ["src/**/*", "__tests__/**/*"],
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true,
+    "rootDir": ".",
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "ES2020",
+    "module": "commonjs",
+    "noUnusedLocals": false,
+    "allowJs": false,
+    "declaration": true,
+    "declarationMap": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strictPropertyInitialization": false,
+    "skipLibCheck": true,
+    "incremental": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["ES2020"]
+  }
+}

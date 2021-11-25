@@ -1,24 +1,16 @@
 {
-  "name": "@timkendall/tql",
-  "author": "Timothy Kendall",
-  "license": "MIT",
-  "version": "0.8.0",
-  "description": "Write GraphQL queries in TypeScript.",
-  "keywords": [
-    "graphql",
-    "typescript",
-    "query builder",
-    "codegen"
-  ],
+  "name": "@timkendall/tql-gen",
+  "version": "1.0.0",
+  "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
-  "workspaces": [
-    ".",
-    "codegen"
-  ],
+  "bin": {
+    "tql-gen": "bin/index"
+  },
   "scripts": {
     "build": "tsc -b",
     "build:release": "tsc --build tsconfig.release.json",
@@ -31,14 +23,22 @@
     "format": "prettier --write",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
+  "author": "Tim Kendall",
+  "license": "MIT",
   "dependencies": {
-    "@graphql-typed-document-node/core": "^3.0.0",
-    "ts-toolbelt": "^9.6.0"
+    "ast-types": "^0.14.2",
+    "fs-extra": "^9.0.1",
+    "graphql": "^15.3.0",
+    "jssha": "^3.2.0",
+    "node-fetch": "^2.6.1",
+    "outvariant": "^1.2.1",
+    "prettier": "^2.1.2",
+    "ts-poet": "^4.5.0",
+    "ts-toolbelt": "^9.6.0",
+    "yargs": "^16.1.0"
   },
   "devDependencies": {
-    "@apollo/client": "^3.4.16",
     "@arkweid/lefthook": "^0.7.2",
-    "@types/deep-freeze": "^0.1.2",
     "@types/fs-extra": "^9.0.2",
     "@types/jest": "^26.0.19",
     "@types/node": "^16.11.7",
@@ -46,18 +46,10 @@
     "@types/prettier": "^2.1.5",
     "@types/yargs": "^15.0.12",
     "auto-changelog": "^2.2.1",
-    "deep-freeze": "^0.0.1",
-    "graphql": "^15.3.0",
-    "graphql-request": "^3.6.1",
     "jest": "^26.6.3",
-    "prettier": "^2.1.2",
     "ts-jest": "^26.4.4",
     "ts-node": "^9.0.0",
-    "tsd": "^0.18.0",
     "typescript": "^4.5.2"
-  },
-  "peerDependencies": {
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
   },
   "publishConfig": {
     "access": "public"

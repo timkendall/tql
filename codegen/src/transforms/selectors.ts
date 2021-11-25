@@ -193,10 +193,10 @@ export const transform = (
   ast: DocumentNode,
   schema: GraphQLSchema
 ): ASTVisitor => {
-  const Field = imp("Field@timkendall@tql");
-  const Argument = imp("Argument@timkendall@tql");
-  const Variable = imp("Variable@timkendall@tql");
-  const InlineFragment = imp("InlineFragment@timkendall@tql");
+  // const Field = imp("Field@timkendall@tql");
+  // const Argument = imp("Argument@timkendall@tql");
+  // const Variable = imp("Variable@timkendall@tql");
+  // const InlineFragment = imp("InlineFragment@timkendall@tql");
 
   return {
     [Kind.ENUM_TYPE_DEFINITION]: (node) => {

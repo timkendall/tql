@@ -1,41 +1,19 @@
 import Yargs from "yargs";
 import fs from "fs-extra";
 import fetch from "node-fetch";
-import {
-  parse,
-  getIntrospectionQuery,
-  buildASTSchema,
-  buildClientSchema,
-  printSchema,
-} from "graphql";
+import { getIntrospectionQuery, buildClientSchema, printSchema } from "graphql";
 
-// import { Codegen } from "./Codegen";
-import { render } from "./codegen";
+import { render } from "./render";
 
 Yargs.command(
   "$0 <schema>",
   "Generate a fluent TypeScript client for your GraphQL API.",
   (yargs) =>
-    yargs
-      .positional("schema", {
-        describe: "ex. https://graphql.org/swapi-graphql/",
-        type: "string",
-        demandOption: true,
-      })
-      .option("client", {
-        type: "string",
-        requiresArg: true,
-        description: "Include an implementation of the Client class.",
-      })
-      .option("tag", {
-        type: "string",
-        default: "unversioned",
-        description: "Semantic versioning tag (ex. 1.0.0).",
-      })
-      .option("module-path", {
-        type: "string",
-        description: "Path to @timkendall/tql module.",
-      }),
+    yargs.positional("schema", {
+      describe: "ex. https://graphql.org/swapi-graphql/",
+      type: "string",
+      demandOption: true,
+    }),
   async (argv) => {
     const schemaPath = argv.schema;
 

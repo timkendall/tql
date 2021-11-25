@@ -1,6 +1,4 @@
-import { TypedQueryDocumentNode } from "graphql";
-
-import { render } from "../codegen";
+import { render } from "../render";
 
 describe.skip("Codegen", () => {
   describe("schema", () => {

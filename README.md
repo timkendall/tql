@@ -18,23 +18,18 @@ Try out our pre-compiled Star Wars GraphQL client on [Repl.it](https://repl.it/)
 
 * **TypeScript 4.1+** is required for [Recursive Conditional Type](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#recursive-conditional-types) support
 
-## Usage
-
-1. []()
-1. []
-
 
 ## Usage
 
 You will need to compile a type-safe client one time before using. Do this with the provided CLI:
 
-`yarn --silent tql <schema> > api.ts`.
+`tql <schema> > api.ts`
 
 ```typescript
 import { useQuery } from '@apollo/client'
 
 // SDK generated in previous setp
-import { $, query } from './starwars'
+import { query, $ } from './starwars'
 
 const QUERY = query((t) => [
   t.reviews({ episode: Episode.EMPIRE }, (t) => [

@@ -255,18 +255,6 @@ export const transform = (
         }
       };
 
-      // @todo
-
-      //   return code`
-      //   const _ENUM_VALUES = Object.freeze({
-      //     ${
-      //       Array.from(enumValues)
-      //       .map((value) => `${value}: true`)
-      //       .join(",\n")
-      //     }
-      //   } as const)
-      // `.toCodeString()
-
       return code`
         export interface ISchema {
           ${types.map(printType).join("\n")}

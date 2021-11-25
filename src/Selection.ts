@@ -1,9 +1,10 @@
 import type { GraphQLSchema } from "graphql/type";
 import { OperationTypeNode, print } from "graphql/language";
-// @question use this type or the one from `@graphql-typed-document-node/core`?
+// @note v16+ of graphql-js exposes their own version of a typed DocumentNode
+// See https://github.com/dotansimha/graphql-typed-document-node/issues/68
+//
 // import type { TypedQueryDocumentNode } from "graphql/utilities";
-// import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
-import type { TypedDocumentNode } from "@apollo/client";
+import type { TypedDocumentNode } from "@graphql-typed-document-node/core";
 
 import type * as AST from "./AST";
 import {
