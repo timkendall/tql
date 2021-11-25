@@ -4,6 +4,7 @@
   "license": "MIT",
   "version": "1.0.0-rc.1",
   "description": "Write GraphQL queries in TypeScript.",
+  "sideEffects": false,
   "keywords": [
     "graphql",
     "typescript",
