@@ -5,7 +5,7 @@ import prettier from "prettier";
 import { typeTransform, selectorInterfaceTransform } from "./transforms";
 
 export const render = (sdl: string): string => {
-  const ast = parse(sdl);
+  const ast = parse(sdl, { noLocation: true });
   const schema = buildSchema(sdl);
 
   const transforms = [
@@ -35,7 +35,10 @@ export const render = (sdl: string): string => {
   `;
 
   const source =
-    `import { 
+    `
+    import { buildASTSchema } from 'graphql'
+
+    import { 
       TypeConditionError,
       NamedType,
       Field,
@@ -50,12 +53,13 @@ export const render = (sdl: string): string => {
       inlineFragment,
       argument, 
       selectionSet
-     } from './src'
+     } from '@timkendall/tql'
      
-     export { Result, Variables, $ } from './src'
+     export { Result, Variables, $ } from '@timkendall/tql'
+     
      ` +
     `
-    export const SCHEMA = ${JSON.stringify(ast)}
+    export const SCHEMA = buildASTSchema(${JSON.stringify(ast)})
     
     export const ENUMS = ${ENUMS}
   ` +

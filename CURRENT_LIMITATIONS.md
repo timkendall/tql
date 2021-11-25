@@ -10,6 +10,8 @@
 - [x] Rewrite `Result` and `Variable` types
 - [x] Type-level testing
 - [x] Default unknown scalars to `string`'s
+- [ ] Fix nested variable extraction
+- [ ] Dynamic selector building (using Proxy's)
 - [ ] Restricing `Selection`'s in selector function returns
 - [ ] Finish rewriting unit tests
 - [ ] Field alias support
