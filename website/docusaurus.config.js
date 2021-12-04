@@ -38,7 +38,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      googleAnalytics: {
+      gtag: {
         trackingID: 'G-4GY1ML0FR6',
         // Optional fields.
         anonymizeIP: true, // Should IPs be anonymized?
