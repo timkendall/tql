@@ -1,0 +1,12 @@
+[package]
+name = "codegen-rust"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+apollo-parser = "0.1.0"
+dprint-core = "0.47.1"
+dprint-plugin-typescript = "0.59.2"
+structopt = "0.3"
