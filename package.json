@@ -38,6 +38,8 @@
   "devDependencies": {
     "@apollo/client": "^3.4.16",
     "@arkweid/lefthook": "^0.7.2",
+    "@swc/core": "^1.2.117",
+    "@swc/wasm-web": "^1.2.117",
     "@types/deep-freeze": "^0.1.2",
     "@types/fs-extra": "^9.0.2",
     "@types/jest": "^26.0.19",
