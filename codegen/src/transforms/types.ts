@@ -93,6 +93,8 @@ export const transform = (
   const enumValues = new Set<string>();
 
   return {
+    [Kind.SCALAR_TYPE_DEFINITION]: () => null,
+
     [Kind.ENUM_TYPE_DEFINITION]: (node) => {
       const typename = node.name.value;
       const values = node.values?.map((v) => v.name.value) ?? [];
