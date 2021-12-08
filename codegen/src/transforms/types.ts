@@ -135,10 +135,9 @@ export const transform = (
 
         if (baseType instanceof GraphQLScalarType) {
           tsType = toPrimitive(baseType);
-        } else if (
-          baseType instanceof GraphQLEnumType ||
-          baseType instanceof GraphQLInputObjectType
-        ) {
+        } else if (baseType instanceof GraphQLEnumType) {
+          tsType = baseType.name;
+        } else if (baseType instanceof GraphQLInputObjectType) {
           tsType = "I" + baseType.name;
         } else {
           throw new Error("Unable to render inputField!");
