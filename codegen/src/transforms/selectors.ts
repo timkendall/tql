@@ -48,7 +48,7 @@ const printConditionalSelectorArg = (types: string[]) => {
   const [first, ...rest] = types;
 
   if (rest.length === 0) {
-    return `${first}Selector`;
+    return `I${first}Selector`;
   } else {
     return types
       .map((t) => `F extends "${t}" ? I${t}Selector : `)
