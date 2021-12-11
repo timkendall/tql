@@ -2,7 +2,7 @@
   "name": "@timkendall/tql",
   "author": "Timothy Kendall",
   "license": "MIT",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "description": "Write GraphQL queries in TypeScript.",
   "sideEffects": false,
   "keywords": [
