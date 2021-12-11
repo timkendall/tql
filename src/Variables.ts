@@ -1,4 +1,4 @@
-import type { GraphQLSchema } from "graphql";
+import type { GraphQLSchema, OperationTypeNode } from "graphql";
 import { Kind, visitWithTypeInfo, TypeInfo, visit } from "graphql";
 import type { O, U } from "ts-toolbelt";
 
@@ -21,14 +21,15 @@ export const $ = <Name extends string>(name: Name): Variable<Name> =>
 
 export const buildVariableDefinitions = <T extends SelectionSet<any>>(
   schema: GraphQLSchema,
+  root: OperationTypeNode,
   selectionSet: T
 ): Array<VariableDefinition<any, any>> => {
   const variableDefinitions: VariableDefinition<any, any>[] = [];
   const typeInfo = new TypeInfo(schema);
 
-  // @note need to wrap selectionset in operation for TypeInfo to track correctly
+  // @note need to wrap selectionset in an operation (root) for TypeInfo to track correctly
   const operationDefinition = operation(
-    "query",
+    root,
     "",
     selectionSet,
     variableDefinitions

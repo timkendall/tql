@@ -30,6 +30,7 @@ describe("Variables", () => {
     // @note we need a way to get the input type at runtime
     const variableDefinitions = buildVariableDefinitions(
       schema,
+      "query",
       selectionSet(selection)
     );
 
@@ -69,6 +70,7 @@ describe("Variables", () => {
 
     const variableDefinitions = buildVariableDefinitions(
       schema,
+      "query",
       selectionSet(selection)
     );
 

@@ -80,6 +80,7 @@ export class Selection<
     const selectionSet = this.toSelectionSet();
     const variableDefinitions = buildVariableDefinitions(
       this.schema,
+      op,
       selectionSet
     );
 
