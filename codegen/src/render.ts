@@ -3,6 +3,7 @@ import type { Code } from "ts-poet";
 import prettier from "prettier";
 
 import { typeTransform, selectorInterfaceTransform } from "./transforms";
+import { printType } from "./utils";
 
 export const render = (sdl: string): string => {
   const ast = parse(sdl, { noLocation: true });
@@ -16,6 +17,10 @@ export const render = (sdl: string): string => {
   // additive transforms
   const results: ReadonlyArray<{ definitions: Code[] }> = transforms.map(
     (vistor) => visit(ast, vistor)
+  );
+
+  const types = Object.values(schema.getTypeMap()).filter(
+    (type) => !type.name.startsWith("__")
   );
 
   const enumValues = new Set(
@@ -32,6 +37,12 @@ export const render = (sdl: string): string => {
         .map((value) => `${value}: true`)
         .join(",\n")}
     } as const)
+  `;
+
+  const typeMap = `
+    export interface ISchema {
+      ${types.map(printType).join("\n")}
+    }
   `;
 
   const source =
@@ -62,6 +73,8 @@ export const render = (sdl: string): string => {
     export const SCHEMA = buildASTSchema(${JSON.stringify(ast)})
     
     export const ENUMS = ${ENUMS}
+
+    ${typeMap}
   ` +
     results
       .flatMap((result) =>

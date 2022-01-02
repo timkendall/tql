@@ -4,6 +4,8 @@ import {
   GraphQLNonNull,
   GraphQLList,
   GraphQLScalarType,
+  GraphQLNamedType,
+  GraphQLEnumType,
 } from "graphql";
 
 export function toUpper(word: string): string {
@@ -58,5 +60,15 @@ export const toPrimitive = (
       return "number";
     default:
       return "string";
+  }
+};
+
+export const printType = (type: GraphQLNamedType) => {
+  if (type instanceof GraphQLScalarType) {
+    return `${type.name}: ${toPrimitive(type)}`;
+  } else if (type instanceof GraphQLEnumType) {
+    return `${type.name}: ${type.name}`;
+  } else {
+    return `${type.name}: I${type.name}`;
   }
 };

@@ -243,26 +243,8 @@ export const transform = (
       `;
     },
 
-    [Kind.SCHEMA_DEFINITION]: (node) => {
-      const types = Object.values(schema.getTypeMap()).filter(
-        (type) => !type.name.startsWith("__")
-      );
-
-      const printType = (type: GraphQLNamedType) => {
-        if (type instanceof GraphQLScalarType) {
-          return `${type.name}: ${toPrimitive(type)}`;
-        } else if (type instanceof GraphQLEnumType) {
-          return `${type.name}: ${type.name}`;
-        } else {
-          return `${type.name}: I${type.name}`;
-        }
-      };
-
-      return code`
-        export interface ISchema {
-          ${types.map(printType).join("\n")}
-        }
-      `;
+    [Kind.SCHEMA_DEFINITION]: (_) => {
+      return null;
     },
   };
 };
