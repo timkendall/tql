@@ -3,18 +3,11 @@ import {
   ASTVisitor,
   Kind,
   GraphQLArgument,
-  isListType,
-  isNonNullType,
   GraphQLField,
   GraphQLObjectType,
-  GraphQLInputObjectType,
-  GraphQLInputType,
-  GraphQLOutputType,
   GraphQLNonNull,
-  GraphQLList,
   GraphQLScalarType,
   GraphQLEnumType,
-  GraphQLNamedType,
   GraphQLUnionType,
   GraphQLInterfaceType,
   DocumentNode,
@@ -22,13 +15,8 @@ import {
 import { imp, code } from "ts-poet";
 import { invariant } from "outvariant";
 
-import {
-  inputType,
-  outputType,
-  listType,
-  toPrimitive,
-  toLower,
-} from "../utils";
+import { printInputType } from "../printers";
+import { inputType, outputType, toPrimitive, toLower } from "../utils";
 
 const printConditionalNamedType = (types: string[]) => {
   const [first, ...rest] = types;
@@ -54,20 +42,6 @@ const printConditionalSelectorArg = (types: string[]) => {
       .map((t) => `F extends "${t}" ? I${t}Selector : `)
       .join("")
       .concat(" never");
-  }
-};
-
-const printInputType = (type: GraphQLInputType): string => {
-  const _base = inputType(type);
-
-  if (_base instanceof GraphQLScalarType) {
-    return toPrimitive(_base);
-  } else if (_base instanceof GraphQLEnumType) {
-    return _base.name;
-  } else if (_base instanceof GraphQLInputObjectType) {
-    return "I" + _base.name;
-  } else {
-    throw new Error("Unable to render inputType.");
   }
 };
 

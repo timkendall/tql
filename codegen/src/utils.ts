@@ -36,7 +36,7 @@ export function outputType(type: GraphQLOutputType): GraphQLOutputType {
   }
 }
 
-export function listType(type: GraphQLOutputType): boolean {
+export function listType(type: GraphQLOutputType | GraphQLInputType): boolean {
   if (type instanceof GraphQLNonNull) {
     return listType(type.ofType);
   } else if (type instanceof GraphQLList) {

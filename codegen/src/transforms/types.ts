@@ -3,18 +3,14 @@ import {
   ASTVisitor,
   Kind,
   GraphQLArgument,
-  isListType,
   isNonNullType,
   GraphQLField,
   GraphQLObjectType,
   GraphQLInputObjectType,
   GraphQLInputType,
-  GraphQLOutputType,
   GraphQLNonNull,
-  GraphQLList,
   GraphQLScalarType,
   GraphQLEnumType,
-  GraphQLNamedType,
   GraphQLUnionType,
   GraphQLInterfaceType,
   DocumentNode,
@@ -23,21 +19,8 @@ import {
 import { code } from "ts-poet";
 import { invariant } from "outvariant";
 
+import { printInputType } from "../printers";
 import { inputType, outputType, listType, toPrimitive } from "../utils";
-
-const printInputType = (type: GraphQLInputType): string => {
-  const _base = inputType(type);
-
-  if (_base instanceof GraphQLScalarType) {
-    return toPrimitive(_base);
-  } else if (_base instanceof GraphQLEnumType) {
-    return _base.name;
-  } else if (_base instanceof GraphQLInputObjectType) {
-    return "I" + _base.name;
-  } else {
-    throw new Error("Unable to render inputType.");
-  }
-};
 
 const printVariable = (arg: GraphQLArgument): string => {
   return `${arg.name}: ${printInputType(arg.type)} ${
@@ -46,7 +29,7 @@ const printVariable = (arg: GraphQLArgument): string => {
 };
 
 const printField = (field: GraphQLField<any, any, any>): string => {
-  const { name, args } = field;
+  const { args } = field;
 
   const isList = listType(field.type);
   const isNonNull = field.type instanceof GraphQLNonNull;
@@ -129,7 +112,7 @@ export const transform = (
       const fields = Object.values(type.getFields());
 
       const printField = (field: GraphQLInputField) => {
-        const isList = isListType(field.type);
+        const isList = listType(field.type);
         const isNonNull = isNonNullType(field.type);
         const baseType = inputType(field.type);
 
