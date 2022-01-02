@@ -93,6 +93,8 @@ export const transform = (
   const enumValues = new Set<string>();
 
   return {
+    [Kind.DIRECTIVE_DEFINITION]: () => null,
+
     [Kind.SCALAR_TYPE_DEFINITION]: () => null,
 
     [Kind.ENUM_TYPE_DEFINITION]: (node) => {

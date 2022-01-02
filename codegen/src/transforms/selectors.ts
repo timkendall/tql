@@ -199,6 +199,8 @@ export const transform = (
   // const InlineFragment = imp("InlineFragment@timkendall@tql");
 
   return {
+    [Kind.DIRECTIVE_DEFINITION]: () => null,
+
     [Kind.SCALAR_TYPE_DEFINITION]: () => null,
 
     [Kind.ENUM_TYPE_DEFINITION]: (node) => {
