@@ -28,7 +28,7 @@
     "dev": "tsc -b -w",
     "test": "jest --cache=false",
     "type-test": "tsd",
-    "format": "prettier --write",
+    "format": "dprint fmt",
     "version": "auto-changelog -p && git add CHANGELOG.md"
   },
   "dependencies": {
@@ -43,7 +43,6 @@
     "@types/jest": "^26.0.19",
     "@types/node": "^16.11.7",
     "@types/node-fetch": "^2.5.7",
-    "@types/prettier": "^2.1.5",
     "@types/yargs": "^15.0.12",
     "auto-changelog": "^2.2.1",
     "deep-freeze": "^0.0.1",
@@ -51,7 +50,6 @@
     "graphql": "^15.3.0",
     "graphql-request": "^3.6.1",
     "jest": "^26.6.3",
-    "prettier": "^2.1.2",
     "ts-jest": "^26.4.4",
     "ts-node": "^9.0.0",
     "tsd": "^0.18.0",
