@@ -1,8 +1,10 @@
 {
   "incremental": true,
   "typescript": {
+    "indentWidth": 2
   },
   "json": {
+    "indentWidth": 2
   },
   "markdown": {
   },

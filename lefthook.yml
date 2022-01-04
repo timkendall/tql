@@ -4,4 +4,4 @@ pre-commit:
     formatter:
       files: git diff --name-only --staged
       glob: "*.{ts}"
-      run: pnpm format {files} && git add {files}
+      run: pnpm dprint fmt {files} && git add {files}
