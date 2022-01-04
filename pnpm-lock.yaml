@@ -64,7 +64,7 @@ importers:
       jssha: ^3.2.0
       node-fetch: ^2.6.1
       outvariant: ^1.2.1
-      prettier: ^2.1.2
+      prettier: ^2.5.1
       ts-jest: ^27.1.2
       ts-node: ^10.4.0
       ts-poet: ^4.5.0
@@ -78,7 +78,7 @@ importers:
       jssha: 3.2.0
       node-fetch: 2.6.6
       outvariant: 1.2.1
-      prettier: 2.4.1
+      prettier: 2.5.1
       ts-poet: 4.6.1
       ts-toolbelt: 9.6.0
       yargs: 16.2.0
@@ -8227,8 +8227,8 @@ packages:
     engines: {node: '>=4'}
     dev: false
 
-  /prettier/2.4.1:
-    resolution: {integrity: sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==}
+  /prettier/2.5.1:
+    resolution: {integrity: sha512-vBZcPRUR5MZJwoyi3ZoyQlc1rXeEck8KgeC9AwwOn+exuxLxq5toTRDTSaVrXHxelDMHy9zlicw8u66yxoSUFg==}
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: false
@@ -9769,7 +9769,7 @@ packages:
     dependencies:
       '@types/prettier': 1.19.1
       lodash: 4.17.21
-      prettier: 2.4.1
+      prettier: 2.5.1
     dev: false
 
   /ts-toolbelt/9.6.0:
