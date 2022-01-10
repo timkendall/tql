@@ -1,8 +1,7 @@
+use apollo_parser::{ast, Parser};
+use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
-use std::fs;
-use apollo_parser::{ast, Parser};
-
 
 /// A basic example
 #[derive(StructOpt, Debug)]
@@ -31,32 +30,32 @@ fn main() {
     println!("{:#?}", opt);
 
     if opt.debug {
-      println!("Debugging!")
+        println!("Debugging!")
     }
 
     let schema_path = opt.file;
 
     match fs::read_to_string(schema_path) {
-      Ok(schema) => {
-        // println!("With text:\n{}", schema);
-        
-        let parser = Parser::new(&schema.to_string());
-        let ast = parser.parse();
+        Ok(schema) => {
+            // println!("With text:\n{}", schema);
 
-        // assert_eq!(0, ast.errors().len());
+            let parser = Parser::new(&schema.to_string());
+            let ast = parser.parse();
 
-        let doc = ast.document();
+            // assert_eq!(0, ast.errors().len());
 
-        for def in doc.definitions() {
-          if let ast::Definition::ObjectTypeDefinition(object_type) = def {
-            println!("{}", object_type.name().unwrap().text());
-            
-            for field_def in object_type.fields_definition().unwrap().field_definitions() {
-                println!("{}", field_def.name().unwrap().text()); // size weight
+            let doc = ast.document();
+
+            for def in doc.definitions() {
+                if let ast::Definition::ObjectTypeDefinition(object_type) = def {
+                    println!("{}", object_type.name().unwrap().text());
+
+                    for field_def in object_type.fields_definition().unwrap().field_definitions() {
+                        println!("{}", field_def.name().unwrap().text()); // size weight
+                    }
+                }
             }
-          }
         }
-      }
-      Err(err) => println!("Error")
+        Err(err) => println!("Error"),
     }
 }

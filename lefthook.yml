@@ -1,7 +1,11 @@
 pre-commit:
   parallel: true
   commands:
-    formatter:
+    format-ts:
       files: git diff --name-only --staged
       glob: "*.{ts}"
       run: pnpm dprint fmt {files} && git add {files}
+    format-rs:
+      files: git diff --name-only --staged
+      glob: "*.{rs}"
+      run: rustfmt {files} && git add {files}
