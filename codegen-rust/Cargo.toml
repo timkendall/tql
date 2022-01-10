@@ -10,3 +10,7 @@ apollo-parser = "0.1.0"
 dprint-core = "0.47.1"
 dprint-plugin-typescript = "0.59.2"
 structopt = "0.3"
+
+[package.metadata]
+# no precompiled binaries of `wasm-opt` are available for this platform, you'll want to set `$WASM_OPT` to a preinstalled `wasm-opt` command or disable via `wasm-opt = false` in your manifest
+wasm-opt = false

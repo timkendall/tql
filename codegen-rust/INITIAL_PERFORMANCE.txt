@@ -1,0 +1,15 @@
+Read a GraphQL SDL text file, parse into an AST, iterate through all definitions, print out names of ObjectTypeDefinition nodes.
+
+442 line schema
+
+1. Node (v16) - 0.17s user 0.03s system 104% cpu 0.191 total
+2. WASM via Wasmer (debug) - 0.04s user 0.01s system 89% cpu 0.050 total
+3. Native (debug) - 0.02s user 0.00s system 70% cpu 0.031 total
+
+---
+
+14219 lines schema
+
+1. Node (v16) - .30s user 0.03s system 124% cpu 0.267 total
+2. WASM via Wasmer (debug) - 0.22s user 0.01s system 98% cpu 0.234 total / (release) 0.02s user 0.00s system 78% cpu 0.034 total
+3. Native (debug) - 0.17s user 0.00s system 97% cpu 0.174 total / (release) 0.02s user 0.00s system 74% cpu 0.027 total

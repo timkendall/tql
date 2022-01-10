@@ -30,16 +30,20 @@ fn main() {
     let opt = Opt::from_args();
     println!("{:#?}", opt);
 
+    if opt.debug {
+      println!("Debugging!")
+    }
+
     let schema_path = opt.file;
 
     match fs::read_to_string(schema_path) {
       Ok(schema) => {
-        println!("With text:\n{}", schema);
+        // println!("With text:\n{}", schema);
         
         let parser = Parser::new(&schema.to_string());
         let ast = parser.parse();
 
-        assert_eq!(0, ast.errors().len());
+        // assert_eq!(0, ast.errors().len());
 
         let doc = ast.document();
 
@@ -47,9 +51,9 @@ fn main() {
           if let ast::Definition::ObjectTypeDefinition(object_type) = def {
             println!("{}", object_type.name().unwrap().text());
             
-            // for field_def in object_type.fields_definition().unwrap().field_definitions() {
-            //     println!("{}", field_def.name().unwrap().text()); // size weight
-            // }
+            for field_def in object_type.fields_definition().unwrap().field_definitions() {
+                println!("{}", field_def.name().unwrap().text()); // size weight
+            }
           }
         }
       }
