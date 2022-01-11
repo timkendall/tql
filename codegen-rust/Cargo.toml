@@ -7,6 +7,9 @@ edition = "2021"
 
 [dependencies]
 apollo-parser = "0.1.0"
+swc_common = "0.16.1"
+swc_ecma_ast = "0.64.0"
+swc_ecma_codegen = "0.88.0"
 dprint-core = "0.47.1"
 dprint-plugin-typescript = "0.59.2"
 structopt = "0.3"
