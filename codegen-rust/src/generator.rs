@@ -1,9 +1,13 @@
 use graphql_tools::ast::SchemaVisitor;
 use graphql_tools::static_graphql::schema::{Document, ObjectType};
+// @todo take a generic to represent `ModuleItem` (i.e the target language AST node type)
+use swc_ecma_ast::ModuleItem;
 
 use crate::plugin::Plugin;
 
-struct SchemaVistorContext;
+struct SchemaVistorContext {
+    nodes: Vec<ModuleItem>,
+}
 
 pub struct Generator<'a, T: Plugin> {
     schema: &'a Document,
@@ -19,11 +23,12 @@ where
     }
 
     pub fn gen(&self) -> String {
+        let mut context = SchemaVistorContext { nodes: Vec::new() };
         // visit the GraphQL schema AST (plugin will convert GraphQL AST nodes to TypeScript AST nodes)
         // @todo fold over nodes instead of visiting
-        self.visit_schema_document(&self.schema, &mut SchemaVistorContext);
+        self.visit_schema_document(&self.schema, &mut context);
         // @todo collect TypeScript AST nodes (from fold) and pass to `plugin.render/1`
-        String::from("console.log('test')")
+        self.plugin.render(&context.nodes)
     }
 }
 
@@ -37,10 +42,11 @@ where
         let module_item = self.plugin.object_type(node);
 
         if module_item.is_some() {
-            let items = vec![module_item.unwrap()];
-            let rendered = self.plugin.render(&items);
+            context.nodes.push(module_item.unwrap());
+            // let items = vec![module_item.unwrap()];
+            // let rendered = self.plugin.render(&items);
 
-            println!("{}", rendered);
+            // println!("{}", rendered);
         }
     }
 }
