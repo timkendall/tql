@@ -2,12 +2,14 @@ use graphql_parser::schema::parse_schema;
 use std::fs;
 use std::path::PathBuf;
 use structopt::StructOpt;
+use swc_ecma_ast::EsVersion;
 
 mod generator;
 mod plugin;
+mod plugins;
 
-pub use crate::generator::Generator;
-pub use crate::plugin::Plugin;
+pub use generator::Generator;
+pub use plugins::typescript::TypeScript;
 
 fn string_to_static_str(s: String) -> &'static str {
     Box::leak(s.into_boxed_str())
@@ -31,8 +33,9 @@ fn main() {
     let schema_clone = string_to_static_str(schema.to_string());
     let ast = parse_schema::<String>(&schema_clone).expect("Failed to parse schema.");
 
-    let plugin = Plugin {
-        name: String::from("typescript"),
+    let plugin = TypeScript {
+        // @todo make configurable from CLI
+        es_version: EsVersion::Es2020,
     };
 
     let generator = Generator::new(&ast, &plugin);
