@@ -39,14 +39,11 @@ where
 {
     fn enter_object_type(&self, node: &ObjectType, context: &mut SchemaVistorContext) {
         // @todo push this onto `context` for now
-        let module_item = self.plugin.object_type(node);
-
-        if module_item.is_some() {
-            context.nodes.push(module_item.unwrap());
-            // let items = vec![module_item.unwrap()];
-            // let rendered = self.plugin.render(&items);
-
-            // println!("{}", rendered);
+        match self.plugin.object_type(node) {
+            Some(node) => {
+                context.nodes.push(node);
+            }
+            None => { /* @todo */ }
         }
     }
 }
