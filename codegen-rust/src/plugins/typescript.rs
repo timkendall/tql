@@ -1,4 +1,4 @@
-use graphql_tools::{ast::TypeDefinitionExtension, static_graphql::schema::ObjectType};
+use graphql_tools::static_graphql::schema::{ObjectType, Type};
 use swc_atoms::*;
 use swc_common::{sync::Lrc, FilePathMapping, SourceMap, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -40,14 +40,11 @@ impl Plugin for TypeScript {
                                 })),
                                 computed: false,
                                 optional: true, // @todo
-                                init: None,     //Option<Box<Expr>>, // ?
+                                init: None,     // Option<Box<Expr>>, // ?
                                 params: vec![], // only for functions
                                 type_ann: Some(TsTypeAnn {
                                     span: DUMMY_SP,
-                                    type_ann: Box::new(TsType::TsKeywordType(TsKeywordType {
-                                        span: DUMMY_SP,
-                                        kind: TsKeywordTypeKind::TsStringKeyword, // @todo
-                                    })),
+                                    type_ann: Box::new(to_ts_type(&f.field_type)),
                                 }),
                                 type_params: None, // only for functions
                             })
@@ -82,5 +79,54 @@ impl Plugin for TypeScript {
         let _ = emitter.emit_module(&module);
 
         String::from_utf8_lossy(&buf).to_string()
+    }
+}
+
+fn to_ts_type(graphql_type: &Type) -> TsType {
+    // @todo TsUnionOrIntersectionType
+
+    match graphql_type {
+        Type::NamedType(value) => {
+            match value.as_str() {
+                "Boolean" => TsType::TsKeywordType(TsKeywordType {
+                    span: DUMMY_SP,
+                    kind: TsKeywordTypeKind::TsBooleanKeyword,
+                }),
+                "Int" => TsType::TsKeywordType(TsKeywordType {
+                    span: DUMMY_SP,
+                    kind: TsKeywordTypeKind::TsNumberKeyword,
+                }),
+                "Float" => TsType::TsKeywordType(TsKeywordType {
+                    span: DUMMY_SP,
+                    kind: TsKeywordTypeKind::TsNumberKeyword,
+                }),
+                "ID" => TsType::TsKeywordType(TsKeywordType {
+                    span: DUMMY_SP,
+                    kind: TsKeywordTypeKind::TsStringKeyword,
+                }),
+                "String" => TsType::TsKeywordType(TsKeywordType {
+                    span: DUMMY_SP,
+                    kind: TsKeywordTypeKind::TsStringKeyword,
+                }),
+                // unknown scalars and complex types
+                _ => TsType::TsTypeRef(TsTypeRef {
+                    span: DUMMY_SP,
+                    type_name: TsEntityName::Ident(Ident {
+                        span: DUMMY_SP,
+                        sym: JsWord::from(value.as_str()),
+                        optional: false,
+                    }),
+                    type_params: None,
+                }),
+            }
+        }
+        Type::ListType(boxed_type) => TsType::TsArrayType(TsArrayType {
+            span: DUMMY_SP,
+            elem_type: Box::new(to_ts_type(&boxed_type)),
+        }),
+        Type::NonNullType(boxed_type) => {
+            // @todo
+            to_ts_type(&boxed_type)
+        }
     }
 }
