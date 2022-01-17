@@ -1,4 +1,4 @@
-use graphql_tools::static_graphql::schema::ObjectType;
+use graphql_tools::{ast::TypeDefinitionExtension, static_graphql::schema::ObjectType};
 use swc_atoms::*;
 use swc_common::{sync::Lrc, FilePathMapping, SourceMap, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -26,7 +26,33 @@ impl Plugin for TypeScript {
                 extends: vec![],
                 body: TsInterfaceBody {
                     span: DUMMY_SP,
-                    body: vec![],
+                    body: object_type
+                        .fields
+                        .iter()
+                        .map(|f| {
+                            TsTypeElement::TsPropertySignature(TsPropertySignature {
+                                span: DUMMY_SP,
+                                readonly: true,
+                                key: Box::new(Expr::Ident(Ident {
+                                    span: DUMMY_SP,
+                                    sym: JsWord::from(f.name.to_string()),
+                                    optional: false,
+                                })),
+                                computed: false,
+                                optional: true, // @todo
+                                init: None,     //Option<Box<Expr>>, // ?
+                                params: vec![], // only for functions
+                                type_ann: Some(TsTypeAnn {
+                                    span: DUMMY_SP,
+                                    type_ann: Box::new(TsType::TsKeywordType(TsKeywordType {
+                                        span: DUMMY_SP,
+                                        kind: TsKeywordTypeKind::TsStringKeyword, // @todo
+                                    })),
+                                }),
+                                type_params: None, // only for functions
+                            })
+                        })
+                        .collect(),
                 },
             }),
         };
