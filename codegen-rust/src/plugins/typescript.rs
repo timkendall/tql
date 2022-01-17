@@ -1,3 +1,6 @@
+use deno_ast::{parse_module, MediaType, ParseParams, SourceTextInfo};
+use dprint_plugin_typescript::configuration::ConfigurationBuilder as DprintConfigurationBuilder;
+use dprint_plugin_typescript::format_parsed_source;
 use graphql_tools::static_graphql::schema::{ObjectType, Type};
 use swc_atoms::*;
 use swc_common::{sync::Lrc, FilePathMapping, SourceMap, DUMMY_SP};
@@ -76,9 +79,30 @@ impl Plugin for TypeScript {
             shebang: None,
         };
 
+        // let program = Program::Module(module.to_owned());
+        // @todo instantiate the source directly from the AST
+        //     let parsed_source = ParsedSource::new(
+        //       "foo",
+        //        MediaType::TypeScript,
+        // SourceTextInfo::from_string(String::from("")),
+        //     );
         let _ = emitter.emit_module(&module);
 
-        String::from_utf8_lossy(&buf).to_string()
+        let parsed_source = parse_module(ParseParams {
+            specifier: "my_file.ts".to_string(),
+            source: SourceTextInfo::from_string(String::from_utf8_lossy(&buf).to_string()),
+            media_type: MediaType::TypeScript,
+            capture_tokens: true,
+            maybe_syntax: None,
+            scope_analysis: false,
+        })
+        .unwrap();
+        // @todo load Dprint configuration from file or explicit CLI arg
+        let config = DprintConfigurationBuilder::new().build();
+
+        format_parsed_source(&parsed_source, &config)
+            .unwrap()
+            .to_string()
     }
 }
 
