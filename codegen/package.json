@@ -25,6 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "ast-types": "^0.14.2",
+    "chalk": "^4",
     "fs-extra": "^9.0.1",
     "graphql": "^15.3.0",
     "jssha": "^3.2.0",
@@ -48,6 +49,9 @@
     "ts-jest": "^27.1.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.4"
+  },
+  "optionalDependencies": {
+    "codegen-experimental": "../codegen-rust-typescript/pkg"
   },
   "publishConfig": {
     "access": "public"

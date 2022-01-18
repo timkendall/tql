@@ -4,9 +4,9 @@ use std::path::PathBuf;
 use structopt::StructOpt;
 use swc_ecma_ast::EsVersion;
 
-mod generator;
-mod plugin;
-mod plugins;
+pub mod generator;
+pub mod plugin;
+pub mod plugins;
 
 pub use generator::Generator;
 pub use plugins::typescript::TypeScript;
