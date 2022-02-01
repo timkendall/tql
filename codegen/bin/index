@@ -1,26 +1,29 @@
 #!/usr/bin/env node --experimental-wasi-unstable-preview1
-// require('../dist/CLI.js')
 
 const fs = require("fs");
 const { WASI } = require("wasi");
 const path = require('path')
 
+const BINARY_PATH = './codegen-rust/target/wasm32-wasi/release/tql.wasi.wasm'
+const WASM_BINARY = fs.readFileSync(BINARY_PATH)
+
 const [_node, _bin, ...rest] = process.argv
 
+const schemaPath = rest[0]
+const schemaDir = path.dirname(schemaPath)
+
 const wasi = new WASI({
-  args: rest,
+  // first arg provided to wasi must still be the executable path
+  args: [_bin, ...rest],
   preopens: {
-    [rest[0]]: path.resolve(rest[0])
+    // preopens must be directories not files
+    [schemaDir]: schemaDir
   }
 });
 
 const importObject = { wasi_snapshot_preview1: wasi.wasiImport };
 
-(async () => {
-  const wasm = await WebAssembly.compile(
-    fs.readFileSync("../codegen-rust/target/wasm32-wasi/release/codegen-rust.wasi.wasm")
-  );
-  const instance = await WebAssembly.instantiate(wasm, importObject);
-
-  wasi.start(instance);
-})();
+WebAssembly
+  .compile(WASM_BINARY)
+  .then(wasm => WebAssembly.instantiate(wasm, importObject))
+  .then(instance => wasi.start(instance));
