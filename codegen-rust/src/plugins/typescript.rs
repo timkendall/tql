@@ -1,7 +1,7 @@
 use deno_ast::{parse_module, MediaType, ParseParams, SourceTextInfo};
 use dprint_plugin_typescript::configuration::ConfigurationBuilder as DprintConfigurationBuilder;
 use dprint_plugin_typescript::format_parsed_source;
-use graphql_tools::static_graphql::schema::{EnumType, ObjectType, ScalarType, Type};
+use graphql_tools::static_graphql::schema::{EnumType, ObjectType, ScalarType, Type, UnionType};
 use swc_atoms::*;
 use swc_common::{sync::Lrc, FilePathMapping, SourceMap, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -118,6 +118,44 @@ impl Plugin for TypeScript {
         };
 
         Some(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(interface)))
+    }
+
+    fn union_type(&self, union_type: &UnionType) -> Option<ModuleItem> {
+        let union = ExportDecl {
+            span: DUMMY_SP,
+            decl: Decl::TsTypeAlias(TsTypeAliasDecl {
+                span: DUMMY_SP,
+                declare: false,
+                id: Ident {
+                    span: DUMMY_SP,
+                    sym: JsWord::from(union_type.name.as_str()),
+                    optional: false,
+                },
+                type_params: None,
+                type_ann: Box::new(TsType::TsUnionOrIntersectionType(
+                    TsUnionOrIntersectionType::TsUnionType(TsUnionType {
+                        span: DUMMY_SP,
+                        types: union_type
+                            .types
+                            .iter()
+                            .map(|t| {
+                                Box::new(TsType::TsTypeRef(TsTypeRef {
+                                    span: DUMMY_SP,
+                                    type_name: TsEntityName::Ident(Ident {
+                                        span: DUMMY_SP,
+                                        sym: JsWord::from(t.as_str()),
+                                        optional: false,
+                                    }),
+                                    type_params: None,
+                                }))
+                            })
+                            .collect(),
+                    }),
+                )),
+            }),
+        };
+
+        Some(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(union)))
     }
 
     fn render(&self, items: &Vec<ModuleItem>) -> String {
