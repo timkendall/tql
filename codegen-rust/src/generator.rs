@@ -37,6 +37,19 @@ impl<'a, T> SchemaVisitor<SchemaVistorContext> for Generator<'a, T>
 where
     T: Plugin,
 {
+    fn enter_enum_type(
+        &self,
+        node: &graphql_tools::static_graphql::schema::EnumType,
+        context: &mut SchemaVistorContext,
+    ) {
+        match self.plugin.enum_type(node) {
+            Some(node) => {
+                context.nodes.push(node);
+            }
+            None => { /* @todo */ }
+        }
+    }
+
     fn enter_object_type(&self, node: &ObjectType, context: &mut SchemaVistorContext) {
         // @todo push this onto `context` for now
         match self.plugin.object_type(node) {

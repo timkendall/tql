@@ -1,7 +1,9 @@
-use deno_ast::{parse_module, MediaType, ParseParams, SourceTextInfo};
+use deno_ast::{
+    parse_module, swc::common::util::take::Take, MediaType, ParseParams, SourceTextInfo,
+};
 use dprint_plugin_typescript::configuration::ConfigurationBuilder as DprintConfigurationBuilder;
 use dprint_plugin_typescript::format_parsed_source;
-use graphql_tools::static_graphql::schema::{ObjectType, Type};
+use graphql_tools::static_graphql::schema::{EnumType, ObjectType, Type};
 use swc_atoms::*;
 use swc_common::{sync::Lrc, FilePathMapping, SourceMap, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -14,6 +16,44 @@ pub struct TypeScript {
 }
 
 impl Plugin for TypeScript {
+    fn enum_type(&self, enum_type: &EnumType) -> Option<ModuleItem> {
+        let enum_d = ExportDecl {
+            span: DUMMY_SP,
+            decl: Decl::TsEnum(TsEnumDecl {
+                span: DUMMY_SP,
+                declare: false,
+                is_const: false,
+                id: Ident {
+                    span: DUMMY_SP,
+                    sym: JsWord::from(enum_type.name.as_str()),
+                    optional: false,
+                },
+                members: enum_type
+                    .values
+                    .iter()
+                    .map(|val| TsEnumMember {
+                        span: DUMMY_SP,
+                        id: TsEnumMemberId::Ident(Ident {
+                            span: DUMMY_SP,
+                            sym: JsWord::from(val.name.as_str()),
+                            optional: false,
+                        }),
+                        init: Some(Box::new(Expr::Lit(Lit::Str(Str {
+                            span: DUMMY_SP,
+                            value: JsWord::from(val.name.as_str()),
+                            has_escape: false,
+                            kind: StrKind::Normal {
+                                contains_quote: false,
+                            },
+                        })))),
+                    })
+                    .collect(),
+            }),
+        };
+
+        Some(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(enum_d)))
+    }
+
     fn object_type(&self, object_type: &ObjectType) -> Option<ModuleItem> {
         let interface = ExportDecl {
             span: DUMMY_SP,
