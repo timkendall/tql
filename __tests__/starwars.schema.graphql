@@ -1,3 +1,11 @@
+scalar ID
+scalar String
+scalar Int
+scalar Float
+scalar Boolean
+
+scalar DateTime
+
 schema {
   query: Query
   mutation: Mutation

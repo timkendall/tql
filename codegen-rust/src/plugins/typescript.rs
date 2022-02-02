@@ -1,9 +1,7 @@
-use deno_ast::{
-    parse_module, swc::common::util::take::Take, MediaType, ParseParams, SourceTextInfo,
-};
+use deno_ast::{parse_module, MediaType, ParseParams, SourceTextInfo};
 use dprint_plugin_typescript::configuration::ConfigurationBuilder as DprintConfigurationBuilder;
 use dprint_plugin_typescript::format_parsed_source;
-use graphql_tools::static_graphql::schema::{EnumType, ObjectType, Type};
+use graphql_tools::static_graphql::schema::{EnumType, ObjectType, ScalarType, Type};
 use swc_atoms::*;
 use swc_common::{sync::Lrc, FilePathMapping, SourceMap, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -16,6 +14,28 @@ pub struct TypeScript {
 }
 
 impl Plugin for TypeScript {
+    fn scalar_type(&self, scalar_type: &ScalarType) -> Option<ModuleItem> {
+        let scalar = ExportDecl {
+            span: DUMMY_SP,
+            decl: Decl::TsTypeAlias(TsTypeAliasDecl {
+                span: DUMMY_SP,
+                declare: false,
+                id: Ident {
+                    span: DUMMY_SP,
+                    sym: JsWord::from(scalar_type.name.as_str()),
+                    optional: false,
+                },
+                type_params: None,
+                type_ann: Box::new(TsType::TsKeywordType(TsKeywordType {
+                    span: DUMMY_SP,
+                    kind: scalar_to_builtin(scalar_type.name.as_str()),
+                })),
+            }),
+        };
+
+        Some(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(scalar)))
+    }
+
     fn enum_type(&self, enum_type: &EnumType) -> Option<ModuleItem> {
         let enum_d = ExportDecl {
             span: DUMMY_SP,
@@ -143,6 +163,17 @@ impl Plugin for TypeScript {
         format_parsed_source(&parsed_source, &config)
             .unwrap()
             .to_string()
+    }
+}
+
+fn scalar_to_builtin(name: &str) -> TsKeywordTypeKind {
+    match name {
+        "ID" => TsKeywordTypeKind::TsStringKeyword,
+        "String" => TsKeywordTypeKind::TsStringKeyword,
+        "Int" => TsKeywordTypeKind::TsNumberKeyword,
+        "Float" => TsKeywordTypeKind::TsNumberKeyword,
+        "Boolean" => TsKeywordTypeKind::TsBooleanKeyword,
+        _ => TsKeywordTypeKind::TsStringKeyword,
     }
 }
 
