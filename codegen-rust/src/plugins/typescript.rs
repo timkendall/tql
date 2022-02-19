@@ -1,7 +1,9 @@
 use deno_ast::{parse_module, MediaType, ParseParams, SourceTextInfo};
 use dprint_plugin_typescript::configuration::ConfigurationBuilder as DprintConfigurationBuilder;
 use dprint_plugin_typescript::format_parsed_source;
-use graphql_tools::static_graphql::schema::{EnumType, ObjectType, ScalarType, Type, UnionType};
+use graphql_tools::static_graphql::schema::{
+    EnumType, InterfaceType, ObjectType, ScalarType, Type, UnionType,
+};
 use swc_atoms::*;
 use swc_common::{sync::Lrc, FilePathMapping, SourceMap, DUMMY_SP};
 use swc_ecma_ast::*;
@@ -11,6 +13,18 @@ use crate::plugin::Plugin;
 
 pub struct TypeScript {
     pub es_version: EsVersion, // @todo readonly interfaces
+}
+
+trait AbstractType {
+    fn possible_types(&self) -> Vec<String>;
+}
+
+// @todo this won't actually work since `InterfaceType` has no reference
+// to the parent schema (for us to go find implementors of itself)
+impl AbstractType for InterfaceType {
+    fn possible_types(&self) -> Vec<String> {
+        vec![String::from("Foo")]
+    }
 }
 
 impl Plugin for TypeScript {
@@ -74,7 +88,154 @@ impl Plugin for TypeScript {
         Some(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(enum_d)))
     }
 
+    fn interface_type(&self, interface_type: &InterfaceType) -> Option<ModuleItem> {
+        let mut fields: Vec<TsTypeElement> = interface_type
+            .fields
+            .iter()
+            .map(|f| {
+                TsTypeElement::TsPropertySignature(TsPropertySignature {
+                    span: DUMMY_SP,
+                    readonly: true,
+                    key: Box::new(Expr::Ident(Ident {
+                        span: DUMMY_SP,
+                        sym: JsWord::from(f.name.to_string()),
+                        optional: false,
+                    })),
+                    computed: false,
+                    optional: true, // @todo
+                    init: None,     // Option<Box<Expr>>, // ?
+                    params: vec![], // only for functions
+                    type_ann: Some(TsTypeAnn {
+                        span: DUMMY_SP,
+                        type_ann: Box::new(to_ts_type(&f.field_type)),
+                    }),
+                    type_params: None, // only for functions
+                })
+            })
+            .collect();
+
+        let typename = TsTypeElement::TsPropertySignature(TsPropertySignature {
+            span: DUMMY_SP,
+            readonly: true,
+            key: Box::new(Expr::Ident(Ident {
+                span: DUMMY_SP,
+                sym: JsWord::from(String::from("__typename")),
+                optional: false,
+            })),
+            computed: false,
+            optional: true,
+            init: None,
+            params: vec![],
+            type_ann: Some(TsTypeAnn {
+                span: DUMMY_SP,
+                type_ann: Box::new(TsType::TsUnionOrIntersectionType(
+                    TsUnionOrIntersectionType::TsUnionType(TsUnionType {
+                        span: DUMMY_SP,
+                        // @todo we really want `possible_types`
+                        types: interface_type
+                            .possible_types()
+                            .iter()
+                            .map(|t| {
+                                Box::new(TsType::TsLitType(TsLitType {
+                                    span: DUMMY_SP,
+                                    lit: TsLit::Str(Str {
+                                        span: DUMMY_SP,
+                                        value: JsWord::from(t.as_str()),
+                                        has_escape: false,
+                                        kind: StrKind::Normal {
+                                            contains_quote: false,
+                                        },
+                                    }),
+                                }))
+                            })
+                            .collect(),
+                    }),
+                )),
+            }),
+            type_params: None,
+        });
+
+        fields.push(typename);
+
+        let interface = ExportDecl {
+            span: DUMMY_SP,
+            decl: Decl::TsInterface(TsInterfaceDecl {
+                id: Ident {
+                    span: DUMMY_SP,
+                    sym: JsWord::from(interface_type.name.as_str()),
+                    optional: false,
+                },
+                span: DUMMY_SP,
+                declare: false,
+                type_params: None,
+                extends: vec![],
+                body: TsInterfaceBody {
+                    span: DUMMY_SP,
+                    body: fields,
+                },
+            }),
+        };
+
+        Some(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(interface)))
+    }
+
     fn object_type(&self, object_type: &ObjectType) -> Option<ModuleItem> {
+        let mut fields: Vec<TsTypeElement> = object_type
+            .fields
+            .iter()
+            .map(|f| {
+                TsTypeElement::TsPropertySignature(TsPropertySignature {
+                    span: DUMMY_SP,
+                    readonly: true,
+                    key: Box::new(Expr::Ident(Ident {
+                        span: DUMMY_SP,
+                        sym: JsWord::from(f.name.to_string()),
+                        optional: false,
+                    })),
+                    computed: false,
+                    optional: true,
+                    init: None,
+                    params: vec![],
+                    type_ann: Some(TsTypeAnn {
+                        span: DUMMY_SP,
+                        type_ann: Box::new(to_ts_type(&f.field_type)),
+                    }),
+                    type_params: None,
+                })
+            })
+            .collect();
+
+        let typename = TsTypeElement::TsPropertySignature(TsPropertySignature {
+            span: DUMMY_SP,
+            readonly: true,
+            key: Box::new(Expr::Ident(Ident {
+                span: DUMMY_SP,
+                sym: JsWord::from(String::from("__typename")),
+                optional: false,
+            })),
+            computed: false,
+            optional: true, // @todo
+            init: None,     // Option<Box<Expr>>, // ?
+            params: vec![], // only for functions
+            type_ann: Some(TsTypeAnn {
+                span: DUMMY_SP,
+                type_ann: Box::new(TsType::TsLitType(TsLitType {
+                    span: DUMMY_SP,
+                    lit: TsLit::Str(Str {
+                        span: DUMMY_SP,
+                        value: JsWord::from(object_type.name.as_str()),
+                        has_escape: false,
+                        kind: StrKind::Normal {
+                            contains_quote: false,
+                        },
+                    }),
+                })),
+            }),
+            type_params: None, // only for functions
+        });
+
+        fields.push(typename);
+
         let interface = ExportDecl {
             span: DUMMY_SP,
             decl: Decl::TsInterface(TsInterfaceDecl {
@@ -89,30 +250,7 @@ impl Plugin for TypeScript {
                 extends: vec![],
                 body: TsInterfaceBody {
                     span: DUMMY_SP,
-                    body: object_type
-                        .fields
-                        .iter()
-                        .map(|f| {
-                            TsTypeElement::TsPropertySignature(TsPropertySignature {
-                                span: DUMMY_SP,
-                                readonly: true,
-                                key: Box::new(Expr::Ident(Ident {
-                                    span: DUMMY_SP,
-                                    sym: JsWord::from(f.name.to_string()),
-                                    optional: false,
-                                })),
-                                computed: false,
-                                optional: true, // @todo
-                                init: None,     // Option<Box<Expr>>, // ?
-                                params: vec![], // only for functions
-                                type_ann: Some(TsTypeAnn {
-                                    span: DUMMY_SP,
-                                    type_ann: Box::new(to_ts_type(&f.field_type)),
-                                }),
-                                type_params: None, // only for functions
-                            })
-                        })
-                        .collect(),
+                    body: fields,
                 },
             }),
         };
@@ -185,6 +323,8 @@ impl Plugin for TypeScript {
         // SourceTextInfo::from_string(String::from("")),
         //     );
         let _ = emitter.emit_module(&module);
+
+        println!("{}", String::from_utf8_lossy(&buf).to_string());
 
         let parsed_source = parse_module(ParseParams {
             specifier: "my_file.ts".to_string(),

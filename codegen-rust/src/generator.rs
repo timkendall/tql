@@ -1,6 +1,6 @@
 use graphql_tools::ast::SchemaVisitor;
 use graphql_tools::static_graphql::schema::{
-    Document, EnumType, ObjectType, ScalarType, UnionType,
+    Document, EnumType, InterfaceType, ObjectType, ScalarType, UnionType,
 };
 // @todo take a generic to represent `ModuleItem` (i.e the target language AST node type)
 use swc_ecma_ast::ModuleItem;
@@ -50,6 +50,15 @@ where
 
     fn enter_enum_type(&self, node: &EnumType, context: &mut SchemaVistorContext) {
         match self.plugin.enum_type(node) {
+            Some(node) => {
+                context.nodes.push(node);
+            }
+            None => { /* @todo */ }
+        }
+    }
+
+    fn enter_interface_type(&self, node: &InterfaceType, context: &mut SchemaVistorContext) {
+        match self.plugin.interface_type(node) {
             Some(node) => {
                 context.nodes.push(node);
             }
