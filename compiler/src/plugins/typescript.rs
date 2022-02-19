@@ -123,7 +123,7 @@ impl Plugin for TypeScript {
                 optional: false,
             })),
             computed: false,
-            optional: true,
+            optional: false,
             init: None,
             params: vec![],
             type_ann: Some(TsTypeAnn {
@@ -214,7 +214,7 @@ impl Plugin for TypeScript {
                 optional: false,
             })),
             computed: false,
-            optional: true, // @todo
+            optional: false,
             init: None,     // Option<Box<Expr>>, // ?
             params: vec![], // only for functions
             type_ann: Some(TsTypeAnn {
@@ -272,7 +272,7 @@ impl Plugin for TypeScript {
                         optional: false,
                     })),
                     computed: false,
-                    optional: true,
+                    optional: true, // @todo only if `value_type` is not `NonNullType`
                     init: None,
                     params: vec![],
                     type_ann: Some(TsTypeAnn {
