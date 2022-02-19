@@ -14,11 +14,14 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "bin"
   ],
+  "bin": {
+    "tql": "bin/index"
+  },
   "workspaces": [
-    ".",
-    "codegen"
+    "."
   ],
   "scripts": {
     "build": "tsc -b",

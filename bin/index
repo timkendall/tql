@@ -4,7 +4,7 @@ const fs = require("fs");
 const { WASI } = require("wasi");
 const path = require('path')
 
-const BINARY_PATH = './codegen-rust/target/wasm32-wasi/release/tql.wasi.wasm'
+const BINARY_PATH = './compiler/target/wasm32-wasi/release/tql.wasi.wasm'
 const WASM_BINARY = fs.readFileSync(BINARY_PATH)
 
 const [_node, _bin, ...rest] = process.argv
