@@ -2,7 +2,7 @@ use deno_ast::{parse_module, MediaType, ParseParams, SourceTextInfo};
 use dprint_plugin_typescript::configuration::ConfigurationBuilder as DprintConfigurationBuilder;
 use dprint_plugin_typescript::format_parsed_source;
 use graphql_tools::static_graphql::schema::{
-    EnumType, InterfaceType, ObjectType, ScalarType, Type, UnionType,
+    EnumType, InputObjectType, InterfaceType, ObjectType, ScalarType, Type, UnionType,
 };
 use swc_atoms::*;
 use swc_common::{sync::Lrc, FilePathMapping, SourceMap, DUMMY_SP};
@@ -258,6 +258,54 @@ impl Plugin for TypeScript {
         Some(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(interface)))
     }
 
+    fn input_object_type(&self, input_object_type: &InputObjectType) -> Option<ModuleItem> {
+        let fields: Vec<TsTypeElement> = input_object_type
+            .fields
+            .iter()
+            .map(|f| {
+                TsTypeElement::TsPropertySignature(TsPropertySignature {
+                    span: DUMMY_SP,
+                    readonly: true,
+                    key: Box::new(Expr::Ident(Ident {
+                        span: DUMMY_SP,
+                        sym: JsWord::from(f.name.to_string()),
+                        optional: false,
+                    })),
+                    computed: false,
+                    optional: true,
+                    init: None,
+                    params: vec![],
+                    type_ann: Some(TsTypeAnn {
+                        span: DUMMY_SP,
+                        type_ann: Box::new(to_ts_type(&f.value_type)),
+                    }),
+                    type_params: None,
+                })
+            })
+            .collect();
+
+        let interface = ExportDecl {
+            span: DUMMY_SP,
+            decl: Decl::TsInterface(TsInterfaceDecl {
+                id: Ident {
+                    span: DUMMY_SP,
+                    sym: JsWord::from(input_object_type.name.as_str()),
+                    optional: false,
+                },
+                span: DUMMY_SP,
+                declare: false,
+                type_params: None,
+                extends: vec![],
+                body: TsInterfaceBody {
+                    span: DUMMY_SP,
+                    body: fields,
+                },
+            }),
+        };
+
+        Some(ModuleItem::ModuleDecl(ModuleDecl::ExportDecl(interface)))
+    }
+
     fn union_type(&self, union_type: &UnionType) -> Option<ModuleItem> {
         let union = ExportDecl {
             span: DUMMY_SP,
@@ -324,7 +372,7 @@ impl Plugin for TypeScript {
         //     );
         let _ = emitter.emit_module(&module);
 
-        println!("{}", String::from_utf8_lossy(&buf).to_string());
+        // println!("{}", String::from_utf8_lossy(&buf).to_string());
 
         let parsed_source = parse_module(ParseParams {
             specifier: "my_file.ts".to_string(),

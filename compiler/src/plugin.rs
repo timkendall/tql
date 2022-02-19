@@ -1,5 +1,5 @@
 use graphql_tools::static_graphql::schema::{
-    EnumType, InterfaceType, ObjectType, ScalarType, UnionType,
+    EnumType, InputObjectType, InterfaceType, ObjectType, ScalarType, UnionType,
 };
 // @todo take a generic to represent `ModuleItem` (i.e the target language AST node type)
 use swc_ecma_ast::ModuleItem;
@@ -12,6 +12,8 @@ pub trait Plugin {
     fn interface_type(&self, interface_type: &InterfaceType) -> Option<ModuleItem>;
 
     fn object_type(&self, object_type: &ObjectType) -> Option<ModuleItem>;
+
+    fn input_object_type(&self, input_object_type: &InputObjectType) -> Option<ModuleItem>;
 
     fn union_type(&self, union_type: &UnionType) -> Option<ModuleItem>;
 
