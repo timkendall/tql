@@ -15,11 +15,12 @@ fn string_to_static_str(s: String) -> &'static str {
     Box::leak(s.into_boxed_str())
 }
 
+/// Generate a fluent TypeScript client for your GraphQL API.
 #[derive(StructOpt, Debug)]
 #[structopt(name = "tql")]
 struct Opt {
-    /// Files to process
-    #[structopt(name = "FILE", parse(from_os_str))]
+    /// GraphQL schema to compile
+    #[structopt(name = "SCHEMA", parse(from_os_str))]
     file: PathBuf,
 }
 

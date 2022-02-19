@@ -111,3 +111,5 @@ sdk.ts
 *_test.ts
 
 target
+
+.DS_Store
