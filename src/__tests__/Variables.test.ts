@@ -1,4 +1,4 @@
-import { buildSchema } from "graphql";
+import { buildSchema, OperationTypeNode } from "graphql";
 
 import {
   namedType,
@@ -30,7 +30,7 @@ describe("Variables", () => {
     // @note we need a way to get the input type at runtime
     const variableDefinitions = buildVariableDefinitions(
       schema,
-      "query",
+      OperationTypeNode.QUERY,
       selectionSet(selection)
     );
 
@@ -70,7 +70,7 @@ describe("Variables", () => {
 
     const variableDefinitions = buildVariableDefinitions(
       schema,
-      "query",
+      OperationTypeNode.QUERY,
       selectionSet(selection)
     );
 

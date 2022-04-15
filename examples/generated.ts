@@ -1,4 +1,4 @@
-import { buildASTSchema } from "graphql";
+import { buildASTSchema, Kind, OperationTypeNode } from "graphql";
 
 import {
   TypeConditionError,
@@ -17,397 +17,590 @@ import {
   selectionSet,
 } from "../src";
 
-export { Result, Variables, $ } from "../src";
+export type { Result, Variables } from "../src";
+export { $ } from "../src";
 
 export const SCHEMA = buildASTSchema({
-  kind: "Document",
+  kind: Kind.DOCUMENT,
   definitions: [
     {
-      kind: "SchemaDefinition",
+      kind: Kind.SCHEMA_DEFINITION,
       directives: [],
       operationTypes: [
         {
-          kind: "OperationTypeDefinition",
-          operation: "query",
-          type: { kind: "NamedType", name: { kind: "Name", value: "Query" } },
+          kind: Kind.OPERATION_TYPE_DEFINITION,
+          operation: OperationTypeNode.QUERY,
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Query",
+            },
+          },
         },
         {
-          kind: "OperationTypeDefinition",
-          operation: "mutation",
+          kind: Kind.OPERATION_TYPE_DEFINITION,
+          operation: OperationTypeNode.MUTATION,
           type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "Mutation" },
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Mutation",
+            },
           },
         },
       ],
     },
     {
-      kind: "ObjectTypeDefinition",
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value:
           "The query type, represents all of the entry points into our object graph",
         block: true,
       },
-      name: { kind: "Name", value: "Query" },
+      name: {
+        kind: Kind.NAME,
+        value: "Query",
+      },
       interfaces: [],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "hero" },
-          arguments: [
-            {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "episode" },
-              type: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Episode" },
-              },
-              directives: [],
-            },
-          ],
-          type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "Character" },
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "hero",
           },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "reviews" },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "episode" },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "episode",
+              },
               type: {
-                kind: "NonNullType",
-                type: {
-                  kind: "NamedType",
-                  name: { kind: "Name", value: "Episode" },
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "Episode",
                 },
               },
               directives: [],
             },
           ],
           type: {
-            kind: "ListType",
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Character",
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "reviews",
+          },
+          arguments: [
+            {
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "episode",
+              },
+              type: {
+                kind: Kind.NON_NULL_TYPE,
+                type: {
+                  kind: Kind.NAMED_TYPE,
+                  name: {
+                    kind: Kind.NAME,
+                    value: "Episode",
+                  },
+                },
+              },
+              directives: [],
+            },
+          ],
+          type: {
+            kind: Kind.LIST_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "Review" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Review",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "search" },
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "search",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "text" },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "text",
+              },
               type: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "String" },
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "String",
+                },
               },
               directives: [],
             },
           ],
           type: {
-            kind: "ListType",
+            kind: Kind.LIST_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "SearchResult" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "SearchResult",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "character" },
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "character",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "id" },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "id",
+              },
               type: {
-                kind: "NonNullType",
+                kind: Kind.NON_NULL_TYPE,
                 type: {
-                  kind: "NamedType",
-                  name: { kind: "Name", value: "ID" },
+                  kind: Kind.NAMED_TYPE,
+                  name: {
+                    kind: Kind.NAME,
+                    value: "ID",
+                  },
                 },
               },
               directives: [],
             },
           ],
           type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "Character" },
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Character",
+            },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "droid" },
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "droid",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "id" },
-              type: {
-                kind: "NonNullType",
-                type: {
-                  kind: "NamedType",
-                  name: { kind: "Name", value: "ID" },
-                },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "id",
               },
-              directives: [],
-            },
-          ],
-          type: { kind: "NamedType", name: { kind: "Name", value: "Droid" } },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "human" },
-          arguments: [
-            {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "id" },
               type: {
-                kind: "NonNullType",
+                kind: Kind.NON_NULL_TYPE,
                 type: {
-                  kind: "NamedType",
-                  name: { kind: "Name", value: "ID" },
-                },
-              },
-              directives: [],
-            },
-          ],
-          type: { kind: "NamedType", name: { kind: "Name", value: "Human" } },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "starship" },
-          arguments: [
-            {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "id" },
-              type: {
-                kind: "NonNullType",
-                type: {
-                  kind: "NamedType",
-                  name: { kind: "Name", value: "ID" },
+                  kind: Kind.NAMED_TYPE,
+                  name: {
+                    kind: Kind.NAME,
+                    value: "ID",
+                  },
                 },
               },
               directives: [],
             },
           ],
           type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "Starship" },
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Droid",
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "human",
+          },
+          arguments: [
+            {
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "id",
+              },
+              type: {
+                kind: Kind.NON_NULL_TYPE,
+                type: {
+                  kind: Kind.NAMED_TYPE,
+                  name: {
+                    kind: Kind.NAME,
+                    value: "ID",
+                  },
+                },
+              },
+              directives: [],
+            },
+          ],
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Human",
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "starship",
+          },
+          arguments: [
+            {
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "id",
+              },
+              type: {
+                kind: Kind.NON_NULL_TYPE,
+                type: {
+                  kind: Kind.NAMED_TYPE,
+                  name: {
+                    kind: Kind.NAME,
+                    value: "ID",
+                  },
+                },
+              },
+              directives: [],
+            },
+          ],
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Starship",
+            },
           },
           directives: [],
         },
       ],
     },
     {
-      kind: "ObjectTypeDefinition",
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value:
           "The mutation type, represents all updates we can make to our data",
         block: true,
       },
-      name: { kind: "Name", value: "Mutation" },
+      name: {
+        kind: Kind.NAME,
+        value: "Mutation",
+      },
       interfaces: [],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "createReview" },
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "createReview",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "episode" },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "episode",
+              },
               type: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Episode" },
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "Episode",
+                },
               },
               directives: [],
             },
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "review" },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "review",
+              },
               type: {
-                kind: "NonNullType",
+                kind: Kind.NON_NULL_TYPE,
                 type: {
-                  kind: "NamedType",
-                  name: { kind: "Name", value: "ReviewInput" },
+                  kind: Kind.NAMED_TYPE,
+                  name: {
+                    kind: Kind.NAME,
+                    value: "ReviewInput",
+                  },
                 },
               },
               directives: [],
             },
           ],
-          type: { kind: "NamedType", name: { kind: "Name", value: "Review" } },
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Review",
+            },
+          },
           directives: [],
         },
       ],
     },
     {
-      kind: "EnumTypeDefinition",
+      kind: Kind.ENUM_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "The episodes in the Star Wars trilogy",
         block: true,
       },
-      name: { kind: "Name", value: "Episode" },
+      name: {
+        kind: Kind.NAME,
+        value: "Episode",
+      },
       directives: [],
       values: [
         {
-          kind: "EnumValueDefinition",
+          kind: Kind.ENUM_VALUE_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Star Wars Episode IV: A New Hope, released in 1977.",
             block: true,
           },
-          name: { kind: "Name", value: "NEWHOPE" },
+          name: {
+            kind: Kind.NAME,
+            value: "NEWHOPE",
+          },
           directives: [],
         },
         {
-          kind: "EnumValueDefinition",
+          kind: Kind.ENUM_VALUE_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value:
               "Star Wars Episode V: The Empire Strikes Back, released in 1980.",
             block: true,
           },
-          name: { kind: "Name", value: "EMPIRE" },
+          name: {
+            kind: Kind.NAME,
+            value: "EMPIRE",
+          },
           directives: [],
         },
         {
-          kind: "EnumValueDefinition",
+          kind: Kind.ENUM_VALUE_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value:
               "Star Wars Episode VI: Return of the Jedi, released in 1983.",
             block: true,
           },
-          name: { kind: "Name", value: "JEDI" },
+          name: {
+            kind: Kind.NAME,
+            value: "JEDI",
+          },
           directives: [],
         },
       ],
     },
     {
-      kind: "InterfaceTypeDefinition",
+      kind: Kind.INTERFACE_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "A character from the Star Wars universe",
         block: true,
       },
-      name: { kind: "Name", value: "Character" },
+      name: {
+        kind: Kind.NAME,
+        value: "Character",
+      },
       interfaces: [],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The ID of the character",
             block: true,
           },
-          name: { kind: "Name", value: "id" },
+          name: {
+            kind: Kind.NAME,
+            value: "id",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          description: {
-            kind: "StringValue",
-            value: "The name of the character",
-            block: true,
-          },
-          name: { kind: "Name", value: "name" },
-          arguments: [],
-          type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "ID",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
+            value: "The name of the character",
+            block: true,
+          },
+          name: {
+            kind: Kind.NAME,
+            value: "name",
+          },
+          arguments: [],
+          type: {
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "String",
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          description: {
+            kind: Kind.STRING,
             value:
               "The friends of the character, or an empty list if they have none",
             block: true,
           },
-          name: { kind: "Name", value: "friends" },
+          name: {
+            kind: Kind.NAME,
+            value: "friends",
+          },
           arguments: [],
           type: {
-            kind: "ListType",
+            kind: Kind.LIST_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "Character" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Character",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value:
               "The friends of the character exposed as a connection with edges",
             block: true,
           },
-          name: { kind: "Name", value: "friendsConnection" },
+          name: {
+            kind: Kind.NAME,
+            value: "friendsConnection",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "first" },
-              type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "first",
+              },
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "Int",
+                },
+              },
               directives: [],
             },
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "after" },
-              type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "after",
+              },
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "ID",
+                },
+              },
               directives: [],
             },
           ],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "FriendsConnection" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "FriendsConnection",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The movies this character appears in",
             block: true,
           },
-          name: { kind: "Name", value: "appearsIn" },
+          name: {
+            kind: Kind.NAME,
+            value: "appearsIn",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "ListType",
+              kind: Kind.LIST_TYPE,
               type: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Episode" },
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "Episode",
+                },
               },
             },
           },
@@ -416,53 +609,71 @@ export const SCHEMA = buildASTSchema({
       ],
     },
     {
-      kind: "EnumTypeDefinition",
+      kind: Kind.ENUM_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "Units of height",
         block: true,
       },
-      name: { kind: "Name", value: "LengthUnit" },
+      name: {
+        kind: Kind.NAME,
+        value: "LengthUnit",
+      },
       directives: [],
       values: [
         {
-          kind: "EnumValueDefinition",
+          kind: Kind.ENUM_VALUE_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The standard unit around the world",
             block: true,
           },
-          name: { kind: "Name", value: "METER" },
+          name: {
+            kind: Kind.NAME,
+            value: "METER",
+          },
           directives: [],
         },
         {
-          kind: "EnumValueDefinition",
+          kind: Kind.ENUM_VALUE_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Primarily used in the United States",
             block: true,
           },
-          name: { kind: "Name", value: "FOOT" },
+          name: {
+            kind: Kind.NAME,
+            value: "FOOT",
+          },
           directives: [],
         },
         {
-          kind: "EnumValueDefinition",
+          kind: Kind.ENUM_VALUE_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Ancient unit used during the Middle Ages",
             block: true,
           },
-          name: { kind: "Name", value: "CUBIT" },
+          name: {
+            kind: Kind.NAME,
+            value: "CUBIT",
+          },
           directives: [
             {
-              kind: "Directive",
-              name: { kind: "Name", value: "deprecated" },
+              kind: Kind.DIRECTIVE,
+              name: {
+                kind: Kind.NAME,
+                value: "deprecated",
+              },
               arguments: [
                 {
-                  kind: "Argument",
-                  name: { kind: "Name", value: "reason" },
+                  kind: Kind.ARGUMENT,
+                  name: {
+                    kind: Kind.NAME,
+                    value: "reason",
+                  },
                   value: {
-                    kind: "StringValue",
+                    kind: Kind.STRING,
                     value: "Test deprecated enum case",
                     block: false,
                   },
@@ -474,106 +685,172 @@ export const SCHEMA = buildASTSchema({
       ],
     },
     {
-      kind: "ObjectTypeDefinition",
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "A humanoid creature from the Star Wars universe",
         block: true,
       },
-      name: { kind: "Name", value: "Human" },
+      name: {
+        kind: Kind.NAME,
+        value: "Human",
+      },
       interfaces: [
-        { kind: "NamedType", name: { kind: "Name", value: "Character" } },
+        {
+          kind: Kind.NAMED_TYPE,
+          name: {
+            kind: Kind.NAME,
+            value: "Character",
+          },
+        },
       ],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The ID of the human",
             block: true,
           },
-          name: { kind: "Name", value: "id" },
+          name: {
+            kind: Kind.NAME,
+            value: "id",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "ID",
+              },
+            },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "What this human calls themselves",
             block: true,
           },
-          name: { kind: "Name", value: "name" },
+          name: {
+            kind: Kind.NAME,
+            value: "name",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "String",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The home planet of the human, or null if unknown",
             block: true,
           },
-          name: { kind: "Name", value: "homePlanet" },
+          name: {
+            kind: Kind.NAME,
+            value: "homePlanet",
+          },
           arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "String",
+            },
+          },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Height in the preferred unit, default is meters",
             block: true,
           },
-          name: { kind: "Name", value: "height" },
+          name: {
+            kind: Kind.NAME,
+            value: "height",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "unit" },
-              type: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "LengthUnit" },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "unit",
               },
-              defaultValue: { kind: "EnumValue", value: "METER" },
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "LengthUnit",
+                },
+              },
+              defaultValue: {
+                kind: Kind.ENUM,
+                value: "METER",
+              },
               directives: [],
             },
           ],
-          type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Float",
+            },
+          },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Mass in kilograms, or null if unknown",
             block: true,
           },
-          name: { kind: "Name", value: "mass" },
+          name: {
+            kind: Kind.NAME,
+            value: "mass",
+          },
           arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Float",
+            },
+          },
           directives: [
             {
-              kind: "Directive",
-              name: { kind: "Name", value: "deprecated" },
+              kind: Kind.DIRECTIVE,
+              name: {
+                kind: Kind.NAME,
+                value: "deprecated",
+              },
               arguments: [
                 {
-                  kind: "Argument",
-                  name: { kind: "Name", value: "reason" },
+                  kind: Kind.ARGUMENT,
+                  name: {
+                    kind: Kind.NAME,
+                    value: "reason",
+                  },
                   value: {
-                    kind: "StringValue",
+                    kind: Kind.STRING,
                     value: "Weight is a sensitive subject!",
                     block: false,
                   },
@@ -583,91 +860,133 @@ export const SCHEMA = buildASTSchema({
           ],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "This human's friends, or an empty list if they have none",
             block: true,
           },
-          name: { kind: "Name", value: "friends" },
+          name: {
+            kind: Kind.NAME,
+            value: "friends",
+          },
           arguments: [],
           type: {
-            kind: "ListType",
+            kind: Kind.LIST_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "Character" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Character",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value:
               "The friends of the human exposed as a connection with edges",
             block: true,
           },
-          name: { kind: "Name", value: "friendsConnection" },
+          name: {
+            kind: Kind.NAME,
+            value: "friendsConnection",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "first" },
-              type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "first",
+              },
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "Int",
+                },
+              },
               directives: [],
             },
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "after" },
-              type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "after",
+              },
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "ID",
+                },
+              },
               directives: [],
             },
           ],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "FriendsConnection" },
-            },
-          },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          description: {
-            kind: "StringValue",
-            value: "The movies this human appears in",
-            block: true,
-          },
-          name: { kind: "Name", value: "appearsIn" },
-          arguments: [],
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "ListType",
-              type: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Episode" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "FriendsConnection",
               },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
+            value: "The movies this human appears in",
+            block: true,
+          },
+          name: {
+            kind: Kind.NAME,
+            value: "appearsIn",
+          },
+          arguments: [],
+          type: {
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.LIST_TYPE,
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "Episode",
+                },
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          description: {
+            kind: Kind.STRING,
             value:
               "A list of starships this person has piloted, or an empty list if none",
             block: true,
           },
-          name: { kind: "Name", value: "starships" },
+          name: {
+            kind: Kind.NAME,
+            value: "starships",
+          },
           arguments: [],
           type: {
-            kind: "ListType",
+            kind: Kind.LIST_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "Starship" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Starship",
+              },
             },
           },
           directives: [],
@@ -675,210 +994,309 @@ export const SCHEMA = buildASTSchema({
       ],
     },
     {
-      kind: "ObjectTypeDefinition",
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "An autonomous mechanical character in the Star Wars universe",
         block: true,
       },
-      name: { kind: "Name", value: "Droid" },
+      name: {
+        kind: Kind.NAME,
+        value: "Droid",
+      },
       interfaces: [
-        { kind: "NamedType", name: { kind: "Name", value: "Character" } },
+        {
+          kind: Kind.NAMED_TYPE,
+          name: {
+            kind: Kind.NAME,
+            value: "Character",
+          },
+        },
       ],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The ID of the droid",
             block: true,
           },
-          name: { kind: "Name", value: "id" },
+          name: {
+            kind: Kind.NAME,
+            value: "id",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "ID",
+              },
+            },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "What others call this droid",
             block: true,
           },
-          name: { kind: "Name", value: "name" },
+          name: {
+            kind: Kind.NAME,
+            value: "name",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "String",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "This droid's friends, or an empty list if they have none",
             block: true,
           },
-          name: { kind: "Name", value: "friends" },
+          name: {
+            kind: Kind.NAME,
+            value: "friends",
+          },
           arguments: [],
           type: {
-            kind: "ListType",
+            kind: Kind.LIST_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "Character" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Character",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value:
               "The friends of the droid exposed as a connection with edges",
             block: true,
           },
-          name: { kind: "Name", value: "friendsConnection" },
+          name: {
+            kind: Kind.NAME,
+            value: "friendsConnection",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "first" },
-              type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "first",
+              },
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "Int",
+                },
+              },
               directives: [],
             },
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "after" },
-              type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "after",
+              },
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "ID",
+                },
+              },
               directives: [],
             },
           ],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "FriendsConnection" },
-            },
-          },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          description: {
-            kind: "StringValue",
-            value: "The movies this droid appears in",
-            block: true,
-          },
-          name: { kind: "Name", value: "appearsIn" },
-          arguments: [],
-          type: {
-            kind: "NonNullType",
-            type: {
-              kind: "ListType",
-              type: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "Episode" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "FriendsConnection",
               },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
-            value: "This droid's primary function",
+            kind: Kind.STRING,
+            value: "The movies this droid appears in",
             block: true,
           },
-          name: { kind: "Name", value: "primaryFunction" },
-          arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
-          directives: [],
-        },
-      ],
-    },
-    {
-      kind: "ObjectTypeDefinition",
-      description: {
-        kind: "StringValue",
-        value: "A connection object for a character's friends",
-        block: true,
-      },
-      name: { kind: "Name", value: "FriendsConnection" },
-      interfaces: [],
-      directives: [],
-      fields: [
-        {
-          kind: "FieldDefinition",
-          description: {
-            kind: "StringValue",
-            value: "The total number of friends",
-            block: true,
+          name: {
+            kind: Kind.NAME,
+            value: "appearsIn",
           },
-          name: { kind: "Name", value: "totalCount" },
-          arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          description: {
-            kind: "StringValue",
-            value: "The edges for each of the character's friends.",
-            block: true,
-          },
-          name: { kind: "Name", value: "edges" },
           arguments: [],
           type: {
-            kind: "ListType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "FriendsEdge" },
+              kind: Kind.LIST_TYPE,
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "Episode",
+                },
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
+            value: "This droid's primary function",
+            block: true,
+          },
+          name: {
+            kind: Kind.NAME,
+            value: "primaryFunction",
+          },
+          arguments: [],
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "String",
+            },
+          },
+          directives: [],
+        },
+      ],
+    },
+    {
+      kind: Kind.OBJECT_TYPE_DEFINITION,
+      description: {
+        kind: Kind.STRING,
+        value: "A connection object for a character's friends",
+        block: true,
+      },
+      name: {
+        kind: Kind.NAME,
+        value: "FriendsConnection",
+      },
+      interfaces: [],
+      directives: [],
+      fields: [
+        {
+          kind: Kind.FIELD_DEFINITION,
+          description: {
+            kind: Kind.STRING,
+            value: "The total number of friends",
+            block: true,
+          },
+          name: {
+            kind: Kind.NAME,
+            value: "totalCount",
+          },
+          arguments: [],
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Int",
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          description: {
+            kind: Kind.STRING,
+            value: "The edges for each of the character's friends.",
+            block: true,
+          },
+          name: {
+            kind: Kind.NAME,
+            value: "edges",
+          },
+          arguments: [],
+          type: {
+            kind: Kind.LIST_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "FriendsEdge",
+              },
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          description: {
+            kind: Kind.STRING,
             value:
               "A list of the friends, as a convenience when edges are not needed.",
             block: true,
           },
-          name: { kind: "Name", value: "friends" },
+          name: {
+            kind: Kind.NAME,
+            value: "friends",
+          },
           arguments: [],
           type: {
-            kind: "ListType",
+            kind: Kind.LIST_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "Character" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Character",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Information for paginating this connection",
             block: true,
           },
-          name: { kind: "Name", value: "pageInfo" },
+          name: {
+            kind: Kind.NAME,
+            value: "pageInfo",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "PageInfo" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "PageInfo",
+              },
             },
           },
           directives: [],
@@ -886,82 +1304,127 @@ export const SCHEMA = buildASTSchema({
       ],
     },
     {
-      kind: "ObjectTypeDefinition",
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "An edge object for a character's friends",
         block: true,
       },
-      name: { kind: "Name", value: "FriendsEdge" },
+      name: {
+        kind: Kind.NAME,
+        value: "FriendsEdge",
+      },
       interfaces: [],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "A cursor used for pagination",
             block: true,
           },
-          name: { kind: "Name", value: "cursor" },
+          name: {
+            kind: Kind.NAME,
+            value: "cursor",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "ID",
+              },
+            },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The character represented by this friendship edge",
             block: true,
           },
-          name: { kind: "Name", value: "node" },
+          name: {
+            kind: Kind.NAME,
+            value: "node",
+          },
           arguments: [],
           type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "Character" },
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Character",
+            },
           },
           directives: [],
         },
       ],
     },
     {
-      kind: "ObjectTypeDefinition",
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "Information for paginating this connection",
         block: true,
       },
-      name: { kind: "Name", value: "PageInfo" },
+      name: {
+        kind: Kind.NAME,
+        value: "PageInfo",
+      },
       interfaces: [],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "startCursor" },
-          arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "endCursor" },
-          arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
-          directives: [],
-        },
-        {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "hasNextPage" },
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "startCursor",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "ID",
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "endCursor",
+          },
+          arguments: [],
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "ID",
+            },
+          },
+          directives: [],
+        },
+        {
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "hasNextPage",
+          },
+          arguments: [],
+          type: {
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "Boolean" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Boolean",
+              },
             },
           },
           directives: [],
@@ -969,208 +1432,332 @@ export const SCHEMA = buildASTSchema({
       ],
     },
     {
-      kind: "ObjectTypeDefinition",
+      kind: Kind.OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "Represents a review for a movie",
         block: true,
       },
-      name: { kind: "Name", value: "Review" },
+      name: {
+        kind: Kind.NAME,
+        value: "Review",
+      },
       interfaces: [],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The number of stars this review gave, 1-5",
             block: true,
           },
-          name: { kind: "Name", value: "stars" },
+          name: {
+            kind: Kind.NAME,
+            value: "stars",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Int",
+              },
+            },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Comment about the movie",
             block: true,
           },
-          name: { kind: "Name", value: "commentary" },
+          name: {
+            kind: Kind.NAME,
+            value: "commentary",
+          },
           arguments: [],
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "String",
+            },
+          },
           directives: [],
         },
       ],
     },
     {
-      kind: "InputObjectTypeDefinition",
+      kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "The input object sent when someone is creating a new review",
         block: true,
       },
-      name: { kind: "Name", value: "ReviewInput" },
+      name: {
+        kind: Kind.NAME,
+        value: "ReviewInput",
+      },
       directives: [],
       fields: [
         {
-          kind: "InputValueDefinition",
-          description: { kind: "StringValue", value: "0-5 stars", block: true },
-          name: { kind: "Name", value: "stars" },
+          kind: Kind.INPUT_VALUE_DEFINITION,
+          description: {
+            kind: Kind.STRING,
+            value: "0-5 stars",
+            block: true,
+          },
+          name: {
+            kind: Kind.NAME,
+            value: "stars",
+          },
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Int",
+              },
+            },
           },
           directives: [],
         },
         {
-          kind: "InputValueDefinition",
+          kind: Kind.INPUT_VALUE_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Comment about the movie, optional",
             block: true,
           },
-          name: { kind: "Name", value: "commentary" },
-          type: { kind: "NamedType", name: { kind: "Name", value: "String" } },
+          name: {
+            kind: Kind.NAME,
+            value: "commentary",
+          },
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "String",
+            },
+          },
           directives: [],
         },
         {
-          kind: "InputValueDefinition",
+          kind: Kind.INPUT_VALUE_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Favorite color, optional",
             block: true,
           },
-          name: { kind: "Name", value: "favorite_color" },
+          name: {
+            kind: Kind.NAME,
+            value: "favorite_color",
+          },
           type: {
-            kind: "NamedType",
-            name: { kind: "Name", value: "ColorInput" },
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "ColorInput",
+            },
           },
           directives: [],
         },
       ],
     },
     {
-      kind: "InputObjectTypeDefinition",
+      kind: Kind.INPUT_OBJECT_TYPE_DEFINITION,
       description: {
-        kind: "StringValue",
+        kind: Kind.STRING,
         value: "The input object sent when passing in a color",
         block: true,
       },
-      name: { kind: "Name", value: "ColorInput" },
+      name: {
+        kind: Kind.NAME,
+        value: "ColorInput",
+      },
       directives: [],
       fields: [
         {
-          kind: "InputValueDefinition",
-          name: { kind: "Name", value: "red" },
+          kind: Kind.INPUT_VALUE_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "red",
+          },
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Int",
+              },
+            },
           },
           directives: [],
         },
         {
-          kind: "InputValueDefinition",
-          name: { kind: "Name", value: "green" },
+          kind: Kind.INPUT_VALUE_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "green",
+          },
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Int",
+              },
+            },
           },
           directives: [],
         },
         {
-          kind: "InputValueDefinition",
-          name: { kind: "Name", value: "blue" },
+          kind: Kind.INPUT_VALUE_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "blue",
+          },
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "Int" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "Int",
+              },
+            },
           },
           directives: [],
         },
       ],
     },
     {
-      kind: "ObjectTypeDefinition",
-      name: { kind: "Name", value: "Starship" },
+      kind: Kind.OBJECT_TYPE_DEFINITION,
+      name: {
+        kind: Kind.NAME,
+        value: "Starship",
+      },
       interfaces: [],
       directives: [],
       fields: [
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The ID of the starship",
             block: true,
           },
-          name: { kind: "Name", value: "id" },
+          name: {
+            kind: Kind.NAME,
+            value: "id",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
-            type: { kind: "NamedType", name: { kind: "Name", value: "ID" } },
+            kind: Kind.NON_NULL_TYPE,
+            type: {
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "ID",
+              },
+            },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "The name of the starship",
             block: true,
           },
-          name: { kind: "Name", value: "name" },
+          name: {
+            kind: Kind.NAME,
+            value: "name",
+          },
           arguments: [],
           type: {
-            kind: "NonNullType",
+            kind: Kind.NON_NULL_TYPE,
             type: {
-              kind: "NamedType",
-              name: { kind: "Name", value: "String" },
+              kind: Kind.NAMED_TYPE,
+              name: {
+                kind: Kind.NAME,
+                value: "String",
+              },
             },
           },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
+          kind: Kind.FIELD_DEFINITION,
           description: {
-            kind: "StringValue",
+            kind: Kind.STRING,
             value: "Length of the starship, along the longest axis",
             block: true,
           },
-          name: { kind: "Name", value: "length" },
+          name: {
+            kind: Kind.NAME,
+            value: "length",
+          },
           arguments: [
             {
-              kind: "InputValueDefinition",
-              name: { kind: "Name", value: "unit" },
-              type: {
-                kind: "NamedType",
-                name: { kind: "Name", value: "LengthUnit" },
+              kind: Kind.INPUT_VALUE_DEFINITION,
+              name: {
+                kind: Kind.NAME,
+                value: "unit",
               },
-              defaultValue: { kind: "EnumValue", value: "METER" },
+              type: {
+                kind: Kind.NAMED_TYPE,
+                name: {
+                  kind: Kind.NAME,
+                  value: "LengthUnit",
+                },
+              },
+              defaultValue: {
+                kind: Kind.ENUM,
+                value: "METER",
+              },
               directives: [],
             },
           ],
-          type: { kind: "NamedType", name: { kind: "Name", value: "Float" } },
+          type: {
+            kind: Kind.NAMED_TYPE,
+            name: {
+              kind: Kind.NAME,
+              value: "Float",
+            },
+          },
           directives: [],
         },
         {
-          kind: "FieldDefinition",
-          name: { kind: "Name", value: "coordinates" },
+          kind: Kind.FIELD_DEFINITION,
+          name: {
+            kind: Kind.NAME,
+            value: "coordinates",
+          },
           arguments: [],
           type: {
-            kind: "ListType",
+            kind: Kind.LIST_TYPE,
             type: {
-              kind: "NonNullType",
+              kind: Kind.NON_NULL_TYPE,
               type: {
-                kind: "ListType",
+                kind: Kind.LIST_TYPE,
                 type: {
-                  kind: "NonNullType",
+                  kind: Kind.NON_NULL_TYPE,
                   type: {
-                    kind: "NamedType",
-                    name: { kind: "Name", value: "Float" },
+                    kind: Kind.NAMED_TYPE,
+                    name: {
+                      kind: Kind.NAME,
+                      value: "Float",
+                    },
                   },
                 },
               },
@@ -1181,13 +1768,34 @@ export const SCHEMA = buildASTSchema({
       ],
     },
     {
-      kind: "UnionTypeDefinition",
-      name: { kind: "Name", value: "SearchResult" },
+      kind: Kind.UNION_TYPE_DEFINITION,
+      name: {
+        kind: Kind.NAME,
+        value: "SearchResult",
+      },
       directives: [],
       types: [
-        { kind: "NamedType", name: { kind: "Name", value: "Human" } },
-        { kind: "NamedType", name: { kind: "Name", value: "Droid" } },
-        { kind: "NamedType", name: { kind: "Name", value: "Starship" } },
+        {
+          kind: Kind.NAMED_TYPE,
+          name: {
+            kind: Kind.NAME,
+            value: "Human",
+          },
+        },
+        {
+          kind: Kind.NAMED_TYPE,
+          name: {
+            kind: Kind.NAME,
+            value: "Droid",
+          },
+        },
+        {
+          kind: Kind.NAMED_TYPE,
+          name: {
+            kind: Kind.NAME,
+            value: "Starship",
+          },
+        },
       ],
     },
   ],

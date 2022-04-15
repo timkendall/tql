@@ -36,7 +36,7 @@
     "ts-toolbelt": "^9.6.0"
   },
   "devDependencies": {
-    "@apollo/client": "^3.4.16",
+    "@apollo/client": "^3.5.10",
     "@arkweid/lefthook": "^0.7.7",
     "@types/deep-freeze": "^0.1.2",
     "@types/fs-extra": "^9.0.13",
@@ -47,8 +47,8 @@
     "auto-changelog": "^2.3.0",
     "deep-freeze": "^0.0.1",
     "dprint": "^0.19.2",
-    "graphql": "^15.7.2",
-    "graphql-request": "^3.6.1",
+    "graphql": "^16.3.0",
+    "graphql-request": "^4.2.0",
     "jest": "^27.4.5",
     "ts-jest": "^27.1.2",
     "ts-node": "^10.4.0",
@@ -56,7 +56,7 @@
     "typescript": "^4.5.4"
   },
   "peerDependencies": {
-    "graphql": "^14.0.0 || ^15.0.0 || ^16.0.0"
+    "graphql": "^16.0.0"
   },
   "publishConfig": {
     "access": "public"
