@@ -1,7 +1,7 @@
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 import { L, Test } from "ts-toolbelt";
 
-import type { AliasedField, Field, InlineFragment, NamedType, Selection, SelectionSet } from "./AST";
+import type { Field, InlineFragment, NamedType, Selection, SelectionSet } from "./AST";
 
 // @note `Result` takes a root `Type` (TS) and `SelectionSet` (GQL) and recursively walks the
 // array of `Selection` nodes's (i.e `Field`, `InlineFragment`, or `FragmentSpread` nodes)
@@ -33,8 +33,10 @@ export type Result<
     Parent;
 
 type InferName<F> =
-  F extends Field<infer Name, any, any> | AliasedField<infer Name, any, any, any>
-    ? Name
+  F extends Field<infer Name, any, any, infer AliasName>
+    ? AliasName extends string 
+      ? AliasName
+      : Name
     : never;
 
 type InferResult<
@@ -42,7 +44,7 @@ type InferResult<
   Schema extends Record<string, any>,
   Parent extends Record<string, any>
 > =
-  F extends Field<infer Name, any, infer SS> | AliasedField<any, infer Name, any, infer SS>
+  F extends Field<infer Name, any, infer SS, any>
     ? Result<Schema, InferParent<Parent, Name>, SS>
     : never
 
@@ -67,7 +69,7 @@ export type SpreadFragments<
 export type SpreadFragment<
   Schema extends Record<string, any>,
   Fragment extends InlineFragment<any, any>,
-  CommonSelection extends SelectionSet<ReadonlyArray<Field<any, any, any> | AliasedField<any, any, any>>>,
+  CommonSelection extends SelectionSet<ReadonlyArray<Field<any, any, any, any>>>,
 > = Fragment extends InlineFragment<
   NamedType<infer Typename>,
   infer SelectionSet
