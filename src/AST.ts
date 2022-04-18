@@ -124,6 +124,19 @@ export interface Field<
   name: { kind: Kind.NAME; value: Name };
   arguments?: Arguments;
   selectionSet?: SS;
+  as<AliasName extends string>(alias: AliasName): AliasedField<AliasName, Name, Arguments, SS>
+}
+
+export interface AliasedField<
+  AliasName extends string,
+  Name extends string,
+  Arguments extends Array<Argument<string, any>> | undefined = undefined,
+  SS extends SelectionSet<any> | undefined = undefined
+> extends FieldNode {
+  name: { kind: Kind.NAME; value: Name };
+  alias: { kind: Kind.NAME; value: AliasName };
+  arguments?: Arguments;
+  selectionSet?: SS;
 }
 
 export const field = <
@@ -141,6 +154,12 @@ export const field = <
   arguments: args,
   alias: undefined,
   selectionSet: selectionSet,
+  as<AliasName extends string>(alias: AliasName) {
+    return {
+      ...this,
+      alias: { kind: Kind.NAME, value: alias }
+    }
+  }
 });
 
 export interface InlineFragment<
@@ -198,6 +217,7 @@ export interface FragmentSpread<Name extends string>
 // SelectionNode
 export type Selection =
   | Field<any, any, any>
+  | AliasedField<any, any, any, any>
   | InlineFragment<any, any>
   | FragmentSpread<any>;
 
