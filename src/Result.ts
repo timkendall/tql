@@ -1,6 +1,8 @@
+import { ResultOf, TypedDocumentNode } from "@graphql-typed-document-node/core";
 import { L, Test } from "ts-toolbelt";
 
 import type { Field, InlineFragment, NamedType, Selection, SelectionSet } from "./AST";
+import type { Selection as SchemaSelection } from "./Selection"
 
 // @note `Result` takes a root `Type` (TS) and `SelectionSet` (GQL) and recursively walks the
 // array of `Selection` nodes's (i.e `Field`, `InlineFragment`, or `FragmentSpread` nodes)
@@ -81,3 +83,9 @@ type HasInlineFragment<T extends SelectionSet<any> | undefined> = T extends Sele
   : never;
 
 type Merge<M, N> = Omit<M, keyof N> & N;
+
+export type SelectionResult<TSelection> =
+  TSelection extends { toQuery(opts: any): TypedDocumentNode<infer ResultType, infer _VariablesType> }
+    ? ResultType
+    : never;
+

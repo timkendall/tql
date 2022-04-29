@@ -70,7 +70,7 @@ export const render = (sdl: string): string => {
       selectionSet
      } from '@timkendall/tql'
 
-     export type { Result, Variables } from '@timkendall/tql'
+     export type { Result, SelectionResult, Variables } from '@timkendall/tql'
      export { $ } from '@timkendall/tql'
 
      ` +
