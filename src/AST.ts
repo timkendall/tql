@@ -119,12 +119,22 @@ export const selectionSet = <T extends ReadonlyArray<Selection>>(
 export interface Field<
   Name extends string,
   Arguments extends Array<Argument<string, any>> | undefined = undefined,
-  SS extends SelectionSet<any> | undefined = undefined
+  SS extends SelectionSet<any> | undefined = undefined,
+  AliasName extends string | undefined = undefined,
 > extends FieldNode {
   name: { kind: Kind.NAME; value: Name };
   arguments?: Arguments;
   selectionSet?: SS;
+  alias?: AliasNode<AliasName>;
+
+  as<AliasName extends string>(alias: AliasName): Field<Name, Arguments, SS, AliasName>
 }
+
+type AliasNode<AliasName extends string | undefined> =
+  AliasName extends string 
+    ? { kind: Kind.NAME, value: AliasName }
+    : undefined
+
 
 export const field = <
   Name extends string,
@@ -141,6 +151,12 @@ export const field = <
   arguments: args,
   alias: undefined,
   selectionSet: selectionSet,
+  as<AliasName extends string>(alias: AliasName) {
+    return {
+      ...this,
+      alias: { kind: Kind.NAME, value: alias } as AliasNode<AliasName>
+    }
+  }
 });
 
 export interface InlineFragment<
@@ -197,7 +213,7 @@ export interface FragmentSpread<Name extends string>
 
 // SelectionNode
 export type Selection =
-  | Field<any, any, any>
+  | Field<any, any, any, any>
   | InlineFragment<any, any>
   | FragmentSpread<any>;
 
