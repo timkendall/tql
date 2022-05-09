@@ -1,4 +1,4 @@
-import { Kind } from "graphql/language";
+import { Kind, OperationTypeNode } from "graphql/language";
 import type {
   TypeNode,
   NamedTypeNode,
@@ -47,7 +47,7 @@ export interface ListType<Type extends NamedType<string> | NonNullType<any>>
 }
 
 export interface NamedType<Name extends string> extends NamedTypeNode {
-  name: { kind: "Name"; value: Name };
+  name: { kind: Kind.NAME; value: Name };
 }
 
 export const namedType = <Name extends string>(
@@ -60,13 +60,13 @@ export const namedType = <Name extends string>(
 export type Type = NamedType<string> | ListType<any> | NonNullType<any>;
 
 export interface Variable<Name extends string> extends VariableNode {
-  name: { kind: "Name"; value: Name };
+  name: { kind: Kind.NAME; value: Name };
 }
 
 export const variable = <Name extends string>(name: Name): Variable<Name> => ({
-  kind: "Variable",
+  kind: Kind.VARIABLE,
   name: {
-    kind: "Name",
+    kind: Kind.NAME,
     value: name,
   },
 });
@@ -76,7 +76,7 @@ export type Value = Variable<any> | Primitive;
 
 export interface Argument<Name extends string, Value = any>
   extends ArgumentNode {
-  readonly name: { kind: "Name"; value: Name };
+  readonly name: { kind: Kind.NAME; value: Name };
 }
 
 export const argument = <Name extends string, Value = any>(
@@ -95,7 +95,7 @@ export const variableDefinition = <V extends Variable<string>, T extends Type>(
   variable: V,
   type: T
 ): VariableDefinition<V, T> => ({
-  kind: "VariableDefinition",
+  kind: Kind.VARIABLE_DEFINITION,
   variable,
   type, // TypeNode =  NamedTypeNode | ListTypeNode | NonNullTypeNode;
 
@@ -119,12 +119,22 @@ export const selectionSet = <T extends ReadonlyArray<Selection>>(
 export interface Field<
   Name extends string,
   Arguments extends Array<Argument<string, any>> | undefined = undefined,
-  SS extends SelectionSet<any> | undefined = undefined
+  SS extends SelectionSet<any> | undefined = undefined,
+  AliasName extends string | undefined = undefined,
 > extends FieldNode {
-  name: { kind: "Name"; value: Name };
+  name: { kind: Kind.NAME; value: Name };
   arguments?: Arguments;
   selectionSet?: SS;
+  alias?: AliasNode<AliasName>;
+
+  as<AliasName extends string>(alias: AliasName): Field<Name, Arguments, SS, AliasName>
 }
+
+type AliasNode<AliasName extends string | undefined> =
+  AliasName extends string 
+    ? { kind: Kind.NAME, value: AliasName }
+    : undefined
+
 
 export const field = <
   Name extends string,
@@ -135,12 +145,18 @@ export const field = <
   args?: Arguments,
   selectionSet?: SS
 ): Field<Name, Arguments, SS> => ({
-  kind: "Field",
-  name: { kind: "Name", value: name },
+  kind: Kind.FIELD,
+  name: { kind: Kind.NAME, value: name },
   directives: [],
   arguments: args,
   alias: undefined,
   selectionSet: selectionSet,
+  as<AliasName extends string>(alias: AliasName) {
+    return {
+      ...this,
+      alias: { kind: Kind.NAME, value: alias } as AliasNode<AliasName>
+    }
+  }
 });
 
 export interface InlineFragment<
@@ -168,7 +184,7 @@ export interface FragmentDefinition<
   TypeCondition extends NamedType<string>,
   SS extends SelectionSet<ReadonlyArray<Selection>>
 > extends FragmentDefinitionNode {
-  readonly name: { kind: "Name"; value: Name };
+  readonly name: { kind: Kind.NAME; value: Name };
   readonly typeCondition: TypeCondition;
   readonly selectionSet: SS;
 }
@@ -182,8 +198,8 @@ export const fragmentDefinition = <
   typeCondition: TypeCondition,
   selectionSet: SS
 ): FragmentDefinition<Name, TypeCondition, SS> => ({
-  kind: "FragmentDefinition",
-  name: { kind: "Name", value: name },
+  kind: Kind.FRAGMENT_DEFINITION,
+  name: { kind: Kind.NAME, value: name },
   typeCondition,
   selectionSet,
   // directives @todo
@@ -191,32 +207,34 @@ export const fragmentDefinition = <
 
 export interface FragmentSpread<Name extends string>
   extends FragmentSpreadNode {
-  readonly name: { kind: "Name"; value: Name };
+  readonly name: { kind: Kind.NAME; value: Name };
   // readonly directives?: ReadonlyArray<DirectiveNode>;
 }
 
 // SelectionNode
 export type Selection =
-  | Field<any, any, any>
+  | Field<any, any, any, any>
   | InlineFragment<any, any>
   | FragmentSpread<any>;
 
 export type Fragment = InlineFragment<any, any>; /*| NamedFragment */
 
+type AnyOp = OperationTypeNode.QUERY | OperationTypeNode.MUTATION | OperationTypeNode.SUBSCRIPTION 
+
 export interface Operation<
-  Op extends "query" | "mutation" | "subscription",
+  Op extends AnyOp,
   Name extends string,
   VariableDefinitions extends Array<VariableDefinition<any, any>> | never,
   SS extends SelectionSet<any>
 > extends OperationDefinitionNode {
   operation: Op;
-  name: { kind: "Name"; value: Name };
+  name: { kind: Kind.NAME; value: Name };
   variableDefinitions: VariableDefinitions;
   selectionSet: SS;
 }
 
 export const operation = <
-  Op extends "query" | "mutation" | "subscription",
+  Op extends AnyOp,
   Name extends string | never,
   VariableDefinitions extends Array<VariableDefinition<any, any>> | never,
   SS extends SelectionSet<any>
@@ -226,8 +244,8 @@ export const operation = <
   selectionSet: SS,
   variableDefinitions: VariableDefinitions
 ): Operation<Op, Name, VariableDefinitions, SS> => ({
-  kind: "OperationDefinition",
-  name: { kind: "Name", value: name },
+  kind: Kind.OPERATION_DEFINITION,
+  name: { kind: Kind.NAME, value: name },
   operation: op,
   variableDefinitions,
   selectionSet,

@@ -63,7 +63,7 @@ export type Variables<
     ? {}
     : S extends SelectionSet<ReadonlyArray<Selection>>
     ? S["selections"][number] extends infer Selection
-      ? Selection extends Field<infer FieldName, infer FieldArgs, infer SS>
+      ? Selection extends Field<infer FieldName, infer FieldArgs, infer SS, any>
         ? O.Merge<
             FilterMapArguments<RootType, FieldName, FieldArgs>,
             Variables<Schema, RootType[FieldName], SS>
