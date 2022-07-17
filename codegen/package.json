@@ -33,7 +33,7 @@
     "prettier": "^2.5.1",
     "ts-poet": "^4.5.0",
     "ts-toolbelt": "^9.6.0",
-    "yargs": "^16.1.0"
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.7",
@@ -42,7 +42,6 @@
     "@types/node": "^16.11.7",
     "@types/node-fetch": "^2.5.7",
     "@types/prettier": "^2.1.5",
-    "@types/yargs": "^15.0.12",
     "auto-changelog": "^2.2.1",
     "jest": "^27.4.5",
     "ts-jest": "^27.1.2",
