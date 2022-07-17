@@ -20,8 +20,9 @@ Try out our pre-compiled Star Wars GraphQL SDK on [CodeSandbox](https://codesand
 
    * **TypeScript 4.1+** is required for [Recursive Conditional Type](https://devblogs.microsoft.com/typescript/announcing-typescript-4-1/#recursive-conditional-types) support
 
-2. Generate an SDK with `npx @timkendall/tql-gen <schema> > sdk.ts`
+2. Generate an SDK with `npx @timkendall/tql-gen <schema> -o sdk.ts`
 
+  `<schema>` can be a path to local file or an http endpoint url.
 
 ## Usage
 

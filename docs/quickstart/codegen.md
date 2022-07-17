@@ -4,7 +4,7 @@ Codegen currently is required to be manually once at least once before usage. We
 
 ## Usage
 
-`npx @timkendall/tql-gen <schema> > sdk.ts`
+`npx @timkendall/tql-gen <schema> -o sdk.ts`
 
 - `<schema>`: HTTP(s) endpoint of a GraphQL API w/ introspection enabled or local `.graphql` schema file
 
