@@ -1,6 +1,6 @@
 {
   "name": "@timkendall/tql-gen",
-  "version": "1.0.0-rc.8",
+  "version": "1.0.0-rc.10",
   "description": "Code generator for @timkendall/tql.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
