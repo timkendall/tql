@@ -7,6 +7,11 @@ use swc_ecma_ast::ModuleItem;
 
 use crate::plugin::Plugin;
 
+// @todo define a barebones `Schema` struct with internal type_map, and implementations_map
+// @todo Populate the maps by collecting NamedTypes
+//   see: https://github.com/graphql/graphql-js/blob/main/src/type/schema.ts#L216
+// @todo implement a `get_type(name: &str) -> Option<TypeDefinition>` and `get_possible_types(type: &TypeDefinition) -> Vec<TypeDefinition>`
+
 struct SchemaVistorContext {
     nodes: Vec<ModuleItem>,
 }
@@ -28,6 +33,7 @@ where
         let mut context = SchemaVistorContext { nodes: Vec::new() };
         // visit the GraphQL schema AST (plugin will convert GraphQL AST nodes to TypeScript AST nodes)
         // @todo fold over nodes instead of visiting
+        // @todo implement `visit_schema_document_with_type_definitions`
         self.visit_schema_document(&self.schema, &mut context);
         // @todo collect TypeScript AST nodes (from fold) and pass to `plugin.render/1`
         self.plugin.render(&context.nodes)

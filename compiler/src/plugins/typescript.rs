@@ -162,7 +162,7 @@ impl Plugin for TypeScript {
             decl: Decl::TsInterface(TsInterfaceDecl {
                 id: Ident {
                     span: DUMMY_SP,
-                    sym: JsWord::from(interface_type.name.as_str()),
+                    sym: JsWord::from(String::from("I") + interface_type.name.as_str()),
                     optional: false,
                 },
                 span: DUMMY_SP,
@@ -198,6 +198,7 @@ impl Plugin for TypeScript {
                     params: vec![],
                     type_ann: Some(TsTypeAnn {
                         span: DUMMY_SP,
+                        // @todo lookup referenced `TypeDefinition` for additional metadata
                         type_ann: Box::new(to_ts_type(&f.field_type)),
                     }),
                     type_params: None,
@@ -241,16 +242,16 @@ impl Plugin for TypeScript {
             decl: Decl::TsInterface(TsInterfaceDecl {
                 id: Ident {
                     span: DUMMY_SP,
-                    sym: JsWord::from(object_type.name.as_str()),
+                    sym: JsWord::from(String::from("I") + object_type.name.as_str()),
                     optional: false,
                 },
                 span: DUMMY_SP,
                 declare: false,
                 type_params: None,
-                extends: vec![],
+                extends: vec![], // @todo extend the interfaces it implements
                 body: TsInterfaceBody {
                     span: DUMMY_SP,
-                    body: fields,
+                    body: fields, // @todo only include fields not on the interfaces it implements
                 },
             }),
         };
@@ -289,7 +290,7 @@ impl Plugin for TypeScript {
             decl: Decl::TsInterface(TsInterfaceDecl {
                 id: Ident {
                     span: DUMMY_SP,
-                    sym: JsWord::from(input_object_type.name.as_str()),
+                    sym: JsWord::from(String::from("I") + input_object_type.name.as_str()),
                     optional: false,
                 },
                 span: DUMMY_SP,
@@ -314,7 +315,7 @@ impl Plugin for TypeScript {
                 declare: false,
                 id: Ident {
                     span: DUMMY_SP,
-                    sym: JsWord::from(union_type.name.as_str()),
+                    sym: JsWord::from(String::from("I") + union_type.name.as_str()),
                     optional: false,
                 },
                 type_params: None,
@@ -329,7 +330,7 @@ impl Plugin for TypeScript {
                                     span: DUMMY_SP,
                                     type_name: TsEntityName::Ident(Ident {
                                         span: DUMMY_SP,
-                                        sym: JsWord::from(t.as_str()),
+                                        sym: JsWord::from(String::from("I") + t.as_str()),
                                         optional: false,
                                     }),
                                     type_params: None,
@@ -430,11 +431,13 @@ fn to_ts_type(graphql_type: &Type) -> TsType {
                     kind: TsKeywordTypeKind::TsStringKeyword,
                 }),
                 // unknown scalars and complex types
+                // @todo define a to_ts_ref -> TsTypeRef
                 _ => TsType::TsTypeRef(TsTypeRef {
                     span: DUMMY_SP,
                     type_name: TsEntityName::Ident(Ident {
                         span: DUMMY_SP,
-                        sym: JsWord::from(value.as_str()),
+                        // @todo don't prepend "I" to enum types
+                        sym: JsWord::from(String::from("I") + value.as_str()),
                         optional: false,
                     }),
                     type_params: None,
