@@ -35,7 +35,7 @@ import { useQuery } from '@apollo/client'
 import { character, query, $ } from './starwars'
 
 // define reusable selections
-const CHARECTER = character(t => [
+const CHARACTER = character(t => [
   t.id(),
   t.name(),
   t.appearsIn(),
@@ -60,9 +60,9 @@ const QUERY = query((t) => [
     t.friends((t) => <const>[
       t.__typename(),
       
-      ...CHARECTER,
+      ...CHARACTER,
       // or
-      CHARECTER.toInlineFragment(),
+      CHARACTER.toInlineFragment(),
 
       t.on("Human", (t) => [t.homePlanet()]),
       t.on("Droid", (t) => [t.primaryFunction()]),
