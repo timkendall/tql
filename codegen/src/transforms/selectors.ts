@@ -202,7 +202,7 @@ export const transform = (
 
       return code`
         ${/* selector interface */ ""}
-        interface I${type.name}Selector {
+        export interface I${type.name}Selector {
           readonly __typename: () => Field<"__typename">
           ${fields.map(printSignature).join("\n")}
         }
