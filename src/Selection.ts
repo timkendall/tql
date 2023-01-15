@@ -20,6 +20,12 @@ import { Variables, buildVariableDefinitions } from "./Variables";
 
 type Element<T> = T extends Array<infer U> ? U : never;
 
+interface OperationOpts {
+  queryName?: string;
+  useVariables?: boolean;
+  dropNullInputValues?: boolean;
+}
+
 export class Selection<
   Schema extends Record<string, any>,
   RootType extends string /* @todo keyof Schema*/,
@@ -59,11 +65,7 @@ export class Selection<
   }
 
   // toOperation? toDocument?
-  toQuery(options: {
-    queryName?: string;
-    useVariables?: boolean;
-    dropNullInputValues?: boolean;
-  }): TypedDocumentNode<
+  toQuery(options?: OperationOpts): TypedDocumentNode<
     Result<Schema, Schema[RootType], AST.SelectionSet<T>>,
     Variables<Schema, Schema[RootType], AST.SelectionSet<T>>
   > {
@@ -86,7 +88,7 @@ export class Selection<
 
     const operationDefinition = operation(
       op,
-      options.queryName ?? "Anonymous",
+      options?.queryName ?? "Anonymous",
       selectionSet,
       variableDefinitions
     );
@@ -99,8 +101,8 @@ export class Selection<
 
   // @todo toRequest (converts to node-fetch API compatible `Request` object)
 
-  toString() {
-    return print(this.toSelectionSet());
+  toString(options?: OperationOpts) {
+    return print(this.toQuery(options));
   }
 }
 
