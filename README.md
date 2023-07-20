@@ -1,6 +1,11 @@
-# TQL
+> **Warning**:
+> This library will not be recieving updates any time soon.
 
-> 🚧 We are getting close to `1.0` but this is still **pre-production software** at this point, see the **[current limitations](./CURRENT_LIMITATIONS.md)**.
+
+> 🙏 Thank you to all contributors. I am not interested in maintaining this right now but please feel free to fork and take inspiration from!
+
+
+# TQL
 
 **tql** is a TypeScript GraphQL query builder.
 
